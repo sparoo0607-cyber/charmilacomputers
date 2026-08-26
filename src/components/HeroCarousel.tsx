@@ -41,10 +41,16 @@ function parseBanner(b: Partial<BannerData> | Partial<BannerRow> | undefined, fa
   const rawImage = ("imageSrc" in b && b.imageSrc) || ("image_src" in b && b.image_src) || fallback.imageSrc;
   const rawBadge = ("badgeText" in b && b.badgeText) || ("badge_text" in b && b.badge_text) || fallback.badgeText;
 
-  if (isStandardTheme && (rawImage.includes("/themes/vinayaka/") || rawBadge.includes("VINAYAKA"))) {
+  // Festive banner overrides can live at "/themes/vinayaka/..." OR the older
+  // "/images/festive/..." path — both must be treated as festive-tagged,
+  // otherwise a stale festive row in Supabase bleeds through into standard theme.
+  const looksFestive = rawImage.includes("/themes/vinayaka/") || rawImage.includes("/images/festive/") || rawBadge.includes("VINAYAKA");
+  const looksStandard = rawImage.includes("/themes/standard/") || rawBadge.includes("WORKSTATIONS");
+
+  if (isStandardTheme && looksFestive) {
     return fallback;
   }
-  if (isFestiveTheme && (rawImage.includes("/themes/standard/") || rawBadge.includes("WORKSTATIONS"))) {
+  if (isFestiveTheme && looksStandard) {
     return fallback;
   }
 

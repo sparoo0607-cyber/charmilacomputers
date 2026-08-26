@@ -3,8 +3,16 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase/client";
 
-function getStoredTheme(): "festive" | "standard" {
-  if (typeof window === "undefined") return "standard";
+// localStorage here is a *paint hint only* — it lets the first render guess
+// the right theme instantly instead of flashing "standard" while the network
+// fetch is in flight. It must never be treated as authoritative: the effect
+// below always reconciles against the server (Supabase `store_settings`, via
+// /api/theme) and overwrites this cache with whatever the server says, every
+// time. Previously a cached value short-circuited the server check entirely,
+// so once any browser had a stale value it would never update again — that
+// was the theme-switch/refresh glitch.
+function getCachedThemeHint(): "festive" | "standard" | null {
+  if (typeof window === "undefined") return null;
   try {
     const direct = localStorage.getItem("charmila_active_theme");
     if (direct === "festive" || direct === "standard") return direct;
@@ -17,61 +25,61 @@ function getStoredTheme(): "festive" | "standard" {
       }
     }
   } catch {}
-  return "standard";
+  return null;
+}
+
+function cacheThemeHint(theme: "festive" | "standard") {
+  try {
+    localStorage.setItem("charmila_active_theme", theme);
+  } catch {}
 }
 
 export function useStoreTheme() {
-  const [theme, setTheme] = useState<"festive" | "standard">(() => getStoredTheme());
+  const [theme, setTheme] = useState<"festive" | "standard">(() => getCachedThemeHint() ?? "standard");
 
   useEffect(() => {
-    // Initial value already comes from getStoredTheme() via the lazy useState
-    // initializer above — this effect only needs to reconcile against the
-    // server/Supabase source of truth and listen for later changes.
-    async function loadTheme() {
-      // If user has direct localStorage set, that takes precedence locally
-      const directLocal = typeof window !== "undefined" ? localStorage.getItem("charmila_active_theme") : null;
-      if (directLocal === "festive" || directLocal === "standard") {
-        setTheme(directLocal);
-        return;
-      }
+    let cancelled = false;
 
-      // Try server /api/theme
+    async function loadTheme() {
+      // Always ask the server for the real, current theme — the cached hint
+      // above was only ever for the very first paint.
       try {
         const res = await fetch("/api/theme", { cache: "no-store" });
         if (res.ok) {
           const json = await res.json();
-          if (json.activeTheme === "festive" || json.activeTheme === "standard") {
+          if (!cancelled && (json.activeTheme === "festive" || json.activeTheme === "standard")) {
             setTheme(json.activeTheme);
+            cacheThemeHint(json.activeTheme);
             return;
           }
         }
       } catch {}
 
-      // Try Supabase store_settings
+      // Fall back to reading Supabase directly if the API route is unreachable.
       try {
         const { data, error } = await supabase
           .from("store_settings")
           .select("active_theme")
           .eq("id", "default")
           .maybeSingle();
-        if (!error && data?.active_theme) {
-          setTheme(data.active_theme as "festive" | "standard");
-          return;
+        if (!cancelled && !error && data?.active_theme) {
+          const resolved = data.active_theme === "festive" ? "festive" : "standard";
+          setTheme(resolved);
+          cacheThemeHint(resolved);
         }
       } catch {}
     }
 
     loadTheme();
 
-    const handleUpdate = () => {
-      setTheme(getStoredTheme());
-    };
-
-    window.addEventListener("charmila_banners_updated", handleUpdate);
-    window.addEventListener("storage", handleUpdate);
+    // Re-reconcile with the server on these signals too, instead of trusting
+    // whatever is currently cached locally.
+    window.addEventListener("charmila_banners_updated", loadTheme);
+    window.addEventListener("storage", loadTheme);
     return () => {
-      window.removeEventListener("charmila_banners_updated", handleUpdate);
-      window.removeEventListener("storage", handleUpdate);
+      cancelled = true;
+      window.removeEventListener("charmila_banners_updated", loadTheme);
+      window.removeEventListener("storage", loadTheme);
     };
   }, []);
 
