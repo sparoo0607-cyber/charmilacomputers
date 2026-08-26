@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { getProduct, getProductsByCategory, products } from "@/data/products";
+import { getProductLive, getProductsByCategoryLive, products } from "@/data/products";
 import { getCategory } from "@/data/categories";
 import ProductImage from "@/components/ProductImage";
 import ProductCard from "@/components/ProductCard";
@@ -11,7 +11,7 @@ import { formatINR } from "@/lib/format";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
-  const product = getProduct(id);
+  const product = await getProductLive(id);
   if (!product) return { title: "Product Not Found" };
 
   const title = `${product.name} — Buy Online at Best Price`;
@@ -30,10 +30,12 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const product = getProduct(id);
+  const product = await getProductLive(id);
   if (!product) notFound();
   const category = getCategory(product.categorySlug);
-  const related = getProductsByCategory(product.categorySlug).filter((p) => p.id !== product.id).slice(0, 4);
+  const related = (await getProductsByCategoryLive(product.categorySlug))
+    .filter((p) => p.id !== product.id)
+    .slice(0, 4);
 
   // Recommended pair item
   const pairItem = products.find((p) => p.categorySlug !== product.categorySlug && p.price > 1000) || products[0];

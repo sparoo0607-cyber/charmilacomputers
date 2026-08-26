@@ -27,6 +27,7 @@ const emptyForm = {
   wattage: "",
   stockQty: "",
   inStock: true,
+  imageUrl: "",
 };
 
 export default function AdminProductsPage() {
@@ -247,6 +248,7 @@ function ProductModal({
           wattage: product.wattage ? String(product.wattage) : "",
           stockQty: String(product.stockQty),
           inStock: product.inStock,
+          imageUrl: product.imageUrl || "",
         }
       : emptyForm
   );
@@ -263,6 +265,7 @@ function ProductModal({
       wattage: form.wattage ? Number(form.wattage) : undefined,
       stockQty: Number(form.stockQty) || 0,
       inStock: form.inStock,
+      imageUrl: form.imageUrl.trim() || undefined,
       rating: product?.rating,
       reviewsCount: product?.reviewsCount,
       specs: product?.specs,
@@ -381,6 +384,18 @@ function ProductModal({
               <span className="text-sm font-semibold text-zinc-700">Available for sale</span>
             </label>
           </div>
+
+          <Field label="Image URL">
+            <input
+              value={form.imageUrl}
+              onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
+              className="w-full border border-[#E5E0D7] rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-[#D1121B]"
+              placeholder="https://<project>.supabase.co/storage/v1/object/public/product-images/..."
+            />
+            <p className="text-[11px] text-zinc-400 mt-1">
+              Upload the photo to Supabase Storage (bucket <code className="font-mono">product-images</code>) and paste its public URL here. Leave blank to use the category&apos;s default placeholder image.
+            </p>
+          </Field>
         </div>
 
         <div className="flex gap-3 mt-7">

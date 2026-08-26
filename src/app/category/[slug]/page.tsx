@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { getCategory, categories } from "@/data/categories";
-import { getProductsByCategory } from "@/data/products";
+import { getProductsByCategoryLive } from "@/data/products";
 import CategoryBrowser from "./CategoryBrowser";
 import { BoltIcon } from "@/components/icons";
 
@@ -29,7 +29,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
   const category = getCategory(slug);
   if (!category) notFound();
 
-  const products = getProductsByCategory(slug);
+  const products = await getProductsByCategoryLive(slug);
 
   return (
     <div className="mx-auto max-w-[1440px] px-4 sm:px-6 py-6 font-sans">

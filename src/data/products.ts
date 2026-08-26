@@ -1649,6 +1649,78 @@ export function getProduct(id: string): Product | undefined {
   return products.find((p) => p.id === id);
 }
 
+// ---------------------------------------------------------------
+// Live Supabase reads — used by Server Components (category & product
+// detail pages) so admin edits in /admin/products show up on the live
+// site. Falls back to the bundled catalog above on any error, so a
+// Supabase hiccup never produces a blank page.
+//
+// The bundled `products` array above stays as: (a) the initial seed for
+// the Supabase `products` table (see supabase/seed_products.sql), and
+// (b) the fallback/offline data source for every other page (search,
+// deals, compare, wishlist, cart, Build Your PC) that isn't wired to
+// Supabase yet.
+// ---------------------------------------------------------------
+type ProductRow = {
+  id: string;
+  category_slug: string;
+  name: string;
+  brand: string;
+  model: string;
+  price: number;
+  mrp: number | null;
+  wattage: number | null;
+  in_stock: boolean;
+  stock_qty: number;
+  rating: number | null;
+  reviews_count: number | null;
+  specs: Record<string, string> | null;
+  features: string[] | null;
+  image_url: string | null;
+};
+
+export function mapProductRow(row: ProductRow): Product {
+  return {
+    id: row.id,
+    categorySlug: row.category_slug,
+    name: row.name,
+    brand: row.brand,
+    model: row.model,
+    price: row.price,
+    mrp: row.mrp ?? undefined,
+    wattage: row.wattage ?? undefined,
+    inStock: row.in_stock,
+    stockQty: row.stock_qty,
+    rating: row.rating ?? undefined,
+    reviewsCount: row.reviews_count ?? undefined,
+    specs: row.specs ?? undefined,
+    features: row.features ?? undefined,
+    imageUrl: row.image_url ?? undefined,
+  };
+}
+
+export async function getProductLive(id: string): Promise<Product | undefined> {
+  try {
+    const { supabase } = await import("@/lib/supabase/client");
+    const { data, error } = await supabase.from("products").select("*").eq("id", id).maybeSingle();
+    if (error || !data) return getProduct(id);
+    return mapProductRow(data as ProductRow);
+  } catch {
+    return getProduct(id);
+  }
+}
+
+export async function getProductsByCategoryLive(categorySlug: string): Promise<Product[]> {
+  try {
+    const { supabase } = await import("@/lib/supabase/client");
+    const { data, error } = await supabase.from("products").select("*").eq("category_slug", categorySlug);
+    if (error || !data || data.length === 0) return getProductsByCategory(categorySlug);
+    return (data as ProductRow[]).map(mapProductRow);
+  } catch {
+    return getProductsByCategory(categorySlug);
+  }
+}
+
 export function getBrandsForCategory(categorySlug: string): string[] {
   const brands = new Set(products.filter((p) => p.categorySlug === categorySlug).map((p) => p.brand));
   return Array.from(brands).sort();

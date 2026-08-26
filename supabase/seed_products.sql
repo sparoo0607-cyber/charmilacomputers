@@ -1,3 +1,6 @@
+-- Run supabase/full_setup.sql FIRST (creates the tables + RLS), then this file.
+-- Uses `on conflict (id) do nothing` on purpose: re-running this after you've
+-- edited a product in the admin panel will NOT overwrite your edit.
 insert into public.products
   (id, category_slug, name, brand, model, price, mrp, wattage, in_stock, stock_qty, rating, reviews_count, specs, features)
 values

@@ -43,6 +43,7 @@ export interface Database {
           reviews_count: number | null;
           specs: Record<string, string> | null;
           features: string[] | null;
+          image_url: string | null;
           created_at: string;
         };
         Insert: {
@@ -60,6 +61,7 @@ export interface Database {
           reviews_count?: number | null;
           specs?: Record<string, string> | null;
           features?: string[] | null;
+          image_url?: string | null;
         };
         Update: Partial<Database["public"]["Tables"]["products"]["Insert"]>;
         Relationships: [];

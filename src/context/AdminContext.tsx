@@ -210,6 +210,7 @@ type ProductRow = {
   reviews_count: number | null;
   specs: Record<string, string> | null;
   features: string[] | null;
+  image_url: string | null;
 };
 
 function mapProductRow(row: ProductRow): Product {
@@ -228,6 +229,7 @@ function mapProductRow(row: ProductRow): Product {
     reviewsCount: row.reviews_count ?? undefined,
     specs: row.specs ?? undefined,
     features: row.features ?? undefined,
+    imageUrl: row.image_url ?? undefined,
   };
 }
 
@@ -469,6 +471,7 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
           reviews_count: product.reviewsCount ?? null,
           specs: product.specs ?? null,
           features: product.features ?? null,
+          image_url: product.imageUrl ?? null,
         })
         .then(({ error }) => {
           if (error) {
@@ -495,6 +498,7 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         ...(patch.wattage !== undefined && { wattage: patch.wattage ?? null }),
         ...(patch.inStock !== undefined && { in_stock: patch.inStock }),
         ...(patch.stockQty !== undefined && { stock_qty: patch.stockQty }),
+        ...(patch.imageUrl !== undefined && { image_url: patch.imageUrl ?? null }),
       };
 
       supabase
