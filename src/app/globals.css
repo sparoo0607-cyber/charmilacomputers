@@ -25,25 +25,11 @@
   --font-display: var(--font-festive-display), Georgia, serif;
 }
 
-/* Standard Corporate Tech Theme Styling */
+/* Standard theme: identical to festive (red/maroon/cream unchanged — see the
+   :root block above) except gold is swapped for black. Nothing else differs. */
 [data-theme="standard"] {
-  --background: #F8FAFC;
-  --foreground: #0F172A;
-
-  --brand-maroon: #1E3A8A;
-  --brand-maroon-dark: #172554;
-  --brand-red: #2563EB;
-  --brand-red-dark: #1D4ED8;
-  --brand-saffron: #0284C7;
-  --brand-gold: #0EA5E9;
-  --brand-cream: #F8FAFC;
-  --brand-cream-card: #FFFFFF;
-  --brand-dark-blue: #1E293B;
-  --brand-footer: #0F172A;
-  --brand-text: #0F172A;
-  --brand-text-secondary: #475569;
-  --brand-text-muted: #64748B;
-  --brand-border: #CBD5E1;
+  --brand-saffron: #18181B;
+  --brand-gold: #18181B;
 
   --font-body: var(--font-corporate-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-brand: var(--font-corporate-heading), var(--font-corporate-sans), sans-serif;
@@ -89,6 +75,25 @@
   font-family: var(--font-corporate-heading), var(--font-corporate-sans), sans-serif;
   letter-spacing: -0.02em;
 }
+
+/* ---------------------------------------------------------------------
+   Standard theme: gold only → black. Red/maroon/cream are left exactly
+   as festive; this repaints just the hardcoded gold hex utility classes
+   (components use literal hex, not the CSS variables above, so the
+   variable change alone doesn't reach them).
+   --------------------------------------------------------------------- */
+[data-theme="standard"] [class*="bg-[#C89B3C]"] { background-color: #18181B !important; }
+[data-theme="standard"] [class*="text-[#C89B3C]"] { color: #18181B !important; }
+[data-theme="standard"] [class*="border-[#C89B3C]"] { border-color: #18181B !important; }
+[data-theme="standard"] [class*="from-[#C89B3C]"] { --tw-gradient-from: #18181B !important; }
+[data-theme="standard"] [class*="bg-[#FFD700]"] { background-color: #18181B !important; }
+[data-theme="standard"] [class*="text-[#FFD700]"] { color: #18181B !important; }
+[data-theme="standard"] [class*="to-[#FFD700]"] { --tw-gradient-to: #18181B !important; }
+[data-theme="standard"] [class*="via-[#FFD700]"] { --tw-gradient-via: #18181B !important; }
+[data-theme="standard"] [class*="bg-[#FFE58F]"] { background-color: #18181B !important; }
+[data-theme="standard"] [class*="text-[#FFE58F]"] { color: #18181B !important; }
+[data-theme="standard"] [class*="hover:text-[#FFE58F]"]:hover { color: #18181B !important; }
+[data-theme="standard"] [class*="from-[#FFE58F]"] { --tw-gradient-from: #18181B !important; }
 
 
 html {
