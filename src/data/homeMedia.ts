@@ -922,6 +922,14 @@ export function resetHomeMedia(): HomePageMediaState {
 }
 
 /**
+ * Applies the complete homepage media state for a specific theme and syncs with Supabase & Server
+ */
+export async function applyThemeMedia(themeId: "festive" | "standard"): Promise<void> {
+  const media = getThemeMedia(themeId);
+  await saveHomeMedia(media, themeId);
+}
+
+/**
  * Helper to read a local file and convert it into a base64 Data URL for instant live preview & storage
  */
 export function readImageFileAsDataUrl(file: File): Promise<string> {
