@@ -41,20 +41,26 @@ export function useStoreTheme() {
     let cancelled = false;
 
     async function loadTheme() {
+      // 1. Check local user selection first — browser cache is authoritative for the active tab
+      const localHint = getCachedThemeHint();
+      if (localHint) {
+        if (!cancelled) {
+          setTheme(localHint);
+        }
+      }
+
+      // 2. Fetch from server API or Supabase
       try {
         const res = await fetch("/api/theme", { cache: "no-store" });
         if (res.ok) {
           const json = await res.json();
           if (!cancelled && (json.activeTheme === "festive" || json.activeTheme === "standard")) {
-            const nextTheme = json.activeTheme;
-            setTheme((prev) => {
-              if (prev !== nextTheme) {
-                cacheThemeHint(nextTheme);
-                return nextTheme;
-              }
-              return prev;
-            });
-            cacheThemeHint(nextTheme);
+            const serverTheme = json.activeTheme;
+            // Only update local state if local cached hint is not present or matches server
+            if (!localHint) {
+              setTheme(serverTheme);
+              cacheThemeHint(serverTheme);
+            }
             return;
           }
         }
@@ -68,14 +74,10 @@ export function useStoreTheme() {
           .maybeSingle();
         if (!cancelled && !error && data?.active_theme) {
           const resolved = data.active_theme === "festive" ? "festive" : "standard";
-          setTheme((prev) => {
-            if (prev !== resolved) {
-              cacheThemeHint(resolved);
-              return resolved;
-            }
-            return prev;
-          });
-          cacheThemeHint(resolved);
+          if (!localHint) {
+            setTheme(resolved);
+            cacheThemeHint(resolved);
+          }
         }
       } catch {}
     }
