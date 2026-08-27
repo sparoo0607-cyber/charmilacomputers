@@ -4,7 +4,10 @@ import path from "path";
 import { getThemeMedia, HomePageMediaState } from "@/data/homeMedia";
 import { supabase } from "@/lib/supabase/client";
 
-const THEME_FILE = path.join(process.cwd(), ".theme_state.json");
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+const THEME_FILE = path.join(process.env.VERCEL ? "/tmp" : process.cwd(), ".theme_state.json");
 
 interface ThemeStateFile {
   activeTheme: "festive" | "standard";
