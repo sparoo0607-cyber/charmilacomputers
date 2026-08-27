@@ -84,9 +84,13 @@ function fallbackForTheme(theme: "festive" | "standard") {
 export default function HeroCarousel() {
   const activeTheme = useStoreTheme();
   const themeFallback = fallbackForTheme(activeTheme);
+  // Reset banners to theme fallback every time activeTheme changes
   const [banners, setBanners] = useState<Record<string, BannerData | BannerRow>>(themeFallback);
 
   useEffect(() => {
+    // Always reset to theme fallback first to avoid stale cross-theme banner bleed
+    setBanners(fallbackForTheme(activeTheme));
+
     async function loadBanners() {
       try {
         const { data, error } = await supabase.from("banners").select("*");
@@ -115,10 +119,10 @@ export default function HeroCarousel() {
     loadBanners();
 
     window.addEventListener("charmila_banners_updated", loadBanners);
-    window.addEventListener("storage", loadBanners);
+    window.addEventListener("charmila_theme_changed", loadBanners);
     return () => {
       window.removeEventListener("charmila_banners_updated", loadBanners);
-      window.removeEventListener("storage", loadBanners);
+      window.removeEventListener("charmila_theme_changed", loadBanners);
     };
   }, [activeTheme]);
 

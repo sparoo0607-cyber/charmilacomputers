@@ -301,3 +301,44 @@ button:disabled {
     scroll-behavior: auto !important;
   }
 }
+
+/* ─────────────────────────────────────────────────────
+   RESPONSIVE / MOBILE FIXES
+   ───────────────────────────────────────────────────── */
+
+/* Prevent horizontal overflow on every viewport */
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* Mini-cart dropdown: don't overflow viewport on mobile */
+@media (max-width: 640px) {
+  /* Cart dropdown full-width on small screens */
+  [id="mobile-menu"] {
+    width: 100vw;
+  }
+  /* Fix cart dropdown clipping off screen */
+  .absolute.right-0.top-10 {
+    right: -1rem;
+    left: -1rem;
+    width: calc(100vw - 2rem) !important;
+    max-width: calc(100vw - 2rem) !important;
+  }
+}
+
+/* Product card image container: stable height on all screens */
+.card-surface img {
+  object-fit: contain;
+}
+
+/* Hero carousel full-width on mobile */
+@media (max-width: 768px) {
+  .aspect-\[1774\/887\] {
+    aspect-ratio: 16 / 9;
+  }
+  .aspect-\[1536\/1024\] {
+    aspect-ratio: 3 / 2;
+  }
+}
+

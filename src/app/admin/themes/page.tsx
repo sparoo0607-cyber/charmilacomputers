@@ -83,6 +83,8 @@ export default function ThemesPage() {
 
     setBusy(true);
 
+    // Immediately write to localStorage & dispatch so the page and all other
+    // hooks update before the async Supabase write completes.
     if (typeof window !== "undefined") {
       localStorage.setItem("charmila_active_theme", themeId);
       try {
@@ -90,14 +92,13 @@ export default function ThemesPage() {
         const parsed = saved ? JSON.parse(saved) : {};
         localStorage.setItem("charmila_admin_settings_v1", JSON.stringify({ ...parsed, activeTheme: themeId }));
       } catch {}
+      window.dispatchEvent(new CustomEvent("charmila_theme_changed", { detail: themeId }));
       window.dispatchEvent(new Event("charmila_banners_updated"));
-      window.dispatchEvent(new Event("storage"));
     }
 
     updateSettings({ activeTheme: themeId });
 
     try {
-      // Apply the complete 33+ image media state for the chosen theme folder
       await applyThemeMedia(themeId);
       showToast(`✓ Activated "${selected.name}" — all 33+ homepage images and banners updated!`);
     } catch (e) {
