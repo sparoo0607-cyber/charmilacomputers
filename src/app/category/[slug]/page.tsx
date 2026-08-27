@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { getCategory, categories } from "@/data/categories";
 import { getProductsByCategoryLive } from "@/data/products";
 import CategoryBrowser from "./CategoryBrowser";
+import PageViewTracker from "@/components/PageViewTracker";
 import { BoltIcon } from "@/components/icons";
 
 export function generateStaticParams() {
@@ -33,6 +34,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
 
   return (
     <div className="mx-auto max-w-[1440px] px-4 sm:px-6 py-6 font-sans">
+      <PageViewTracker kind="category" slug={category.slug} />
       {/* Breadcrumb */}
       <nav className="text-xs text-zinc-500 mb-4 flex items-center gap-1.5">
         <Link href="/" className="hover:text-[#D1121B] transition-colors">Home</Link>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import HeroCarousel from "@/components/HeroCarousel";
+import PageViewTracker from "@/components/PageViewTracker";
 import { useCart } from "@/context/CartContext";
 import { CheckIcon, HeartIcon, StarIcon, BoltIcon, ChevronRightIcon, TruckIcon, ShieldIcon, HeadsetSupportIcon, CloseIcon } from "@/components/icons";
 import { useStoreTheme } from "@/hooks/useStoreTheme";
@@ -254,6 +255,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#F7F3EA] text-[#1B1B1B] font-sans selection:bg-[#D1121B] selection:text-white">
+      <PageViewTracker kind="home" />
       {/* Centered Content Container with 1440px max width and 16-24px gutters */}
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 py-4 sm:py-6 space-y-10 sm:space-y-14">
         

@@ -7,7 +7,6 @@ import { useAdmin } from "@/context/AdminContext";
 import {
   DashboardIcon,
   PackageIcon,
-  ClipboardListIcon,
   UsersIcon,
   SettingsIcon,
   LogoutIcon,
@@ -39,8 +38,7 @@ function ThemeIcon({ className = "w-[18px] h-[18px]" }: { className?: string }) 
 const NAV = [
   { href: "/admin", label: "Dashboard", icon: DashboardIcon, exact: true },
   { href: "/admin/products", label: "Products", icon: PackageIcon },
-  { href: "/admin/orders", label: "Orders", icon: ClipboardListIcon },
-  { href: "/admin/customers", label: "Customers", icon: UsersIcon },
+  { href: "/admin/users", label: "Users", icon: UsersIcon },
   { href: "/admin/banners", label: "Banners", icon: BannerIcon },
   { href: "/admin/themes", label: "Themes", icon: ThemeIcon },
   { href: "/admin/settings", label: "Settings", icon: SettingsIcon },

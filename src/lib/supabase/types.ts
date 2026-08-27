@@ -182,6 +182,26 @@ export interface Database {
         Update: Partial<Database["public"]["Tables"]["banners"]["Insert"]>;
         Relationships: [];
       };
+      page_views: {
+        Row: {
+          id: number;
+          path: string;
+          kind: "home" | "category" | "product" | "other";
+          slug: string | null;
+          visitor_id: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: number;
+          path: string;
+          kind?: "home" | "category" | "product" | "other";
+          slug?: string | null;
+          visitor_id?: string | null;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["page_views"]["Insert"]>;
+        Relationships: [];
+      };
       store_settings: {
         Row: {
           id: string;
@@ -209,7 +229,19 @@ export interface Database {
         Relationships: [];
       };
     };
-    Views: Record<string, never>;
+    Views: {
+      admin_users: {
+        Row: {
+          id: string;
+          full_name: string | null;
+          phone: string | null;
+          email: string | null;
+          charmila_coins: number | null;
+          created_at: string | null;
+        };
+        Relationships: [];
+      };
+    };
 
     Functions: Record<string, never>;
     Enums: Record<string, never>;

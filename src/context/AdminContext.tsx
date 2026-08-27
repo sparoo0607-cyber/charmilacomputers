@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { products as seedProducts } from "@/data/products";
 import { Product } from "@/data/types";
 import { supabase } from "@/lib/supabase/client";
@@ -43,17 +43,25 @@ export interface AdminOrder {
   total: number;
 }
 
-export interface AdminCustomer {
+// A signed-in storefront account — the admin "Users" screen only needs
+// identity (name / phone / email), not commerce history.
+export interface SiteUser {
   id: string;
   name: string;
   email: string;
   phone: string;
-  city: string;
-  state: string;
   joinedAt: string;
-  ordersCount: number;
-  totalSpent: number;
-  segment: "New" | "Regular" | "VIP";
+  coins: number;
+}
+
+// One storefront page view, as read back from Supabase `page_views`.
+export interface PageViewRow {
+  id: number;
+  path: string;
+  kind: "home" | "category" | "product" | "other";
+  slug: string | null;
+  visitorId: string | null;
+  createdAt: string;
 }
 
 export interface StoreSettings {
@@ -87,8 +95,12 @@ interface AdminContextValue {
   adminOrders: AdminOrder[];
   updateOrderStatus: (orderId: string, status: AdminOrderStatus) => void;
 
-  // Customers — derived from orders
-  customers: AdminCustomer[];
+  // Signed-in accounts (profiles ⨝ auth.users) — admin "Users" screen
+  siteUsers: SiteUser[];
+
+  // Raw storefront page views (last 30 days) — dashboard analytics
+  pageViews: PageViewRow[];
+  analyticsLoading: boolean;
 
   // Settings — local only (no settings table; not customer/security sensitive)
   settings: StoreSettings;
@@ -199,34 +211,44 @@ function mapOrderRow(row: OrderWithItemsRow): AdminOrder {
   };
 }
 
-function buildCustomersFromOrders(orders: AdminOrder[]): AdminCustomer[] {
-  const map = new Map<string, AdminCustomer>();
-  for (const o of orders) {
-    const existing = map.get(o.customerEmail);
-    if (existing) {
-      existing.ordersCount += 1;
-      existing.totalSpent += o.total;
-    } else {
-      map.set(o.customerEmail, {
-        id: o.customerEmail,
-        name: o.customerName,
-        email: o.customerEmail,
-        phone: o.customerPhone,
-        city: o.city,
-        state: o.state,
-        joinedAt: o.createdAt,
-        ordersCount: 1,
-        totalSpent: o.total,
-        segment: "New",
-      });
-    }
-  }
-  return Array.from(map.values())
-    .map((c) => ({
-      ...c,
-      segment: (c.totalSpent > 60000 ? "VIP" : c.ordersCount > 1 ? "Regular" : "New") as AdminCustomer["segment"],
-    }))
-    .sort((a, b) => b.totalSpent - a.totalSpent);
+type AdminUserRow = {
+  id: string;
+  full_name: string | null;
+  phone: string | null;
+  email: string | null;
+  charmila_coins: number | null;
+  created_at: string | null;
+};
+
+function mapSiteUser(row: AdminUserRow): SiteUser {
+  return {
+    id: row.id,
+    name: row.full_name?.trim() || "—",
+    email: row.email || "—",
+    phone: row.phone?.trim() || "—",
+    joinedAt: row.created_at || "",
+    coins: row.charmila_coins ?? 0,
+  };
+}
+
+type PageViewDbRow = {
+  id: number;
+  path: string;
+  kind: PageViewRow["kind"];
+  slug: string | null;
+  visitor_id: string | null;
+  created_at: string;
+};
+
+function mapPageView(row: PageViewDbRow): PageViewRow {
+  return {
+    id: row.id,
+    path: row.path,
+    kind: row.kind,
+    slug: row.slug,
+    visitorId: row.visitor_id,
+    createdAt: row.created_at,
+  };
 }
 
 export function AdminProvider({ children }: { children: React.ReactNode }) {
@@ -235,6 +257,9 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
   const [adminName, setAdminName] = useState("Admin");
   const [adminProducts, setAdminProducts] = useState<Product[]>([]);
   const [adminOrders, setAdminOrders] = useState<AdminOrder[]>([]);
+  const [siteUsers, setSiteUsers] = useState<SiteUser[]>([]);
+  const [pageViews, setPageViews] = useState<PageViewRow[]>([]);
+  const [analyticsLoading, setAnalyticsLoading] = useState(true);
   const [settings, setSettings] = useState<StoreSettings>(() => {
     if (typeof window !== "undefined") {
       try {
@@ -371,13 +396,41 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  const fetchSiteUsers = useCallback(async () => {
+    const { data, error } = await supabase.from("admin_users").select("*");
+    if (!error && data) {
+      setSiteUsers((data as AdminUserRow[]).map(mapSiteUser));
+    } else if (error) {
+      console.warn("Supabase admin_users fetch failed:", error.message);
+    }
+  }, []);
+
+  const fetchPageViews = useCallback(async () => {
+    setAnalyticsLoading(true);
+    const since = new Date(Date.now() - 30 * 864e5).toISOString();
+    const { data, error } = await supabase
+      .from("page_views")
+      .select("*")
+      .gte("created_at", since)
+      .order("created_at", { ascending: false })
+      .limit(20000);
+    if (!error && data) {
+      setPageViews((data as PageViewDbRow[]).map(mapPageView));
+    } else if (error) {
+      console.warn("Supabase page_views fetch failed:", error.message);
+    }
+    setAnalyticsLoading(false);
+  }, []);
+
   useEffect(() => {
     if (!isAuthed) return;
     Promise.resolve().then(() => {
       fetchProducts();
       fetchOrders();
+      fetchSiteUsers();
+      fetchPageViews();
     });
-  }, [isAuthed, fetchProducts, fetchOrders]);
+  }, [isAuthed, fetchProducts, fetchOrders, fetchSiteUsers, fetchPageViews]);
 
   // ---------------------------------------------------------------
   // Auth — sign-in itself happens on /login (shared with customer login);
@@ -533,7 +586,6 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
     [showToast, fetchOrders]
   );
 
-  const customers = useMemo(() => buildCustomersFromOrders(adminOrders), [adminOrders]);
 
   const updateSettings = useCallback(
     (patch: Partial<StoreSettings>) => {
@@ -574,7 +626,9 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         restoreDefaults,
         adminOrders,
         updateOrderStatus,
-        customers,
+        siteUsers,
+        pageViews,
+        analyticsLoading,
         settings,
         updateSettings,
         toast,

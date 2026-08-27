@@ -6,6 +6,7 @@ import { getCategory } from "@/data/categories";
 import ProductImage from "@/components/ProductImage";
 import ProductCard from "@/components/ProductCard";
 import ProductActions from "./ProductActions";
+import PageViewTracker from "@/components/PageViewTracker";
 import { StarIcon, ShieldCheckIcon, TruckIcon, BoltIcon, CheckIcon, CheckCircleIcon } from "@/components/icons";
 import { formatINR } from "@/lib/format";
 
@@ -97,6 +98,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
 
   return (
     <div className="mx-auto max-w-[1440px] px-4 sm:px-6 py-6 font-sans">
+      <PageViewTracker kind="product" slug={product.id} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
