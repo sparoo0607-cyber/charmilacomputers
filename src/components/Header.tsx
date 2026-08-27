@@ -35,13 +35,12 @@ const popularCategories = [
 
 export default function Header() {
   const { lines, itemCount, subtotal, removeFromCart, wishlist, compareList, user, logout } = useCart();
+  // Seeded from the server-resolved theme (Supabase → root layout → context),
+  // so SSR and the first client render already agree. No post-mount gate — that
+  // gate rendered the header in standard styling on first paint and then
+  // snapped it to festive after hydration, which is the refresh flash.
   const activeTheme = useStoreTheme();
-  const [mounted, setMounted] = useState(false);
-  // One-shot post-hydration flag so theme-dependent markup matches the server
-  // render on first paint (avoids a hydration mismatch).
-  // eslint-disable-next-line react-hooks/set-state-in-effect
-  useEffect(() => setMounted(true), []);
-  const isFestive = mounted && activeTheme === "festive";
+  const isFestive = activeTheme === "festive";
 
   const router = useRouter();
   const [query, setQuery] = useState("");

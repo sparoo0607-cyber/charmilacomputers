@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useContext } from "react";
 import { supabase } from "@/lib/supabase/client";
+import { ServerThemeContext } from "@/context/ThemeContext";
 import { normalizeTheme, isThemeId, type ThemeId } from "@/lib/theme";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -59,7 +60,12 @@ async function fetchThemeFromSupabase(): Promise<ThemeId | null> {
 }
 
 export function useStoreTheme() {
-  const [theme, setTheme] = useState<ThemeId>(() => readLocalHint() ?? "standard");
+  // Seed from the SERVER-resolved theme (Supabase → root layout → context).
+  // SSR and the first client render therefore agree, so nothing flashes on
+  // refresh. localStorage / Supabase reconciliation still runs on mount below
+  // to pick up a live admin switch without a full reload.
+  const serverTheme = useContext(ServerThemeContext);
+  const [theme, setTheme] = useState<ThemeId>(serverTheme);
 
   const syncTheme = useCallback(async () => {
     // 1. Try server API first (reads Supabase store_settings)

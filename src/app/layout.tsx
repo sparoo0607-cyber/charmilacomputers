@@ -4,6 +4,12 @@ import "./globals.css";
 import SiteChrome from "@/components/SiteChrome";
 import Toast from "@/components/Toast";
 import { CartProvider } from "@/context/CartContext";
+import { ThemeProvider } from "@/context/ThemeContext";
+import { getServerTheme } from "@/lib/theme-server";
+
+// The active theme lives in Supabase and can be flipped from the admin panel at
+// any time, so the shell must render per-request to stamp the right data-theme.
+export const dynamic = "force-dynamic";
 
 const plusJakarta = Plus_Jakarta_Sans({
   variable: "--font-body-festive",
@@ -87,26 +93,34 @@ export const viewport = {
   themeColor: "#7A1118",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Resolve the theme on the server (Supabase = source of truth) and stamp it
+  // onto <html> here. The correct theme is in the very first byte of HTML, so
+  // there is no festive→standard flash on refresh. useStoreTheme is seeded from
+  // the same value via ThemeProvider, so the first client render matches too.
+  const initialTheme = await getServerTheme();
+
   return (
     <html
       lang="en"
+      data-theme={initialTheme}
       suppressHydrationWarning
       className={`${plusJakarta.variable} ${montserrat.variable} ${cinzel.variable} ${inter.variable} ${outfit.variable} h-full antialiased`}
     >
-      
       <body className="min-h-full flex flex-col bg-[#F7F3EA] text-[#1B1B1B]">
         <a href="#main-content" className="skip-link">
           Skip to content
         </a>
-        <CartProvider>
-          <SiteChrome>{children}</SiteChrome>
-          <Toast />
-        </CartProvider>
+        <ThemeProvider initialTheme={initialTheme}>
+          <CartProvider>
+            <SiteChrome>{children}</SiteChrome>
+            <Toast />
+          </CartProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

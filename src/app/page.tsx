@@ -176,6 +176,7 @@ interface QuickViewProduct {
 
 export default function Home() {
   const { addToCart, toast } = useCart();
+  // Seeded from the server-resolved theme, so SSR and first client render agree.
   const activeTheme = useStoreTheme();
   const [homeMedia, setHomeMedia] = useState<HomePageMediaState>(() => getThemeMedia(activeTheme));
   const [addedItems, setAddedItems] = useState<{ [key: string]: boolean }>({});
@@ -196,10 +197,10 @@ export default function Home() {
     fetchMedia();
 
     window.addEventListener("charmila_banners_updated", fetchMedia);
-    window.addEventListener("storage", fetchMedia);
+    window.addEventListener("charmila_theme_changed", fetchMedia);
     return () => {
       window.removeEventListener("charmila_banners_updated", fetchMedia);
-      window.removeEventListener("storage", fetchMedia);
+      window.removeEventListener("charmila_theme_changed", fetchMedia);
     };
   }, [activeTheme]);
 

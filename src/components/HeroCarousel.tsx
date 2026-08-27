@@ -82,15 +82,15 @@ function fallbackForTheme(theme: "festive" | "standard") {
 }
 
 export default function HeroCarousel() {
+  // Seeded from the server-resolved theme, so SSR and first client render agree
+  // — no festive→standard banner swap on refresh.
   const activeTheme = useStoreTheme();
   const themeFallback = fallbackForTheme(activeTheme);
-  // Reset banners to theme fallback every time activeTheme changes
   const [banners, setBanners] = useState<Record<string, BannerData | BannerRow>>(themeFallback);
 
   useEffect(() => {
     // Reset to the theme fallback whenever the active theme changes, so a stale
     // set of banners from the previous theme can't flash before Supabase answers.
-    // This is a reset-on-external-input effect, not render-derived state.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setBanners(fallbackForTheme(activeTheme));
 

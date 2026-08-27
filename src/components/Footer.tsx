@@ -1,16 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
 import { STORE } from "@/lib/format";
 import { PhoneIcon, WhatsAppIcon, FacebookIcon, TwitterIcon, InstagramIcon } from "./icons";
 import { useStoreTheme } from "@/hooks/useStoreTheme";
 
 export default function Footer() {
+  // Seeded from the server-resolved theme, so SSR and the first client render
+  // already agree — no post-mount gate, which would itself cause a standard→
+  // festive flash on refresh.
   const activeTheme = useStoreTheme();
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-  const isFestive = mounted && activeTheme === "festive";
+  const isFestive = activeTheme === "festive";
 
   return (
     <footer className="mt-14 bg-[#263844] text-zinc-300 font-sans border-t-2 border-[#C89B3C]/50 relative">
