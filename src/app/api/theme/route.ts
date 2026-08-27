@@ -44,12 +44,17 @@ export async function GET() {
   try {
     const { data } = await supabase
       .from("store_settings")
-      .select("active_theme")
+      .select("active_theme, updated_at")
       .eq("id", "default")
       .maybeSingle();
 
     if (data?.active_theme) {
-      activeTheme = data.active_theme as "festive" | "standard";
+      const supabaseTime = data.updated_at ? new Date(data.updated_at).getTime() : 0;
+      const localTime = localState.updatedAt ? new Date(localState.updatedAt).getTime() : 0;
+      // Only override localState if Supabase timestamp is newer or equal
+      if (supabaseTime >= localTime || !localState.updatedAt) {
+        activeTheme = data.active_theme as "festive" | "standard";
+      }
     }
   } catch {
     // fallback to localState
