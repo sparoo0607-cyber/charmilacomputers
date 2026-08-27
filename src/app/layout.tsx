@@ -98,21 +98,7 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${plusJakarta.variable} ${montserrat.variable} ${cinzel.variable} ${inter.variable} ${outfit.variable} h-full antialiased`}
     >
-      <head>
-        {/*
-          Set data-theme BEFORE first paint so the page never flashes the CSS
-          default (festive) and then snaps to the real theme after hydration.
-          Reads the localStorage hint written by useStoreTheme; falls back to
-          "standard" (also the DB default). useStoreTheme then reconciles with
-          Supabase in the background.
-        */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html:
-              "(function(){try{var t=localStorage.getItem('charmila_active_theme');if(t!=='festive'&&t!=='standard'){t='standard';}document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','standard');}})();",
-          }}
-        />
-      </head>
+      
       <body className="min-h-full flex flex-col bg-[#F7F3EA] text-[#1B1B1B]">
         <a href="#main-content" className="skip-link">
           Skip to content
