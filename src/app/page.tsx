@@ -189,11 +189,6 @@ export default function Home() {
   });
 
   useEffect(() => {
-    // Reset to this theme's fallback media immediately, then layer any saved
-    // overrides on top. Deferred a tick so this isn't a synchronous setState
-    // inside the effect body.
-    Promise.resolve().then(() => setHomeMedia(getThemeMedia(activeTheme)));
-
     async function fetchMedia() {
       const data = await loadHomeMedia(activeTheme);
       setHomeMedia(data);
@@ -294,10 +289,18 @@ export default function Home() {
               </div>
               <div>
                 <div className="flex items-center gap-2 justify-center md:justify-start">
-                  <h2 className="text-lg sm:text-2xl font-extrabold tracking-wider bg-gradient-to-r from-[#FFF4CC] via-[#FFD700] to-[#FFA726] bg-clip-text text-transparent uppercase font-serif">
+                  <h2 className={`text-lg sm:text-2xl font-extrabold tracking-wider uppercase font-serif ${
+                    activeTheme === "festive"
+                      ? "bg-gradient-to-r from-[#FFF4CC] via-[#FFD700] to-[#FFA726] bg-clip-text text-transparent"
+                      : "text-white"
+                  }`}>
                     {activeTheme === "festive" ? "VINAYAKA FESTIVE PICKS" : "FEATURED HARDWARE DEALS"}
                   </h2>
-                  <span className="bg-[#D1121B] text-[#FFE58F] text-[9px] font-black uppercase px-2 py-0.5 rounded border border-[#C89B3C]/50 tracking-wider">
+                  <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded tracking-wider ${
+                    activeTheme === "festive"
+                      ? "bg-[#D1121B] text-[#FFE58F] border border-[#C89B3C]/50"
+                      : "bg-[#D1121B] text-white border border-red-500/50"
+                  }`}>
                     {activeTheme === "festive" ? "FESTIVE SPECIAL" : "BEST SELLER"}
                   </span>
                 </div>
@@ -732,16 +735,24 @@ export default function Home() {
             {/* Cinematic Gradient & Rich Promotional Text Overlay */}
             <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent flex items-center">
               <div className="p-4 sm:p-8 md:p-12 lg:p-14 max-w-xl text-white space-y-2.5 sm:space-y-4">
-                {/* Top Festive Badge */}
-                <div className="inline-flex items-center gap-1.5 bg-gradient-to-r from-[#D1121B] to-[#7A1118] text-[#FFE58F] border border-[#C89B3C]/50 text-[9px] sm:text-xs font-extrabold uppercase px-3 py-1 rounded-full shadow-md tracking-wider">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#FFE58F] animate-pulse" />
+                {/* Top Badge */}
+                <div className={`inline-flex items-center gap-1.5 text-[9px] sm:text-xs font-extrabold uppercase px-3 py-1 rounded-full shadow-md tracking-wider ${
+                  activeTheme === "festive"
+                    ? "bg-gradient-to-r from-[#D1121B] to-[#7A1118] text-[#FFE58F] border border-[#C89B3C]/50"
+                    : "bg-gradient-to-r from-[#D1121B] to-[#7A1118] text-white border border-red-500/50"
+                }`}>
+                  <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${activeTheme === "festive" ? "bg-[#FFE58F]" : "bg-white"}`} />
                   <span>{homeMedia.promos.templeNight?.badge || (activeTheme === "standard" ? "ENTERPRISE HARDWARE SPECIAL" : "VINAYAKA CHAVITHI MEGA FEST")}</span>
                 </div>
 
                 {/* Main Headline */}
                 <h2 className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight leading-tight uppercase font-serif">
                   <span className="block text-white">{homeMedia.promos.templeNight?.titleLine1 || (activeTheme === "standard" ? "ULTRA PERFORMANCE" : "IGNITE YOUR")}</span>
-                  <span className="bg-gradient-to-r from-[#FFE58F] via-[#FFD700] to-[#FFA726] bg-clip-text text-transparent drop-shadow-md">
+                  <span className={
+                    activeTheme === "festive"
+                      ? "bg-gradient-to-r from-[#FFE58F] via-[#FFD700] to-[#FFA726] bg-clip-text text-transparent drop-shadow-md"
+                      : "bg-gradient-to-r from-[#FF4D4D] via-[#D1121B] to-[#FF8080] bg-clip-text text-transparent drop-shadow-md"
+                  }>
                     {homeMedia.promos.templeNight?.titleLine2 || (activeTheme === "standard" ? "WORKSTATIONS" : "GAMING DREAMS")}
                   </span>
                 </h2>
@@ -752,14 +763,16 @@ export default function Home() {
                 </p>
 
                 {/* Offer Feature Badges */}
-                <div className="flex flex-wrap gap-2 pt-0.5 sm:pt-1 text-[9px] sm:text-[11px] text-amber-200 font-semibold">
-                  <span className="bg-black/50 backdrop-blur-xs px-2.5 py-1 rounded border border-amber-500/30">
+                <div className={`flex flex-wrap gap-2 pt-0.5 sm:pt-1 text-[9px] sm:text-[11px] font-semibold ${
+                  activeTheme === "festive" ? "text-amber-200" : "text-red-200"
+                }`}>
+                  <span className={`bg-black/50 backdrop-blur-xs px-2.5 py-1 rounded border ${activeTheme === "festive" ? "border-amber-500/30" : "border-red-500/30"}`}>
                     ✓ 0% Easy EMI
                   </span>
-                  <span className="bg-black/50 backdrop-blur-xs px-2.5 py-1 rounded border border-amber-500/30">
+                  <span className={`bg-black/50 backdrop-blur-xs px-2.5 py-1 rounded border ${activeTheme === "festive" ? "border-amber-500/30" : "border-red-500/30"}`}>
                     ✓ 3-Yr Warranty
                   </span>
-                  <span className="bg-black/50 backdrop-blur-xs px-2.5 py-1 rounded border border-amber-500/30">
+                  <span className={`bg-black/50 backdrop-blur-xs px-2.5 py-1 rounded border ${activeTheme === "festive" ? "border-amber-500/30" : "border-red-500/30"}`}>
                     ✓ Free Pan-India Delivery
                   </span>
                 </div>

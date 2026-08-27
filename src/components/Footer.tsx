@@ -1,10 +1,17 @@
 "use client";
 
 import Link from "next/link";
+import { useState, useEffect } from "react";
 import { STORE } from "@/lib/format";
 import { PhoneIcon, WhatsAppIcon, FacebookIcon, TwitterIcon, InstagramIcon } from "./icons";
+import { useStoreTheme } from "@/hooks/useStoreTheme";
 
 export default function Footer() {
+  const activeTheme = useStoreTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const isFestive = mounted && activeTheme === "festive";
+
   return (
     <footer className="mt-14 bg-[#263844] text-zinc-300 font-sans border-t-2 border-[#C89B3C]/50 relative">
       {/* Back to top button */}
@@ -26,7 +33,7 @@ export default function Footer() {
             <Link href="/" className="flex items-center group select-none">
               <span className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white transition-colors group-hover:text-zinc-200">
                 CHARMILA
-                <span className="font-black text-[#C89B3C] ml-1 transition-opacity group-hover:opacity-90">
+                <span className={`font-black ml-1 transition-opacity group-hover:opacity-90 ${isFestive ? "text-[#C89B3C]" : "text-[#D1121B]"}`}>
                   COMPUTERS
                 </span>
               </span>
@@ -34,9 +41,9 @@ export default function Footer() {
             <p className="text-zinc-400 text-xs leading-relaxed max-w-sm">
               India&apos;s premier computer hardware, gaming components and custom PC builder destination. Delivering genuine components with official manufacturer warranty pan-India.
             </p>
-            <div className="pt-1 text-[11px] text-amber-300 font-semibold flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#C89B3C] animate-pulse" />
-              <span>Vinayaka Chavithi Festive Deals Active</span>
+            <div className={`pt-1 text-[11px] font-semibold flex items-center gap-2 ${isFestive ? "text-amber-300" : "text-red-400"}`}>
+              <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${isFestive ? "bg-[#C89B3C]" : "bg-[#D1121B]"}`} />
+              <span>{isFestive ? "Vinayaka Chavithi Festive Deals Active" : "Official Brand Warranty & Express Shipping"}</span>
             </div>
 
             {/* Social Icons */}
@@ -50,61 +57,61 @@ export default function Footer() {
 
           {/* Column 1: SHOP */}
           <div>
-            <p className="text-white font-extrabold text-xs uppercase tracking-wider mb-4 border-b border-[#C89B3C]/30 pb-2">SHOP</p>
+            <p className="text-white font-extrabold text-xs uppercase tracking-wider mb-4 border-b border-white/15 pb-2">SHOP</p>
             <ul className="space-y-2.5 text-[12px] text-zinc-300 font-medium">
-              <li><Link href="/category/processors" className="hover:text-amber-300 flex items-center gap-1 transition-colors">Processors</Link></li>
-              <li><Link href="/category/graphics-cards" className="hover:text-amber-300 flex items-center gap-1 transition-colors">Graphics Cards</Link></li>
-              <li><Link href="/category/motherboards" className="hover:text-amber-300 flex items-center gap-1 transition-colors">Motherboards</Link></li>
-              <li><Link href="/category/memory" className="hover:text-amber-300 flex items-center gap-1 transition-colors">RAM (Memory)</Link></li>
-              <li><Link href="/category/ssd" className="hover:text-amber-300 flex items-center gap-1 transition-colors">Storage &amp; SSDs</Link></li>
-              <li><Link href="/category/monitors" className="hover:text-amber-300 flex items-center gap-1 transition-colors">Monitors</Link></li>
+              <li><Link href="/category/processors" className="hover:text-white flex items-center gap-1 transition-colors">Processors</Link></li>
+              <li><Link href="/category/graphics-cards" className="hover:text-white flex items-center gap-1 transition-colors">Graphics Cards</Link></li>
+              <li><Link href="/category/motherboards" className="hover:text-white flex items-center gap-1 transition-colors">Motherboards</Link></li>
+              <li><Link href="/category/memory" className="hover:text-white flex items-center gap-1 transition-colors">RAM (Memory)</Link></li>
+              <li><Link href="/category/ssd" className="hover:text-white flex items-center gap-1 transition-colors">Storage &amp; SSDs</Link></li>
+              <li><Link href="/category/monitors" className="hover:text-white flex items-center gap-1 transition-colors">Monitors</Link></li>
             </ul>
           </div>
 
           {/* Column 2: BUILD & SPECIALS */}
           <div>
-            <p className="text-white font-extrabold text-xs uppercase tracking-wider mb-4 border-b border-[#C89B3C]/30 pb-2">SPECIALS</p>
+            <p className="text-white font-extrabold text-xs uppercase tracking-wider mb-4 border-b border-white/15 pb-2">SPECIALS</p>
             <ul className="space-y-2.5 text-[12px] text-zinc-300 font-medium">
-              <li><Link href="/build-your-pc" className="hover:text-amber-300 flex items-center gap-1 transition-colors">Custom PC Builder</Link></li>
-              <li><Link href="/deals" className="hover:text-amber-300 flex items-center gap-1 transition-colors font-bold text-amber-300">Festive Offers &amp; Combos</Link></li>
-              <li><Link href="/compare" className="hover:text-amber-300 flex items-center gap-1 transition-colors">Compare Components</Link></li>
-              <li><Link href="/wishlist" className="hover:text-amber-300 flex items-center gap-1 transition-colors">Saved Wishlist</Link></li>
-              <li><Link href="/account" className="hover:text-amber-300 flex items-center gap-1 transition-colors">My Customer Account</Link></li>
+              <li><Link href="/build-your-pc" className="hover:text-white flex items-center gap-1 transition-colors">Custom PC Builder</Link></li>
+              <li><Link href="/deals" className={`flex items-center gap-1 transition-colors font-bold ${isFestive ? "text-amber-300 hover:text-white" : "text-red-400 hover:text-white"}`}>{isFestive ? "Festive Offers & Combos" : "Hot Offers & Deals"}</Link></li>
+              <li><Link href="/compare" className="hover:text-white flex items-center gap-1 transition-colors">Compare Components</Link></li>
+              <li><Link href="/wishlist" className="hover:text-white flex items-center gap-1 transition-colors">Saved Wishlist</Link></li>
+              <li><Link href="/account" className="hover:text-white flex items-center gap-1 transition-colors">My Customer Account</Link></li>
             </ul>
           </div>
 
           {/* Column 3: SUPPORT & POLICIES */}
           <div>
-            <p className="text-white font-extrabold text-xs uppercase tracking-wider mb-4 border-b border-[#C89B3C]/30 pb-2">SUPPORT</p>
+            <p className="text-white font-extrabold text-xs uppercase tracking-wider mb-4 border-b border-white/15 pb-2">SUPPORT</p>
             <ul className="space-y-2.5 text-[12px] text-zinc-300 font-medium">
               <li>
                 <a
                   href={`https://wa.me/${STORE.whatsapp}?text=${encodeURIComponent("Hi, I'd like an update on my order status.")}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-amber-300 flex items-center gap-1 transition-colors"
+                  className="hover:text-white flex items-center gap-1 transition-colors"
                 >
                   Track Your Order
                 </a>
               </li>
-              <li><Link href="/warranty-rma" className="hover:text-amber-300 flex items-center gap-1 transition-colors">Warranty &amp; RMA Center</Link></li>
-              <li><Link href="/about" className="hover:text-amber-300 flex items-center gap-1 transition-colors">About Us</Link></li>
-              <li><Link href="/contact" className="hover:text-amber-300 flex items-center gap-1 transition-colors">Contact &amp; Store Locator</Link></li>
-              <li><Link href="/login" className="hover:text-amber-300 flex items-center gap-1 transition-colors">Customer Login</Link></li>
+              <li><Link href="/warranty-rma" className="hover:text-white flex items-center gap-1 transition-colors">Warranty &amp; RMA Center</Link></li>
+              <li><Link href="/about" className="hover:text-white flex items-center gap-1 transition-colors">About Us</Link></li>
+              <li><Link href="/contact" className="hover:text-white flex items-center gap-1 transition-colors">Contact &amp; Store Locator</Link></li>
+              <li><Link href="/login" className="hover:text-white flex items-center gap-1 transition-colors">Customer Login</Link></li>
             </ul>
           </div>
 
           {/* Column 4: CONTACT */}
           <div>
-            <p className="text-white font-extrabold text-xs uppercase tracking-wider mb-4 border-b border-[#C89B3C]/30 pb-2">CONTACT</p>
+            <p className="text-white font-extrabold text-xs uppercase tracking-wider mb-4 border-b border-white/15 pb-2">CONTACT</p>
             <div className="space-y-2.5 text-[11px] text-zinc-300">
               <p className="text-zinc-400 leading-relaxed">{STORE.address}</p>
               <div className="pt-1 space-y-1">
-                <a href={`tel:${STORE.phonePrimary}`} className="hover:text-amber-300 flex items-center gap-1.5 transition-colors font-bold text-white">
-                  <PhoneIcon className="w-3.5 h-3.5 text-[#C89B3C]" />
+                <a href={`tel:${STORE.phonePrimary}`} className="hover:text-white flex items-center gap-1.5 transition-colors font-bold text-white">
+                  <PhoneIcon className={`w-3.5 h-3.5 ${isFestive ? "text-[#C89B3C]" : "text-[#D1121B]"}`} />
                   <span>{STORE.phonePrimary}</span>
                 </a>
-                <a href={`mailto:${STORE.email}`} className="hover:text-amber-300 block transition-colors text-zinc-400">
+                <a href={`mailto:${STORE.email}`} className="hover:text-white block transition-colors text-zinc-400">
                   {STORE.email}
                 </a>
               </div>

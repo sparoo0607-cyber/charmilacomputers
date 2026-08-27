@@ -41,21 +41,25 @@ export function useStoreTheme() {
     let cancelled = false;
 
     async function loadTheme() {
-      // Always ask the server for the real, current theme — the cached hint
-      // above was only ever for the very first paint.
       try {
         const res = await fetch("/api/theme", { cache: "no-store" });
         if (res.ok) {
           const json = await res.json();
           if (!cancelled && (json.activeTheme === "festive" || json.activeTheme === "standard")) {
-            setTheme(json.activeTheme);
-            cacheThemeHint(json.activeTheme);
+            const nextTheme = json.activeTheme;
+            setTheme((prev) => {
+              if (prev !== nextTheme) {
+                cacheThemeHint(nextTheme);
+                return nextTheme;
+              }
+              return prev;
+            });
+            cacheThemeHint(nextTheme);
             return;
           }
         }
       } catch {}
 
-      // Fall back to reading Supabase directly if the API route is unreachable.
       try {
         const { data, error } = await supabase
           .from("store_settings")
@@ -64,7 +68,13 @@ export function useStoreTheme() {
           .maybeSingle();
         if (!cancelled && !error && data?.active_theme) {
           const resolved = data.active_theme === "festive" ? "festive" : "standard";
-          setTheme(resolved);
+          setTheme((prev) => {
+            if (prev !== resolved) {
+              cacheThemeHint(resolved);
+              return resolved;
+            }
+            return prev;
+          });
           cacheThemeHint(resolved);
         }
       } catch {}

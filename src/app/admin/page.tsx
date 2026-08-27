@@ -102,21 +102,29 @@ export default function AdminDashboardPage() {
                 </tr>
               </thead>
               <tbody>
-                {recentOrders.map((o) => (
-                  <tr key={o.id} className="border-b border-zinc-50 last:border-0 hover:bg-[#FAF7F2]">
-                    <td className="px-6 py-3 font-mono text-xs font-bold">{o.id}</td>
-                    <td className="px-3 py-3">
-                      <p className="font-semibold text-zinc-800">{o.customerName}</p>
-                      <p className="text-[11px] text-zinc-400">{o.city}</p>
+                {recentOrders.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="px-6 py-8 text-center text-xs text-zinc-400 font-medium">
+                      No customer orders yet — catalog and PC builder inquiries mode.
                     </td>
-                    <td className="px-3 py-3">
-                      <span className={`inline-block text-[10px] font-bold uppercase px-2 py-1 rounded-full border ${STATUS_STYLES[o.status]}`}>
-                        {o.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-3 text-right font-bold tabular-nums">{formatINR(o.total)}</td>
                   </tr>
-                ))}
+                ) : (
+                  recentOrders.map((o) => (
+                    <tr key={o.id} className="border-b border-zinc-50 last:border-0 hover:bg-[#FAF7F2]">
+                      <td className="px-6 py-3 font-mono text-xs font-bold">{o.id}</td>
+                      <td className="px-3 py-3">
+                        <p className="font-semibold text-zinc-800">{o.customerName}</p>
+                        <p className="text-[11px] text-zinc-400">{o.city}</p>
+                      </td>
+                      <td className="px-3 py-3">
+                        <span className={`inline-block text-[10px] font-bold uppercase px-2 py-1 rounded-full border ${STATUS_STYLES[o.status]}`}>
+                          {o.status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-3 text-right font-bold tabular-nums">{formatINR(o.total)}</td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>

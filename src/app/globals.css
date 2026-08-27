@@ -21,24 +21,6 @@
   --brand-border: #E5E0D7;
 
   --font-body: var(--font-body-festive);
-  --font-brand: var(--font-brand);
-  --font-display: var(--font-festive-display), Georgia, serif;
-}
-
-/* Standard theme: identical to festive (red/maroon/cream unchanged — see the
-   :root block above) except gold is swapped for black. Nothing else differs. */
-[data-theme="standard"] {
-  --brand-saffron: #18181B;
-  --brand-gold: #18181B;
-
-  --font-body: var(--font-corporate-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-brand: var(--font-corporate-heading), var(--font-corporate-sans), sans-serif;
-  --font-display: var(--font-corporate-heading), var(--font-corporate-sans), sans-serif;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --color-brand-maroon: var(--brand-maroon);
   --color-brand-maroon-dark: var(--brand-maroon-dark);
   --color-brand-red: var(--brand-red);
@@ -54,6 +36,15 @@
   --color-brand-border: var(--brand-border);
   --font-sans: var(--font-body);
   --font-brand: var(--font-brand);
+}
+
+[data-theme="standard"] {
+  --brand-saffron: #D1121B;
+  --brand-gold: #D1121B;
+
+  --font-body: var(--font-corporate-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-brand: var(--font-corporate-heading), var(--font-corporate-sans), sans-serif;
+  --font-display: var(--font-corporate-heading), var(--font-corporate-sans), sans-serif;
 }
 
 /* Dynamic Typography Overrides */
@@ -76,37 +67,19 @@
   letter-spacing: -0.02em;
 }
 
-/* ---------------------------------------------------------------------
-   Standard theme: gold only → black. Red/maroon/cream are left exactly
-   as festive; this repaints just the hardcoded gold hex utility classes
-   (components use literal hex, not the CSS variables above, so the
-   variable change alone doesn't reach them).
-   --------------------------------------------------------------------- */
-[data-theme="standard"] [class*="bg-[#C89B3C]"] { background-color: #18181B !important; }
-[data-theme="standard"] [class*="text-[#C89B3C]"] { color: #18181B !important; }
-[data-theme="standard"] [class*="border-[#C89B3C]"] { border-color: #18181B !important; }
-[data-theme="standard"] [class*="from-[#C89B3C]"] { --tw-gradient-from: #18181B !important; }
-[data-theme="standard"] [class*="bg-[#FFD700]"] { background-color: #18181B !important; }
-[data-theme="standard"] [class*="text-[#FFD700]"] { color: #18181B !important; }
-[data-theme="standard"] [class*="to-[#FFD700]"] { --tw-gradient-to: #18181B !important; }
-[data-theme="standard"] [class*="via-[#FFD700]"] { --tw-gradient-via: #18181B !important; }
-[data-theme="standard"] [class*="bg-[#FFE58F]"] { background-color: #18181B !important; }
-[data-theme="standard"] [class*="text-[#FFE58F]"] { color: #18181B !important; }
-[data-theme="standard"] [class*="hover:text-[#FFE58F]"]:hover { color: #18181B !important; }
-[data-theme="standard"] [class*="from-[#FFE58F]"] { --tw-gradient-from: #18181B !important; }
-
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-body), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-}
+/* Standard theme hex overrides: Replace gold and black with Red and White */
+[data-theme="standard"] [class*="bg-[#C89B3C]"] { background-color: #D1121B !important; }
+[data-theme="standard"] [class*="text-[#C89B3C]"] { color: #D1121B !important; }
+[data-theme="standard"] [class*="border-[#C89B3C]"] { border-color: #D1121B !important; }
+[data-theme="standard"] [class*="from-[#C89B3C]"] { --tw-gradient-from: #D1121B !important; }
+[data-theme="standard"] [class*="bg-[#FFD700]"] { background-color: #D1121B !important; }
+[data-theme="standard"] [class*="text-[#FFD700]"] { color: #FFFFFF !important; }
+[data-theme="standard"] [class*="to-[#FFD700]"] { --tw-gradient-to: #FF8080 !important; }
+[data-theme="standard"] [class*="via-[#FFD700]"] { --tw-gradient-via: #D1121B !important; }
+[data-theme="standard"] [class*="bg-[#FFE58F]"] { background-color: #D1121B !important; }
+[data-theme="standard"] [class*="text-[#FFE58F]"] { color: #FFFFFF !important; }
+[data-theme="standard"] [class*="hover:text-[#FFE58F]"]:hover { color: #D1121B !important; }
+[data-theme="standard"] [class*="from-[#FFE58F]"] { --tw-gradient-from: #FF4D4D !important; }
 
 /* ---------------------------------------------------------------------
    Unified component system — one button system, one section-header

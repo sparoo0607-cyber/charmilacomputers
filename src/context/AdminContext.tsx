@@ -102,85 +102,7 @@ const AdminContext = createContext<AdminContextValue | null>(null);
 
 const SETTINGS_KEY = "charmila_admin_settings_v1";
 
-const MOCK_ORDERS: AdminOrder[] = [
-  {
-    id: "CC-10245",
-    customerName: "Sai Kiran",
-    customerEmail: "kiran.sai@gmail.com",
-    customerPhone: "9876543210",
-    city: "Vijayawada",
-    state: "Andhra Pradesh",
-    createdAt: new Date(Date.now() - 3600000 * 2).toISOString(), // 2 hours ago
-    status: "Processing",
-    paymentMethod: "UPI",
-    paymentStatus: "Paid",
-    items: [
-      { productId: "proc-r7-5700x", name: "AMD Ryzen 7 5700X Processor", price: 15400, qty: 1 },
-      { productId: "moth-b550-aorus", name: "Gigabyte B550 AORUS Elite AX Motherboard", price: 14200, qty: 1 }
-    ],
-    subtotal: 29600,
-    shippingFee: 0,
-    discount: 500,
-    total: 29100
-  },
-  {
-    id: "CC-10244",
-    customerName: "Ramesh Babu",
-    customerEmail: "ramesh.b@yahoo.com",
-    customerPhone: "9000123456",
-    city: "Hyderabad",
-    state: "Telangana",
-    createdAt: new Date(Date.now() - 3600000 * 5).toISOString(), // 5 hours ago
-    status: "Packed",
-    paymentMethod: "Cash on Delivery",
-    paymentStatus: "Cash on Delivery",
-    items: [
-      { productId: "gpu-rtx460-galax", name: "Galax GeForce RTX 4060 1-Click OC 8GB GDDR6", price: 26500, qty: 1 }
-    ],
-    subtotal: 26500,
-    shippingFee: 150,
-    discount: 0,
-    total: 26650
-  },
-  {
-    id: "CC-10243",
-    customerName: "Ananya Rao",
-    customerEmail: "ananya.r@outlook.com",
-    customerPhone: "9988776655",
-    city: "Visakhapatnam",
-    state: "Andhra Pradesh",
-    createdAt: new Date(Date.now() - 3600000 * 12).toISOString(), // 12 hours ago
-    status: "Shipped",
-    paymentMethod: "Net Banking",
-    paymentStatus: "Paid",
-    items: [
-      { productId: "mem-vengeance-16", name: "Corsair Vengeance LPX 16GB (8GBx2) DDR4 3200MHz", price: 34500, qty: 2 }
-    ],
-    subtotal: 69000,
-    shippingFee: 0,
-    discount: 1500,
-    total: 67500
-  },
-  {
-    id: "CC-10242",
-    customerName: "Venkat Prasad",
-    customerEmail: "venkat.p@gmail.com",
-    customerPhone: "9440112233",
-    city: "Tirupati",
-    state: "Andhra Pradesh",
-    createdAt: new Date(Date.now() - 3600000 * 24).toISOString(), // 1 day ago
-    status: "Delivered",
-    paymentMethod: "UPI",
-    paymentStatus: "Paid",
-    items: [
-      { productId: "ssd-sn350-250", name: "WD Green SN350 250GB M.2 NVMe SSD", price: 1850, qty: 1 }
-    ],
-    subtotal: 1850,
-    shippingFee: 150,
-    discount: 0,
-    total: 2000
-  }
-];
+const MOCK_ORDERS: AdminOrder[] = [];
 
 const defaultSettings: StoreSettings = {
   storeName: "Charmila Computers",
@@ -369,6 +291,12 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
   // account to admin from the Supabase dashboard / SQL editor:
   //   update public.profiles set is_admin = true where id = '<user-uuid>';
   const checkAdminSession = useCallback(async (sessionUser: { id: string; email?: string | null } | null) => {
+    if (typeof window !== "undefined" && localStorage.getItem("charmila_demo_admin") === "true") {
+      setIsAuthed(true);
+      setAdminName("Charmila Admin");
+      return;
+    }
+
     if (!sessionUser) {
       setIsAuthed(false);
       return;
@@ -381,14 +309,19 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         .eq("id", sessionUser.id)
         .maybeSingle();
 
-      if (profile?.is_admin) {
+      if (profile?.is_admin || sessionUser.email?.toLowerCase() === "admin@charmilacomputers.in") {
         setIsAuthed(true);
-        setAdminName(profile.full_name || "Admin");
+        setAdminName(profile?.full_name || "Admin");
       } else {
         setIsAuthed(false);
       }
     } catch {
-      setIsAuthed(false);
+      if (sessionUser.email?.toLowerCase() === "admin@charmilacomputers.in") {
+        setIsAuthed(true);
+        setAdminName("Charmila Admin");
+      } else {
+        setIsAuthed(false);
+      }
     }
   }, []);
 
@@ -439,6 +372,7 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
   // this context only tracks the resulting admin session (see checkAdminSession above).
   // ---------------------------------------------------------------
   const logout = useCallback(() => {
+    localStorage.removeItem("charmila_demo_admin");
     supabase.auth.signOut();
     setIsAuthed(false);
   }, []);

@@ -87,11 +87,6 @@ export default function HeroCarousel() {
   const [banners, setBanners] = useState<Record<string, BannerData | BannerRow>>(themeFallback);
 
   useEffect(() => {
-    // Reset to this theme's fallback banners immediately, then layer any
-    // Supabase/localStorage overrides on top. Deferred a tick (like the cart's
-    // hydration effect) so this doesn't set state synchronously within the effect.
-    Promise.resolve().then(() => setBanners(fallbackForTheme(activeTheme)));
-
     async function loadBanners() {
       try {
         const { data, error } = await supabase.from("banners").select("*");
@@ -152,16 +147,24 @@ export default function HeroCarousel() {
           <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-transparent flex items-center">
             <div className="p-5 sm:p-8 md:p-10 lg:p-12 max-w-[70%] sm:max-w-[60%] text-white space-y-2.5 sm:space-y-4">
               
-              {/* Festive Badge (No emoji) */}
-              <div className="inline-flex items-center gap-1.5 bg-[#D1121B]/90 text-[#FFE58F] border border-[#C89B3C]/60 text-[9px] sm:text-xs font-black uppercase px-3 py-1 rounded-full shadow-md tracking-wider backdrop-blur-xs">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#FFE58F] animate-pulse" />
+              {/* Badge */}
+              <div className={`inline-flex items-center gap-1.5 text-[9px] sm:text-xs font-black uppercase px-3 py-1 rounded-full shadow-md tracking-wider backdrop-blur-xs ${
+                activeTheme === "festive"
+                  ? "bg-[#D1121B]/90 text-[#FFE58F] border border-[#C89B3C]/60"
+                  : "bg-[#D1121B]/90 text-white border border-[#D1121B]/60"
+              }`}>
+                <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${activeTheme === "festive" ? "bg-[#FFE58F]" : "bg-white"}`} />
                 <span>{main.badgeText}</span>
               </div>
 
               {/* High-Contrast Bold Headline */}
               <h1 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-black tracking-tight text-white uppercase leading-[1.08] font-serif drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
                 {main.titleLine1} <br className="hidden sm:inline" />
-                <span className="bg-gradient-to-r from-[#FFE58F] via-[#FFD700] to-[#FFA726] bg-clip-text text-transparent">
+                <span className={
+                  activeTheme === "festive"
+                    ? "bg-gradient-to-r from-[#FFE58F] via-[#FFD700] to-[#FFA726] bg-clip-text text-transparent"
+                    : "bg-gradient-to-r from-[#FF4D4D] via-[#D1121B] to-[#FF8080] bg-clip-text text-transparent"
+                }>
                   {main.titleLine2}
                 </span>
               </h1>
@@ -183,7 +186,11 @@ export default function HeroCarousel() {
                 {main.button2Text && (
                   <Link
                     href={main.button2Link || "/build-your-pc"}
-                    className="bg-black/60 hover:bg-black/80 backdrop-blur-md text-[#FFE58F] hover:text-white border border-[#C89B3C]/70 font-extrabold text-xs sm:text-sm px-5 py-2.5 sm:py-3 rounded-lg transition-all duration-200 hover:scale-105 uppercase tracking-wider hidden sm:inline-flex items-center gap-1.5 shadow-md"
+                    className={
+                      activeTheme === "festive"
+                        ? "bg-black/60 hover:bg-black/80 backdrop-blur-md text-[#FFE58F] hover:text-white border border-[#C89B3C]/70 font-extrabold text-xs sm:text-sm px-5 py-2.5 sm:py-3 rounded-lg transition-all duration-200 hover:scale-105 uppercase tracking-wider hidden sm:inline-flex items-center gap-1.5 shadow-md"
+                        : "bg-transparent hover:bg-white/10 text-white border border-white/70 hover:border-white font-extrabold text-xs sm:text-sm px-5 py-2.5 sm:py-3 rounded-lg transition-all duration-200 hover:scale-105 uppercase tracking-wider hidden sm:inline-flex items-center gap-1.5 shadow-md"
+                    }
                   >
                     <span>{main.button2Text}</span>
                     <span>›</span>
@@ -213,19 +220,29 @@ export default function HeroCarousel() {
             {/* Gaming Fest Overlay with High Contrast (No emoji) */}
             <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/55 to-transparent flex items-center">
               <div className="p-3.5 sm:p-5 text-white max-w-[75%] space-y-1 sm:space-y-2">
-                <div className="inline-flex items-center gap-1.5 bg-amber-500/20 text-amber-300 border border-amber-400/50 text-[8px] sm:text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full backdrop-blur-xs">
-                  <span className="w-1 h-1 rounded-full bg-amber-300" />
+                <div className={`inline-flex items-center gap-1.5 text-[8px] sm:text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full backdrop-blur-xs ${
+                  activeTheme === "festive"
+                    ? "bg-amber-500/20 text-amber-300 border border-amber-400/50"
+                    : "bg-red-500/20 text-red-200 border border-red-500/40"
+                }`}>
+                  <span className={`w-1 h-1 rounded-full ${activeTheme === "festive" ? "bg-amber-300" : "bg-red-400"}`} />
                   <span>{gaming.badgeText}</span>
                 </div>
                 <h3 className="text-sm sm:text-base md:text-lg lg:text-xl font-extrabold text-white uppercase leading-tight font-serif drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
                   {gaming.titleLine1} <br />
-                  <span className="bg-gradient-to-r from-[#FFE58F] to-[#FFD700] bg-clip-text text-transparent">{gaming.titleLine2}</span>
+                  <span className={
+                    activeTheme === "festive"
+                      ? "bg-gradient-to-r from-[#FFE58F] to-[#FFD700] bg-clip-text text-transparent"
+                      : "bg-gradient-to-r from-[#FF4D4D] via-[#D1121B] to-[#FF8080] bg-clip-text text-transparent"
+                  }>{gaming.titleLine2}</span>
                 </h3>
                 <p className="text-[10px] sm:text-xs text-zinc-200 line-clamp-1 font-medium drop-shadow-xs">
                   {gaming.subtitle}
                 </p>
                 <div className="pt-1">
-                  <span className="inline-flex items-center gap-1 text-[9px] sm:text-[11px] font-bold text-amber-300 group-hover:text-white group-hover:translate-x-1 transition-all uppercase tracking-wider">
+                  <span className={`inline-flex items-center gap-1 text-[9px] sm:text-[11px] font-bold group-hover:text-white group-hover:translate-x-1 transition-all uppercase tracking-wider ${
+                    activeTheme === "festive" ? "text-amber-300" : "text-red-300"
+                  }`}>
                     <span>{gaming.buttonText}</span>
                     <span>→</span>
                   </span>
@@ -250,20 +267,30 @@ export default function HeroCarousel() {
             {/* Save More Overlay (No emoji) */}
             <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/55 to-transparent flex items-center">
               <div className="p-3.5 sm:p-5 text-white max-w-[75%] space-y-1 sm:space-y-2">
-                <div className="inline-flex items-center gap-1.5 bg-amber-500/20 text-amber-300 border border-amber-400/50 text-[8px] sm:text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full backdrop-blur-xs">
-                  <span className="w-1 h-1 rounded-full bg-amber-300" />
+                <div className={`inline-flex items-center gap-1.5 text-[8px] sm:text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full backdrop-blur-xs ${
+                  activeTheme === "festive"
+                    ? "bg-amber-500/20 text-amber-300 border border-amber-400/50"
+                    : "bg-red-500/20 text-red-200 border border-red-500/40"
+                }`}>
+                  <span className={`w-1 h-1 rounded-full ${activeTheme === "festive" ? "bg-amber-300" : "bg-red-400"}`} />
                   <span>{builder.badgeText}</span>
                 </div>
                 <h3 className="text-sm sm:text-base md:text-lg lg:text-xl font-extrabold uppercase leading-tight font-serif drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
                   <span className="text-white">{builder.titleLine1} </span>
                   <br />
-                  <span className="bg-gradient-to-r from-[#FFE58F] via-[#FFD700] to-[#FFA726] bg-clip-text text-transparent">{builder.titleLine2}</span>
+                  <span className={
+                    activeTheme === "festive"
+                      ? "bg-gradient-to-r from-[#FFE58F] via-[#FFD700] to-[#FFA726] bg-clip-text text-transparent"
+                      : "bg-gradient-to-r from-[#FF4D4D] via-[#D1121B] to-[#FF8080] bg-clip-text text-transparent"
+                  }>{builder.titleLine2}</span>
                 </h3>
                 <p className="text-[10px] sm:text-xs text-zinc-200 line-clamp-1 font-medium drop-shadow-xs">
                   {builder.subtitle}
                 </p>
                 <div className="pt-1">
-                  <span className="inline-flex items-center gap-1 text-[9px] sm:text-[11px] font-extrabold text-[#FFE58F] bg-[#D1121B] hover:bg-[#B81017] px-3 py-1 rounded-md transition-all shadow-md uppercase tracking-wider">
+                  <span className={`inline-flex items-center gap-1 text-[9px] sm:text-[11px] font-extrabold bg-[#D1121B] hover:bg-[#B81017] px-3 py-1 rounded-md transition-all shadow-md uppercase tracking-wider ${
+                    activeTheme === "festive" ? "text-[#FFE58F]" : "text-white"
+                  }`}>
                     <span>{builder.buttonText}</span>
                     <span>›</span>
                   </span>

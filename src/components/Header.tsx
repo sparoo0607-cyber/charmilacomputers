@@ -36,6 +36,10 @@ const popularCategories = [
 export default function Header() {
   const { lines, itemCount, subtotal, removeFromCart, wishlist, compareList, user, logout } = useCart();
   const activeTheme = useStoreTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const isFestive = mounted && activeTheme === "festive";
+
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -123,7 +127,7 @@ export default function Header() {
           {/* Right: Quick Links */}
           <div className="flex items-center gap-3 sm:gap-4 uppercase font-bold tracking-wider text-[10px] text-[#6B6B6B]">
             <Link href="/deals" className="text-[#D1121B] hover:text-[#7A1118] transition-colors flex items-center gap-1">
-              <BoltIcon className="w-3 h-3 text-[#D1121B]" /> {activeTheme === "festive" ? "Festive Deals" : "Hot Deals"}
+              <BoltIcon className="w-3 h-3 text-[#D1121B]" /> {isFestive ? "Festive Deals" : "Hot Deals"}
             </Link>
             <span className="text-[#E5E0D7]">|</span>
             <a
@@ -261,11 +265,11 @@ export default function Header() {
           {/* Build Your PC Button */}
           <Link
             href="/build-your-pc"
-            className="hidden sm:flex items-center gap-1.5 bg-gradient-to-r from-[#4E0B10] to-[#7A1118] hover:from-[#7A1118] hover:to-[#D1121B] text-white px-3.5 py-2 rounded-md font-bold text-xs shadow-sm hover:shadow transition-all duration-200 uppercase tracking-wider border border-[#C89B3C]/50 hover:scale-[1.02]"
+            className="hidden sm:flex items-center gap-1.5 bg-gradient-to-r from-[#4E0B10] to-[#7A1118] hover:from-[#7A1118] hover:to-[#D1121B] text-white px-3.5 py-2 rounded-md font-bold text-xs shadow-sm hover:shadow transition-all duration-200 uppercase tracking-wider border border-red-500/50 hover:scale-[1.02]"
           >
-            <ComputerIcon className="w-4 h-4 text-[#FFD700]" />
+            <ComputerIcon className="w-4 h-4 text-white" />
             <span>BUILD YOUR PC</span>
-            <span className="bg-[#D1121B] text-[#FFE58F] text-[8px] px-1.5 py-0.5 rounded font-black border border-[#C89B3C]/40">
+            <span className="bg-[#D1121B] text-white text-[8px] px-1.5 py-0.5 rounded font-black border border-red-400/40">
               CUSTOM
             </span>
           </Link>
@@ -506,7 +510,7 @@ export default function Header() {
               aria-expanded={menuOpen}
               onClick={() => setMenuOpen((v) => !v)}
             >
-              <MenuIcon className="w-4 h-4 text-[#FFD700]" />
+              <MenuIcon className="w-4 h-4 text-white" />
               <span>ALL CATEGORIES</span>
               <ChevronDownIcon className={`w-3.5 h-3.5 transition-transform duration-200 ${menuOpen ? "rotate-180" : ""}`} />
             </button>
@@ -532,24 +536,24 @@ export default function Header() {
           </div>
 
           {/* Primary Nav Links */}
-          <div className="flex items-center gap-5 lg:gap-6 ml-5 font-bold text-xs uppercase tracking-wider">
-            <Link href="/category/processors" className="hover:text-[#FFE58F] transition-colors">Processors</Link>
-            <Link href="/category/graphics-cards" className="hover:text-[#FFE58F] transition-colors">Graphics Cards</Link>
-            <Link href="/category/motherboards" className="hover:text-[#FFE58F] transition-colors">Motherboards</Link>
-            <Link href="/category/memory" className="hover:text-[#FFE58F] transition-colors">Memory</Link>
-            <Link href="/category/ssd" className="hover:text-[#FFE58F] transition-colors">Storage</Link>
-            <Link href="/category/coolers" className="hover:text-[#FFE58F] transition-colors">Cooling</Link>
-            <Link href="/category/monitors" className="hover:text-[#FFE58F] transition-colors">Monitors</Link>
-            <Link href="/deals" className="text-[#FFD700] hover:text-white transition-colors flex items-center gap-1 font-extrabold">
-              <BoltIcon className="w-3 h-3 text-[#FFD700]" />
-              <span>{activeTheme === "festive" ? "Festive Deals" : "Hot Deals"}</span>
+          <div className="flex items-center gap-5 lg:gap-6 ml-5 font-bold text-xs uppercase tracking-wider text-white">
+            <Link href="/category/processors" className={isFestive ? "hover:text-[#FFE58F] transition-colors" : "text-white hover:text-black transition-colors"}>Processors</Link>
+            <Link href="/category/graphics-cards" className={isFestive ? "hover:text-[#FFE58F] transition-colors" : "text-white hover:text-black transition-colors"}>Graphics Cards</Link>
+            <Link href="/category/motherboards" className={isFestive ? "hover:text-[#FFE58F] transition-colors" : "text-white hover:text-black transition-colors"}>Motherboards</Link>
+            <Link href="/category/memory" className={isFestive ? "hover:text-[#FFE58F] transition-colors" : "text-white hover:text-black transition-colors"}>Memory</Link>
+            <Link href="/category/ssd" className={isFestive ? "hover:text-[#FFE58F] transition-colors" : "text-white hover:text-black transition-colors"}>Storage</Link>
+            <Link href="/category/coolers" className={isFestive ? "hover:text-[#FFE58F] transition-colors" : "text-white hover:text-black transition-colors"}>Cooling</Link>
+            <Link href="/category/monitors" className={isFestive ? "hover:text-[#FFE58F] transition-colors" : "text-white hover:text-black transition-colors"}>Monitors</Link>
+            <Link href="/deals" className={isFestive ? "text-[#FFD700] hover:text-white transition-colors flex items-center gap-1 font-extrabold" : "text-white hover:text-black transition-colors flex items-center gap-1 font-extrabold"}>
+              <BoltIcon className={`w-3 h-3 ${isFestive ? "text-[#FFD700]" : "text-[#D1121B]"}`} />
+              <span>{isFestive ? "Festive Deals" : "Hot Deals"}</span>
             </Link>
-            <Link href="/compare" className="hover:text-[#FFE58F] transition-colors">Compare</Link>
+            <Link href="/compare" className={isFestive ? "hover:text-[#FFE58F] transition-colors" : "text-white hover:text-black transition-colors"}>Compare</Link>
           </div>
 
-          <div className="ml-auto text-[10px] font-bold text-[#FFE58F] uppercase tracking-widest hidden lg:flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#FFD700] animate-pulse" />
-            <span>{activeTheme === "festive" ? "Vinayaka Chavithi Mega Deals Live" : "Official Brand Warranty & Express Shipping"}</span>
+          <div className={`ml-auto text-[10px] font-bold uppercase tracking-widest hidden lg:flex items-center gap-1.5 ${isFestive ? "text-[#FFE58F]" : "text-white"}`}>
+            <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${isFestive ? "bg-[#FFD700]" : "bg-white"}`} />
+            <span>{isFestive ? "Vinayaka Chavithi Mega Deals Live" : "Official Brand Warranty & Express Shipping"}</span>
           </div>
         </div>
       </nav>
