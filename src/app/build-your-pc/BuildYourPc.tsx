@@ -2,10 +2,10 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { buildableCategories } from "@/data/categories";
-import { getBrandsForCategory, getProduct, getProductsByCategory } from "@/data/products";
+import { getProduct, getProductsByCategory } from "@/data/products";
 import { formatINR, whatsappOrderLink, STORE } from "@/lib/format";
 import { useCart } from "@/context/CartContext";
-import { Category } from "@/data/types";
+import { Category, Product } from "@/data/types";
 import ProductImage from "@/components/ProductImage";
 import {
   CheckIcon, PlusIcon, SearchIcon, TrashIcon,
@@ -112,28 +112,72 @@ const CAT_LABELS: Record<string, string> = {
   keyboards: "KB",
 };
 
-const DEFAULT_SELECTIONS: Record<string, Selection> = {
-  processors: { productId: "cpu-3", qty: 1 },
-  motherboards: { productId: "mb-1", qty: 1 },
-  memory: { productId: "ram-2", qty: 1 },
-  ssd: { productId: "ssd-2", qty: 1 },
-  "graphics-cards": { productId: "gpu-3", qty: 1 },
-  "power-supply": { productId: "psu-2", qty: 1 },
-  cabinets: { productId: "cab-3", qty: 1 },
-};
-
 export default function BuildYourPc() {
-  // Lazy-init from a saved build (if any) so a refresh doesn't lose progress —
-  // reading localStorage here, not in an effect, avoids an extra render pass.
+  // Start EMPTY — no preloaded default build. Only a build the visitor saved
+  // themselves is restored (reading localStorage here, not in an effect, avoids
+  // an extra render pass).
   const [selections, setSelections] = useState<Record<string, Selection>>(() => {
-    if (typeof window === "undefined") return DEFAULT_SELECTIONS;
+    if (typeof window === "undefined") return {};
     try {
       const saved = window.localStorage.getItem(BUILD_STORAGE_KEY);
-      return saved ? JSON.parse(saved) : DEFAULT_SELECTIONS;
+      return saved ? JSON.parse(saved) : {};
     } catch {
-      return DEFAULT_SELECTIONS;
+      return {};
     }
   });
+
+  // Live catalog per buildable category, pulled from Supabase `products` so the
+  // picker only ever suggests parts that actually exist in the store. Falls back
+  // to the bundled catalog per-category (getProductsByCategoryLive already does
+  // that on error/empty). Keyed by category slug.
+  const [liveCatalog, setLiveCatalog] = useState<Record<string, Product[]>>({});
+  const [catalogLoading, setCatalogLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const slugs = buildableCategories.map((c) => c.slug);
+      const grouped: Record<string, Product[]> = {};
+      try {
+        const { supabase } = await import("@/lib/supabase/client");
+        const { data, error } = await supabase
+          .from("products")
+          .select("*")
+          .in("category_slug", slugs);
+        if (error || !data) throw error ?? new Error("no data");
+        const { mapProductRow } = await import("@/data/products");
+        for (const slug of slugs) grouped[slug] = [];
+        for (const row of data) {
+          const p = mapProductRow(row as Parameters<typeof mapProductRow>[0]);
+          (grouped[p.categorySlug] ??= []).push(p);
+        }
+        // Any category Supabase returned nothing for → fall back to bundled data
+        // so the picker is never emptier than the offline catalog.
+        for (const slug of slugs) {
+          if (grouped[slug].length === 0) grouped[slug] = getProductsByCategory(slug);
+        }
+      } catch {
+        for (const slug of slugs) grouped[slug] = getProductsByCategory(slug);
+      }
+      if (cancelled) return;
+      setLiveCatalog(grouped);
+      setCatalogLoading(false);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // Every id in the live catalog, for O(1) lookups when resolving a selection.
+  const liveById = useMemo(() => {
+    const m = new Map<string, Product>();
+    for (const list of Object.values(liveCatalog)) for (const p of list) m.set(p.id, p);
+    return m;
+  }, [liveCatalog]);
+
+  // Resolve a product id against the live catalog first, then the bundled one.
+  const resolveProduct = (id: string): Product | undefined => liveById.get(id) ?? getProduct(id);
+  const catalogFor = (slug: string): Product[] => liveCatalog[slug] ?? getProductsByCategory(slug);
 
   useEffect(() => {
     try {
@@ -160,7 +204,7 @@ export default function BuildYourPc() {
     let price = 0;
     let watts = 0;
     for (const [categorySlug, sel] of Object.entries(selections)) {
-      const p = getProduct(sel.productId);
+      const p = liveById.get(sel.productId) ?? getProduct(sel.productId);
       if (!p) continue;
       price += p.price * sel.qty;
       // The PSU's `wattage` is its rated *capacity*, not something it draws —
@@ -171,7 +215,7 @@ export default function BuildYourPc() {
     }
     if (watts > 0) watts += 35;
     return { price, watts };
-  }, [selections]);
+  }, [selections, liveById]);
 
   // ~20% headroom over draw, rounded up to the nearest 50W — matches how PSUs are actually sized.
   const recommendedPsu = useMemo(() => {
@@ -181,11 +225,13 @@ export default function BuildYourPc() {
 
   const compatibility = useMemo(() => {
     const issues: string[] = [];
-    const cpu = selections["processors"] ? getProduct(selections["processors"].productId) : undefined;
-    const mb = selections["motherboards"] ? getProduct(selections["motherboards"].productId) : undefined;
-    const ram = selections["memory"] ? getProduct(selections["memory"].productId) : undefined;
-    const psu = selections["power-supply"] ? getProduct(selections["power-supply"].productId) : undefined;
-    const gpu = selections["graphics-cards"] ? getProduct(selections["graphics-cards"].productId) : undefined;
+    const pick = (slug: string) =>
+      selections[slug] ? liveById.get(selections[slug].productId) ?? getProduct(selections[slug].productId) : undefined;
+    const cpu = pick("processors");
+    const mb = pick("motherboards");
+    const ram = pick("memory");
+    const psu = pick("power-supply");
+    const gpu = pick("graphics-cards");
 
     if (cpu && mb) {
       const cpuIsIntel = cpu.brand.toLowerCase().includes("intel");
@@ -210,12 +256,12 @@ export default function BuildYourPc() {
       issues.push(`${cpu.name} has no iGPU — add a GPU!`);
     }
     return { ok: issues.length === 0, issues };
-  }, [selections, totals.watts]);
+  }, [selections, totals.watts, liveById]);
 
   function chooseProduct(categorySlug: string, productId: string) {
     setSelections((prev) => ({ ...prev, [categorySlug]: { productId, qty: 1 } }));
     setActivePickerCategory(null);
-    const prod = getProduct(productId);
+    const prod = resolveProduct(productId);
     showToast(`✓ ${prod?.name}`);
   }
 
@@ -246,7 +292,7 @@ export default function BuildYourPc() {
   // Swap the current PSU for the cheapest one that actually covers the
   // system's power draw — surfaced as a one-click fix on the compatibility warning.
   function applyRecommendedPsu() {
-    const allPsus = getProductsByCategory("power-supply");
+    const allPsus = catalogFor("power-supply");
     // Ideal: cheapest PSU that meets the recommended headroom.
     const ideal = allPsus
       .filter((p) => (p.wattage || 0) >= recommendedPsu)
@@ -269,7 +315,7 @@ export default function BuildYourPc() {
 
   const selectedCount = Object.keys(selections).length;
   const psuTooLow = (() => {
-    const psu = selections["power-supply"] ? getProduct(selections["power-supply"].productId) : undefined;
+    const psu = selections["power-supply"] ? resolveProduct(selections["power-supply"].productId) : undefined;
     return !!psu && totals.watts > 0 && (psu.wattage || 0) < totals.watts;
   })();
 
@@ -278,7 +324,7 @@ export default function BuildYourPc() {
     ...buildableCategories
       .filter((c) => selections[c.slug])
       .map((c) => {
-        const p = getProduct(selections[c.slug].productId)!;
+        const p = resolveProduct(selections[c.slug].productId)!;
         return `• ${c.shortName}: ${p.name} — ${formatINR(p.price)}`;
       }),
     `Total: ${formatINR(totals.price)} | Estimated power draw: ${totals.watts}W`,
@@ -380,7 +426,7 @@ export default function BuildYourPc() {
                 key={cat.slug}
                 cat={cat}
                 idx={idx}
-                selections={selections}
+                product={selections[cat.slug] ? resolveProduct(selections[cat.slug].productId) : undefined}
                 onPick={() => setActivePickerCategory(cat.slug)}
                 onClear={() => clearProduct(cat.slug)}
               />
@@ -399,7 +445,7 @@ export default function BuildYourPc() {
                 key={cat.slug}
                 cat={cat}
                 idx={idx}
-                selections={selections}
+                product={selections[cat.slug] ? resolveProduct(selections[cat.slug].productId) : undefined}
                 onPick={() => setActivePickerCategory(cat.slug)}
                 onClear={() => clearProduct(cat.slug)}
               />
@@ -488,6 +534,8 @@ export default function BuildYourPc() {
       {activePickerCategory && (
         <ComponentPickerModal
           categorySlug={activePickerCategory}
+          products={catalogFor(activePickerCategory)}
+          loading={catalogLoading && !liveCatalog[activePickerCategory]}
           onClose={() => setActivePickerCategory(null)}
           onSelect={(pid) => chooseProduct(activePickerCategory, pid)}
           currentSelectionId={selections[activePickerCategory]?.productId}
@@ -502,18 +550,17 @@ export default function BuildYourPc() {
 function CategoryRow({
   cat,
   idx,
-  selections,
+  product,
   onPick,
   onClear,
 }: {
   cat: Category;
   idx: number;
-  selections: Record<string, Selection>;
+  product: Product | undefined;
   onPick: () => void;
   onClear: () => void;
 }) {
-  const sel = selections[cat.slug];
-  const prod = sel ? getProduct(sel.productId) : undefined;
+  const prod = product;
   const label = CAT_LABELS[cat.slug] ?? cat.shortName.slice(0, 4);
 
   return (
@@ -590,11 +637,15 @@ function CategoryRow({
 
 function ComponentPickerModal({
   categorySlug,
+  products,
+  loading,
   onClose,
   onSelect,
   currentSelectionId,
 }: {
   categorySlug: string;
+  products: Product[];
+  loading: boolean;
   onClose: () => void;
   onSelect: (productId: string) => void;
   currentSelectionId?: string;
@@ -603,8 +654,13 @@ function ComponentPickerModal({
   const [selectedBrand, setSelectedBrand] = useState("all");
   const [sortOrder, setSortOrder] = useState<"featured" | "price-asc" | "price-desc">("featured");
 
-  const allProducts = getProductsByCategory(categorySlug);
-  const brands = getBrandsForCategory(categorySlug);
+  // Suggestions come straight from the Supabase-backed catalog passed in — the
+  // picker never shows a part that isn't actually in the store.
+  const allProducts = products;
+  const brands = useMemo(
+    () => Array.from(new Set(products.map((p) => p.brand))).sort(),
+    [products]
+  );
 
   const filtered = useMemo(() => {
     const list = allProducts.filter(
@@ -678,9 +734,15 @@ function ComponentPickerModal({
 
         {/* Product list */}
         <div className="flex-1 overflow-y-auto divide-y divide-zinc-50">
-          {filtered.length === 0 ? (
+          {loading ? (
+            <div className="py-20 text-center text-zinc-400 text-sm animate-pulse">
+              Loading parts from catalog…
+            </div>
+          ) : filtered.length === 0 ? (
             <div className="py-20 text-center text-zinc-400 text-sm">
-              No results. Try a different search.
+              {allProducts.length === 0
+                ? "No parts in this category yet."
+                : "No results. Try a different search."}
             </div>
           ) : (
             filtered.map((prod) => {
