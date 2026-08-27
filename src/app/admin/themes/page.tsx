@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useAdmin } from "@/context/AdminContext";
 import { CheckIcon } from "@/components/icons";
 import { applyThemeMedia, getThemeMedia } from "@/data/homeMedia";
+import { useStoreTheme } from "@/hooks/useStoreTheme";
 
 interface ThemeDefinition {
   id: "festive" | "standard";
@@ -70,13 +71,10 @@ const THEMES: ThemeDefinition[] = [
   },
 ];
 
-
-
 export default function ThemesPage() {
   const { settings, updateSettings, showToast } = useAdmin();
-  const [currentTheme, setCurrentTheme] = useState<"festive" | "standard">(
-    settings.activeTheme || "festive"
-  );
+  const storeTheme = useStoreTheme();
+  const currentTheme = storeTheme || settings.activeTheme || "festive";
   const [busy, setBusy] = useState(false);
 
   async function handleSelectTheme(themeId: "festive" | "standard") {
@@ -84,7 +82,6 @@ export default function ThemesPage() {
     if (!selected) return;
 
     setBusy(true);
-    setCurrentTheme(themeId);
 
     if (typeof window !== "undefined") {
       localStorage.setItem("charmila_active_theme", themeId);

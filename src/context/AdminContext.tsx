@@ -234,7 +234,18 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
   const [adminName, setAdminName] = useState("Admin");
   const [adminProducts, setAdminProducts] = useState<Product[]>([]);
   const [adminOrders, setAdminOrders] = useState<AdminOrder[]>([]);
-  const [settings, setSettings] = useState<StoreSettings>(defaultSettings);
+  const [settings, setSettings] = useState<StoreSettings>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const direct = localStorage.getItem("charmila_active_theme");
+        const saved = localStorage.getItem(SETTINGS_KEY);
+        const parsed = saved ? JSON.parse(saved) : {};
+        const activeTheme = (direct === "festive" || direct === "standard") ? direct : (parsed.activeTheme || "standard");
+        return { ...defaultSettings, ...parsed, activeTheme };
+      } catch {}
+    }
+    return defaultSettings;
+  });
   const [toast, setToast] = useState<string | null>(null);
   const [settingsHydrated, setSettingsHydrated] = useState(false);
 
