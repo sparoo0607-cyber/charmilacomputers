@@ -33,6 +33,17 @@ It is idempotent (safe to run more than once). It:
 
 (`supabase/full_setup.sql` was also patched for fresh installs — no need to re-run it if the DB already exists, but harmless if you do.)
 
+### 1b. Run the analytics SQL (once)
+
+Supabase Dashboard → SQL Editor → New query → paste **`supabase/analytics_setup.sql`** → Run.
+Also idempotent. It:
+- creates `page_views` (storefront traffic log — anon insert, admin-only read),
+- creates the `admin_users` view (profiles ⨝ auth.users, admin-only) that the
+  admin **Users** screen and dashboard read for name / mobile / email.
+
+Until this runs, the admin dashboard shows an "Analytics not live yet" notice
+and the Users list is empty — the storefront itself is unaffected.
+
 ### 2. Set the server-only env var (local + Vercel)
 
 `.env.local` already has it for local dev:
