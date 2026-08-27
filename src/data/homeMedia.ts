@@ -712,7 +712,7 @@ export async function applyThemeMedia(themeId: "festive" | "standard"): Promise<
   }
 
   // 2. Persist media and Supabase
-  await saveHomeMedia(themeMedia);
+  await saveHomeMedia(themeMedia, themeId);
   return themeMedia;
 }
 
@@ -921,13 +921,6 @@ export function resetHomeMedia(): HomePageMediaState {
   return DEFAULT_HOME_MEDIA;
 }
 
-/**
- * Applies the complete homepage media state for a specific theme and syncs with Supabase & Server
- */
-export async function applyThemeMedia(themeId: "festive" | "standard"): Promise<void> {
-  const media = getThemeMedia(themeId);
-  await saveHomeMedia(media, themeId);
-}
 
 /**
  * Helper to read a local file and convert it into a base64 Data URL for instant live preview & storage
