@@ -5,6 +5,7 @@ import { products as seedProducts } from "@/data/products";
 import { Product } from "@/data/types";
 import { supabase } from "@/lib/supabase/client";
 import type { Database } from "@/lib/supabase/types";
+import { normalizeTheme } from "@/lib/theme";
 
 /* ------------------------------------------------------------------ */
 /*  Backed by real Supabase tables (see supabase/schema.sql).             */
@@ -240,7 +241,7 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         const direct = localStorage.getItem("charmila_active_theme");
         const saved = localStorage.getItem(SETTINGS_KEY);
         const parsed = saved ? JSON.parse(saved) : {};
-        const activeTheme = (direct === "festive" || direct === "standard") ? direct : (parsed.activeTheme || "standard");
+        const activeTheme = normalizeTheme(direct ?? parsed.activeTheme);
         return { ...defaultSettings, ...parsed, activeTheme };
       } catch {}
     }
@@ -260,7 +261,7 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         if (!error && data) {
           setSettings({
             ...defaultSettings,
-            activeTheme: data.active_theme === "festive" ? "festive" : "standard",
+            activeTheme: normalizeTheme(data.active_theme),
             storeName: data.store_name || defaultSettings.storeName,
             supportEmail: data.support_email || defaultSettings.supportEmail,
             supportPhone: data.support_phone || defaultSettings.supportPhone,

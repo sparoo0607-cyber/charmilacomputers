@@ -37,6 +37,9 @@ export default function Header() {
   const { lines, itemCount, subtotal, removeFromCart, wishlist, compareList, user, logout } = useCart();
   const activeTheme = useStoreTheme();
   const [mounted, setMounted] = useState(false);
+  // One-shot post-hydration flag so theme-dependent markup matches the server
+  // render on first paint (avoids a hydration mismatch).
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
   const isFestive = mounted && activeTheme === "festive";
 

@@ -9,7 +9,7 @@ const PRODUCT_IMAGE_MAP: Record<string, string> = {
   "cpu-6": "/images/products/cpu-6-ryzen-7-5700x.png",
   "cpu-7": "/images/products/cpu-7-intel-ultra-7-265k.png",
   "gpu-1": "/images/products/graphic card.png",
-  "gpu-2": "/images/products/gpu-2-rtx-3060.png",
+  "gpu-2": "/images/products/graphic card.png",
   "gpu-3": "/images/products/galax-rtx-5060ti.png",
   "gpu-4": "/images/products/gpu-4-rtx-4070-super.png",
   "gpu-5": "/images/products/gpu-5-rx-7800-xt.png",

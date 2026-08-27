@@ -129,7 +129,8 @@ create policy "banners: admins write" on public.banners
 -- ============================================================
 create table if not exists public.store_settings (
   id text primary key default 'default',
-  active_theme text not null default 'festive',
+  active_theme text not null default 'standard'
+    check (active_theme in ('festive', 'standard')),
   store_name text not null default 'Charmila Computers',
   support_email text not null default 'info@charmilacomputers.in',
   support_phone text not null default '9010177427',
@@ -152,7 +153,7 @@ create policy "store_settings: admins write" on public.store_settings
   );
 
 insert into public.store_settings (id, active_theme)
-values ('default', 'festive')
+values ('default', 'standard')
 on conflict (id) do nothing;
 
 -- ============================================================

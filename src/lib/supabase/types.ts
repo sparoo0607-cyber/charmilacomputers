@@ -188,6 +188,7 @@ export interface Database {
           store_name: string;
           support_email: string;
           support_phone: string;
+          gstin: string;
           free_shipping_threshold: number;
           active_theme: string;
           created_at: string;
@@ -198,6 +199,7 @@ export interface Database {
           store_name?: string;
           support_email?: string;
           support_phone?: string;
+          gstin?: string;
           free_shipping_threshold?: number;
           active_theme?: string;
           created_at?: string;

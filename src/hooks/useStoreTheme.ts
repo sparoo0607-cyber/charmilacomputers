@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase/client";
+import { normalizeTheme, isThemeId, type ThemeId } from "@/lib/theme";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Single source of truth: Supabase `store_settings` row id="default".
@@ -11,56 +12,54 @@ import { supabase } from "@/lib/supabase/client";
 //   1. Write to Supabase (via /api/theme POST)
 //   2. Write localStorage hint so other tabs / next refresh are fast
 //   3. Dispatch "charmila_theme_changed" so every hook instance re-reads
+//
+// Every value coming back from an external source is run through
+// normalizeTheme() so a stray value like "festival" can't wedge the store.
 // ─────────────────────────────────────────────────────────────────────────────
 
 const THEME_KEY = "charmila_active_theme";
 
-function readLocalHint(): "festive" | "standard" | null {
+function readLocalHint(): ThemeId | null {
   if (typeof window === "undefined") return null;
   try {
     const v = localStorage.getItem(THEME_KEY);
-    if (v === "festive" || v === "standard") return v;
+    if (v == null) return null;
+    return normalizeTheme(v);
   } catch {}
   return null;
 }
 
-function writeLocalHint(theme: "festive" | "standard") {
+function writeLocalHint(theme: ThemeId) {
   try {
     localStorage.setItem(THEME_KEY, theme);
   } catch {}
 }
 
-async function fetchThemeFromServer(): Promise<"festive" | "standard" | null> {
+async function fetchThemeFromServer(): Promise<ThemeId | null> {
   try {
     const res = await fetch("/api/theme", { cache: "no-store" });
     if (res.ok) {
       const json = await res.json();
-      if (json.activeTheme === "festive" || json.activeTheme === "standard") {
-        return json.activeTheme;
-      }
+      if (isThemeId(json.activeTheme)) return json.activeTheme;
     }
   } catch {}
   return null;
 }
 
-async function fetchThemeFromSupabase(): Promise<"festive" | "standard" | null> {
+async function fetchThemeFromSupabase(): Promise<ThemeId | null> {
   try {
     const { data, error } = await supabase
       .from("store_settings")
       .select("active_theme")
       .eq("id", "default")
       .maybeSingle();
-    if (!error && (data?.active_theme === "festive" || data?.active_theme === "standard")) {
-      return data.active_theme as "festive" | "standard";
-    }
+    if (!error && data?.active_theme) return normalizeTheme(data.active_theme);
   } catch {}
   return null;
 }
 
 export function useStoreTheme() {
-  const [theme, setTheme] = useState<"festive" | "standard">(
-    () => readLocalHint() ?? "standard"
-  );
+  const [theme, setTheme] = useState<ThemeId>(() => readLocalHint() ?? "standard");
 
   const syncTheme = useCallback(async () => {
     // 1. Try server API first (reads Supabase store_settings)
@@ -83,7 +82,11 @@ export function useStoreTheme() {
   }, []);
 
   useEffect(() => {
-    // Sync on mount
+    // Reconcile with the backend on mount. setState happens asynchronously
+    // inside syncTheme() as we pull the authoritative value from Supabase —
+    // this is the "subscribe to an external system" effect pattern, not a
+    // render-derived state update.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     syncTheme();
 
     // Re-sync when admin changes theme
