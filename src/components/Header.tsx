@@ -10,7 +10,7 @@ import { STORE, formatINR, whatsappOrderLink } from "@/lib/format";
 import {
   CartIcon, ChevronDownIcon, MenuIcon, PhoneIcon, SearchIcon, WhatsAppIcon, CloseIcon, HeartIcon,
   FacebookIcon, TwitterIcon, InstagramIcon, UserIcon, ComputerIcon, TrashIcon, BoltIcon, CompareIcon,
-  ShieldCheckIcon, TruckIcon
+  ShieldCheckIcon
 } from "./icons";
 import { useStoreTheme } from "@/hooks/useStoreTheme";
 
@@ -127,19 +127,10 @@ export default function Header() {
           </div>
 
           {/* Right: Quick Links */}
-          <div className="flex items-center gap-3 sm:gap-4 uppercase font-bold tracking-wider text-[10px] text-[#6B6B6B]">
+          <div className="flex items-center gap-2.5 sm:gap-4 uppercase font-bold tracking-wider text-[10px] text-[#6B6B6B]">
             <Link href="/deals" className="text-[#D1121B] hover:text-[#7A1118] transition-colors flex items-center gap-1">
               <BoltIcon className="w-3 h-3 text-[#D1121B]" /> {isFestive ? "Festive Deals" : "Hot Deals"}
             </Link>
-            <span className="text-[#E5E0D7]">|</span>
-            <a
-              href={`https://wa.me/${STORE.whatsapp}?text=${encodeURIComponent("Hi, I'd like an update on my order status.")}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-[#7A1118] transition-colors flex items-center gap-1"
-            >
-              <TruckIcon className="w-3 h-3" /> Order Status
-            </a>
             <span className="text-[#E5E0D7] hidden sm:inline">|</span>
             <Link href="/warranty-rma" className="hover:text-[#7A1118] transition-colors hidden sm:flex items-center gap-1">
               <ShieldCheckIcon className="w-3 h-3" /> Warranty &amp; RMA
@@ -153,10 +144,10 @@ export default function Header() {
       </div>
 
       {/* LEVEL 2 — MAIN HEADER */}
-      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 py-3 flex items-center justify-between gap-4 lg:gap-8 w-full">
+      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 py-3 flex items-center justify-between gap-2 sm:gap-4 lg:gap-8 w-full">
         {/* Mobile menu button */}
         <button
-          className="md:hidden p-1 text-[#1B1B1B] rounded transition-transform active:scale-90"
+          className="md:hidden p-1 -ml-1 shrink-0 text-[#1B1B1B] rounded transition-transform active:scale-90"
           onClick={() => setMobileOpen((v) => !v)}
           aria-label={mobileOpen ? "Close menu" : "Open menu"}
         >
@@ -164,8 +155,8 @@ export default function Header() {
         </button>
 
         {/* Brand Logo */}
-        <Link href="/" className="flex items-center shrink-0 group select-none">
-          <span className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#7A1118] transition-colors group-hover:text-[#D1121B]">
+        <Link href="/" className="flex items-center shrink-0 group select-none min-w-0">
+          <span className="text-lg sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-[#7A1118] transition-colors group-hover:text-[#D1121B] whitespace-nowrap">
             CHARMILA
             <span className="font-black text-[#D1121B] ml-1 bg-gradient-to-r from-[#D1121B] to-[#7A1118] bg-clip-text text-transparent transition-opacity group-hover:opacity-90">
               COMPUTERS
@@ -263,7 +254,7 @@ export default function Header() {
         </div>
 
         {/* Right Actions: Build PC, Compare, Wishlist, Account, Cart */}
-        <div className="flex items-center gap-3 sm:gap-4 lg:gap-5 shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-4 lg:gap-5 shrink-0">
           {/* Build Your PC Button */}
           <Link
             href="/build-your-pc"
@@ -575,24 +566,13 @@ export default function Header() {
               <ComputerIcon className="w-4 h-4 text-[#FFD700]" />
               <span>BUILD YOUR PC</span>
             </Link>
-            <div className="grid grid-cols-2 gap-2">
-              <Link
-                href="/deals"
-                className="flex items-center justify-center gap-1 bg-amber-50 text-[#D1121B] border border-amber-200 py-2 rounded-lg font-bold uppercase tracking-wider text-[11px]"
-                onClick={() => setMobileOpen(false)}
-              >
-                <BoltIcon className="w-3 h-3 text-[#D1121B]" /> Festive Deals
-              </Link>
-              <a
-                href={`https://wa.me/${STORE.whatsapp}?text=${encodeURIComponent("Hi, I'd like an update on my order status.")}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-1 bg-zinc-100 text-zinc-800 py-2 rounded-lg font-bold uppercase tracking-wider text-[11px]"
-                onClick={() => setMobileOpen(false)}
-              >
-                <TruckIcon className="w-3 h-3" /> Order Status
-              </a>
-            </div>
+            <Link
+              href="/deals"
+              className="flex items-center justify-center gap-1 bg-amber-50 text-[#D1121B] border border-amber-200 py-2 rounded-lg font-bold uppercase tracking-wider text-[11px]"
+              onClick={() => setMobileOpen(false)}
+            >
+              <BoltIcon className="w-3 h-3 text-[#D1121B]" /> {isFestive ? "Festive Deals" : "Hot Deals"}
+            </Link>
           </div>
 
           <div className="divide-y divide-zinc-100">

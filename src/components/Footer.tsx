@@ -84,16 +84,6 @@ export default function Footer() {
           <div>
             <p className="text-white font-extrabold text-xs uppercase tracking-wider mb-4 border-b border-white/15 pb-2">SUPPORT</p>
             <ul className="space-y-2.5 text-[12px] text-zinc-300 font-medium">
-              <li>
-                <a
-                  href={`https://wa.me/${STORE.whatsapp}?text=${encodeURIComponent("Hi, I'd like an update on my order status.")}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-white flex items-center gap-1 transition-colors"
-                >
-                  Track Your Order
-                </a>
-              </li>
               <li><Link href="/warranty-rma" className="hover:text-white flex items-center gap-1 transition-colors">Warranty &amp; RMA Center</Link></li>
               <li><Link href="/about" className="hover:text-white flex items-center gap-1 transition-colors">About Us</Link></li>
               <li><Link href="/contact" className="hover:text-white flex items-center gap-1 transition-colors">Contact &amp; Store Locator</Link></li>

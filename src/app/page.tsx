@@ -276,6 +276,34 @@ export default function Home() {
               className="object-cover object-center transition-transform duration-700 group-hover:scale-[1.01]"
               priority
             />
+
+            {/* Standard-theme typographic overlay — the standard banner art is a
+                clean render with open space on the left, so the headline lives
+                there. Festive art already carries baked-in lettering. */}
+            {activeTheme === "standard" && (
+              <>
+                <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/35 to-transparent" />
+                <div className="absolute inset-0 flex items-center">
+                  <div className="max-w-[62%] sm:max-w-[52%] lg:max-w-[46%] pl-5 sm:pl-10 lg:pl-14 pr-4">
+                    <p className="text-[9px] sm:text-[11px] lg:text-xs font-bold uppercase tracking-[0.25em] text-[#FF8080]">
+                      Custom PC Configurator
+                    </p>
+                    <h2 className="mt-1.5 sm:mt-3 font-serif font-black text-white leading-[1.03] tracking-tight text-xl sm:text-4xl lg:text-5xl">
+                      Build Different.
+                      <span className="block text-[#FF4D4D]">Engineered Exact.</span>
+                    </h2>
+                    <p className="hidden sm:block mt-3 lg:mt-4 text-[11px] lg:text-sm text-zinc-200/90 font-medium max-w-md leading-relaxed">
+                      Hand-picked components, bench-tested assembly and full manufacturer
+                      warranty — configured to your workload, not a spec sheet.
+                    </p>
+                    <span className="mt-3 sm:mt-5 inline-flex items-center gap-2 rounded-full bg-white px-3.5 sm:px-5 py-1.5 sm:py-2.5 text-[10px] sm:text-xs font-black uppercase tracking-wider text-[#1B1B1B] shadow-lg transition-transform group-hover:translate-x-1">
+                      Start Your Build
+                      <span aria-hidden className="text-[#D1121B]">&rarr;</span>
+                    </span>
+                  </div>
+                </div>
+              </>
+            )}
           </Link>
         </section>
 
