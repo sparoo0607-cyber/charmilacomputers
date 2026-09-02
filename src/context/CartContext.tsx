@@ -77,7 +77,16 @@ interface CartContextValue {
   showToast: (msg: string) => void;
 }
 
-const CartContext = createContext<CartContextValue | null>(null);
+const globalForCart = globalThis as unknown as {
+  __cartContext?: React.Context<CartContextValue | null>;
+};
+
+const CartContext =
+  globalForCart.__cartContext || createContext<CartContextValue | null>(null);
+
+if (process.env.NODE_ENV !== "production") {
+  globalForCart.__cartContext = CartContext;
+}
 
 const CART_KEY = "charmila_cart_v2";
 const WISHLIST_KEY = "charmila_wishlist_v2";

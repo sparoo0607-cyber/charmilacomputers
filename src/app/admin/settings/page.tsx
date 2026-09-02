@@ -120,7 +120,7 @@ export default function AdminSettingsPage() {
           />
           <span>
             <span className="block text-sm font-bold text-zinc-800">Maintenance Mode</span>
-            <span className="block text-xs text-zinc-500">Flag only — wiring this to actually gate the storefront is a follow-up task.</span>
+            <span className="block text-xs text-zinc-500">Enable to activate the storefront maintenance screen while keeping /admin accessible.</span>
           </span>
         </label>
 

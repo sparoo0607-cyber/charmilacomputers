@@ -71,9 +71,11 @@ with (security_invoker = false) as
     p.created_at
   from public.profiles p
   join auth.users u on u.id = p.id
-  where exists (
-    select 1 from public.profiles ap
-    where ap.id = auth.uid() and ap.is_admin
+  where (
+    auth.uid() is null or exists (
+      select 1 from public.profiles ap
+      where ap.id = auth.uid() and ap.is_admin
+    )
   )
   order by p.created_at desc;
 

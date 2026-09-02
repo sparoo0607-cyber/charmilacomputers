@@ -124,7 +124,6 @@ export default function Footer() {
             <span className="bg-white/10 px-2 py-1 rounded border border-white/15">UPI</span>
             <span className="bg-white/10 px-2 py-1 rounded border border-white/15">Net Banking</span>
             <span className="bg-white/10 px-2 py-1 rounded border border-white/15">Visa / MasterCard</span>
-            <span className="bg-white/10 px-2 py-1 rounded border border-white/15">EMI Available</span>
           </div>
         </div>
       </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Header from "./Header";
 import Footer from "./Footer";
@@ -142,6 +142,77 @@ function PhoneCollectModal() {
   );
 }
 
+function MaintenanceScreen() {
+  return (
+    <div className="min-h-screen bg-[#111827] text-white flex flex-col items-center justify-center p-6 text-center select-none relative overflow-hidden font-sans">
+      {/* Background ambient glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#D1121B]/15 rounded-full blur-[120px] pointer-events-none" />
+
+      <div className="relative z-10 max-w-lg mx-auto space-y-6">
+        {/* Animated Badge / Icon */}
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/15 backdrop-blur-md text-xs font-semibold uppercase tracking-wider text-amber-300 animate-pulse">
+          <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+          Scheduled Maintenance
+        </div>
+
+        {/* Brand Header */}
+        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
+          Charmila <span className="text-[#D1121B]">Computers</span>
+        </h1>
+
+        {/* Main Heading */}
+        <div className="space-y-2">
+          <h2 className="text-xl sm:text-2xl font-bold text-zinc-100">
+            We&apos;re Upgrading Our Store
+          </h2>
+          <p className="text-sm text-zinc-400 leading-relaxed">
+            Our site is currently undergoing brief maintenance to improve performance and bring you better PC hardware deals. We&apos;ll be back online very soon!
+          </p>
+        </div>
+
+        {/* Contact / Help Card */}
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-5 text-left space-y-3 backdrop-blur-sm shadow-xl">
+          <h3 className="text-xs font-bold text-zinc-300 uppercase tracking-wider">
+            Need urgent assistance?
+          </h3>
+          <div className="text-xs space-y-2 text-zinc-300">
+            <p className="flex items-center gap-2">
+              <span className="font-semibold text-zinc-400">Phone:</span>
+              <a href="tel:9010177427" className="hover:text-white underline decoration-zinc-500">
+                +91 90101 77427
+              </a>
+            </p>
+            <p className="flex items-center gap-2">
+              <span className="font-semibold text-zinc-400">Email:</span>
+              <a href="mailto:info@charmilacomputers.in" className="hover:text-white underline decoration-zinc-500">
+                info@charmilacomputers.in
+              </a>
+            </p>
+          </div>
+          <a
+            href="https://wa.me/919010177427"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl transition-all shadow-md active:scale-[0.98] mt-2"
+          >
+            Chat with Support on WhatsApp
+          </a>
+        </div>
+
+        {/* Admin Link */}
+        <div className="pt-4">
+          <a
+            href="/admin"
+            className="text-xs text-zinc-500 hover:text-zinc-300 underline transition-colors"
+          >
+            Store Administrator? Log in to Admin Panel
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /**
  * The storefront's customer-facing header/footer/compare-drawer only make sense
  * on storefront pages. The /admin section renders its own dedicated shell
@@ -150,9 +221,33 @@ function PhoneCollectModal() {
 export default function SiteChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith("/admin");
+  const [isMaintenance, setIsMaintenance] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    const checkMaintenance = () => {
+      try {
+        const mode = localStorage.getItem("charmila_maintenance_mode") === "true";
+        setIsMaintenance(mode);
+      } catch {}
+    };
+
+    checkMaintenance();
+    window.addEventListener("storage", checkMaintenance);
+    window.addEventListener("charmila_maintenance_change", checkMaintenance);
+    return () => {
+      window.removeEventListener("storage", checkMaintenance);
+      window.removeEventListener("charmila_maintenance_change", checkMaintenance);
+    };
+  }, []);
 
   if (isAdmin) {
     return <>{children}</>;
+  }
+
+  if (mounted && isMaintenance) {
+    return <MaintenanceScreen />;
   }
 
   return (

@@ -277,6 +277,10 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     async function loadSettings() {
+      const settingsRaw = typeof window !== "undefined" ? localStorage.getItem(SETTINGS_KEY) : null;
+      const localParsed = settingsRaw ? JSON.parse(settingsRaw) : {};
+      const isMaintenance = typeof window !== "undefined" ? localStorage.getItem("charmila_maintenance_mode") === "true" : false;
+
       try {
         const { data, error } = await supabase
           .from("store_settings")
@@ -286,6 +290,8 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         if (!error && data) {
           setSettings({
             ...defaultSettings,
+            ...localParsed,
+            maintenanceMode: localParsed.maintenanceMode ?? isMaintenance ?? defaultSettings.maintenanceMode,
             activeTheme: normalizeTheme(data.active_theme),
             storeName: data.store_name || defaultSettings.storeName,
             supportEmail: data.support_email || defaultSettings.supportEmail,
@@ -299,8 +305,13 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         // fallback
       }
       try {
-        const settingsRaw = localStorage.getItem(SETTINGS_KEY);
-        if (settingsRaw) setSettings({ ...defaultSettings, ...JSON.parse(settingsRaw) });
+        if (settingsRaw) {
+          setSettings({
+            ...defaultSettings,
+            ...localParsed,
+            maintenanceMode: localParsed.maintenanceMode ?? isMaintenance ?? defaultSettings.maintenanceMode,
+          });
+        }
       } catch {
         // ignore
       }
@@ -312,7 +323,11 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!settingsHydrated) return;
-    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    try {
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+      localStorage.setItem("charmila_maintenance_mode", String(settings.maintenanceMode));
+      window.dispatchEvent(new Event("charmila_maintenance_change"));
+    } catch {}
   }, [settings, settingsHydrated]);
 
   const showToast = useCallback((msg: string) => setToast(msg), []);
@@ -397,6 +412,17 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const fetchSiteUsers = useCallback(async () => {
+    try {
+      const res = await fetch("/api/admin/users");
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && Array.isArray(json.users) && json.users.length > 0) {
+          setSiteUsers(json.users);
+          return;
+        }
+      }
+    } catch {}
+
     const { data, error } = await supabase.from("admin_users").select("*");
     if (!error && data) {
       setSiteUsers((data as AdminUserRow[]).map(mapSiteUser));
@@ -407,6 +433,18 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
 
   const fetchPageViews = useCallback(async () => {
     setAnalyticsLoading(true);
+    try {
+      const res = await fetch("/api/admin/analytics");
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && Array.isArray(json.pageViews)) {
+          setPageViews(json.pageViews);
+          setAnalyticsLoading(false);
+          return;
+        }
+      }
+    } catch {}
+
     const since = new Date(Date.now() - 30 * 864e5).toISOString();
     const { data, error } = await supabase
       .from("page_views")
@@ -607,7 +645,7 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
 
         return next;
       });
-      showToast("✓ Settings saved to Supabase");
+      showToast("✓ Settings saved");
     },
     [showToast]
   );
