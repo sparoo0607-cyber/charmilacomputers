@@ -1,175 +1,7 @@
 import { supabase } from "@/lib/supabase/client";
 import { ThemeId, normalizeTheme } from "@/lib/theme";
 
-export function getDussaraThemeMedia(dayNum: number): HomePageMediaState {
-  const folder = `/themes/dussara/D${dayNum}`;
-  const base = VINAYAKA_THEME_MEDIA;
-  const dussaraTitles: { [key: number]: { badge: string; goddess: string } } = {
-    1: { badge: "SHAILAPUTRI DEVI · DUSSARA DAY 1", goddess: "Swarna Kavachalankruta Durga" },
-    2: { badge: "BRAHMACHARINI DEVI · DUSSARA DAY 2", goddess: "Sri Bala Tripura Sundari" },
-    3: { badge: "CHANDRAGHANTA DEVI · DUSSARA DAY 3", goddess: "Sri Gayatri Devi" },
-    4: { badge: "KUSHMANDA DEVI · DUSSARA DAY 4", goddess: "Sri Annapurna Devi" },
-    5: { badge: "SKANDAMATA DEVI · DUSSARA DAY 5", goddess: "Sri Lakshmi Devi" },
-    6: { badge: "KATYAYANI DEVI · DUSSARA DAY 6", goddess: "Sri Saraswati Devi" },
-    7: { badge: "KALARATRI DEVI · DUSSARA DAY 7", goddess: "Sri Lalitha Tripura Sundari" },
-    8: { badge: "MAHAGAURI DEVI · DUSSARA DAY 8", goddess: "Sri Mahishasura Mardhini" },
-    9: { badge: "SIDDHIDATRI DEVI · DUSSARA DAY 9", goddess: "Sri Raja Rajeshwari Devi (Vijaya Dasami)" },
-  };
 
-  const meta = dussaraTitles[dayNum] || { badge: `DUSSARA DAY ${dayNum} SPECIAL`, goddess: "Sri Durga Devi" };
-
-  return {
-    ...base,
-    hero: {
-      main: {
-        ...base.hero.main,
-        imageSrc: `${folder}/1.png`,
-        badgeText: `DUSSARA NAVRATRI DAY ${dayNum} · UP TO 45% OFF`,
-        titleLine1: "DUSSEHRA FESTIVAL",
-        titleLine2: "MEGA SALE",
-        subtitle: `Navratri Day ${dayNum} (${meta.goddess}) — Special offers on RTX 50 series GPUs, liquid cooled rigs & high-speed SSDs.`,
-      },
-      gaming: {
-        ...base.hero.gaming,
-        imageSrc: `${folder}/2.png`,
-        badgeText: `DUSSARA DAY ${dayNum} GAMING FEST`,
-      },
-      builder: {
-        ...base.hero.builder,
-        imageSrc: `${folder}/3.png`,
-        badgeText: `DAY ${dayNum} PC BUILDER SPECIAL`,
-      },
-    },
-    promos: {
-      buildDifferent: {
-        ...base.promos.buildDifferent,
-        image: `${folder}/4.png`,
-      },
-      templeNight: {
-        ...base.promos.templeNight,
-        image: `${folder}/5.png`,
-        badge: meta.badge,
-        subtitle: `Unleash extreme gaming performance with custom liquid-cooled PC rigs and high-end components this Dussara.`,
-      },
-    },
-  };
-}
-
-export const HOME_MEDIA_STORAGE_KEY = "charmila_home_media_v2";
-
-/**
- * Returns complete media state for a given theme
- */
-export function getThemeMedia(themeId: ThemeId): HomePageMediaState {
-  if (themeId === "standard") return STANDARD_THEME_MEDIA;
-  if (themeId === "festive") return VINAYAKA_THEME_MEDIA;
-  if (typeof themeId === "string" && themeId.startsWith("dussara-d")) {
-    const day = parseInt(themeId.replace("dussara-d", ""), 10) || 1;
-    return getDussaraThemeMedia(day);
-  }
-  return VINAYAKA_THEME_MEDIA;
-}
-
-/**
- * Applies a theme across all homepage images, banners, and categories, saving to Server API, Supabase & localStorage
- */
-export async function applyThemeMedia(themeId: ThemeId): Promise<HomePageMediaState> {
-  const themeMedia = getThemeMedia(themeId);
-
-  // 1. Notify global server API
-  try {
-    await fetch("/api/theme", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ theme: themeId }),
-    });
-  } catch (e) {
-    console.warn("Failed to notify /api/theme:", e);
-  }
-
-  // 2. Persist media and Supabase
-  await saveHomeMedia(themeMedia, themeId);
-  return themeMedia;
-}
-
-/**
- * Loads homepage media from Server API, Supabase & localStorage for all users
- */
-export async function loadHomeMedia(themeOverride?: ThemeId): Promise<HomePageMediaState> {
-  let resolvedTheme: ThemeId = themeOverride || "standard";
-
-  // 1. If no override provided, query localStorage admin settings & server /api/theme
-  if (!themeOverride) {
-    if (typeof window !== "undefined") {
-      try {
-        const savedSettings = localStorage.getItem("charmila_admin_settings_v1");
-        if (savedSettings) {
-          const parsed = JSON.parse(savedSettings);
-          if (parsed.activeTheme) resolvedTheme = normalizeTheme(parsed.activeTheme);
-        }
-      } catch {}
-    }
-    try {
-      const res = await fetch("/api/theme", { cache: "no-store" });
-      if (res.ok) {
-        const json = await res.json();
-        if (json.activeTheme) {
-          resolvedTheme = normalizeTheme(json.activeTheme);
-        }
-      }
-    } catch {}
-  }
-
-  // 2. Fresh base state from the resolved theme
-  const baseThemeMedia = getThemeMedia(resolvedTheme);
-  let loadedState: HomePageMediaState = { ...baseThemeMedia };
-
-  // 3. Try loading theme-specific cache from localStorage with cross-theme sanitization
-  if (typeof window !== "undefined") {
-    try {
-      const saved = localStorage.getItem(`${HOME_MEDIA_STORAGE_KEY}_${resolvedTheme}`);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-
-        // Helper to sanitize cross-theme contamination
-        const isClean = (url?: string) => {
-          if (!url) return false;
-          if (resolvedTheme === "standard") {
-            return !url.includes("/themes/vinayaka/") && !url.includes("/images/festive/") && !url.includes("/themes/dussara/");
-          }
-          return true;
-        };
-
-        loadedState = {
-          ...loadedState,
-          hero: {
-            main: isClean(parsed.hero?.main?.imageSrc) ? { ...loadedState.hero.main, ...parsed.hero.main } : loadedState.hero.main,
-            gaming: isClean(parsed.hero?.gaming?.imageSrc) ? { ...loadedState.hero.gaming, ...parsed.hero.gaming } : loadedState.hero.gaming,
-            builder: isClean(parsed.hero?.builder?.imageSrc) ? { ...loadedState.hero.builder, ...parsed.hero.builder } : loadedState.hero.builder,
-          },
-          promos: {
-            buildDifferent: isClean(parsed.promos?.buildDifferent?.image) ? { ...loadedState.promos.buildDifferent, ...parsed.promos.buildDifferent } : loadedState.promos.buildDifferent,
-            templeNight: isClean(parsed.promos?.templeNight?.image) ? { ...loadedState.promos.templeNight, ...parsed.promos.templeNight } : loadedState.promos.templeNight,
-          },
-          flagship: isClean(parsed.flagship?.image) ? { ...loadedState.flagship, ...parsed.flagship } : loadedState.flagship,
-          components: Array.isArray(parsed.components) && parsed.components.every((c: { image?: string }) => isClean(c.image))
-            ? parsed.components
-            : loadedState.components,
-          gaming: Array.isArray(parsed.gaming) && parsed.gaming.every((c: { image?: string }) => isClean(c.image))
-            ? parsed.gaming
-            : loadedState.gaming,
-          accessories: Array.isArray(parsed.accessories) && parsed.accessories.every((c: { image?: string }) => isClean(c.image))
-            ? parsed.accessories
-            : loadedState.accessories,
-        };
-      }
-    } catch (e) {
-      console.warn("Failed to parse local home media cache:", e);
-    }
-  }
-
-  return loadedState;
-}
 
 export interface CategoryCardMedia {
   id: string;
@@ -853,6 +685,176 @@ export const STORE_IMAGE_PRESETS = [
   { label: "Laptops Showcase", value: "/images/laptops.png", category: "Showcase" },
   { label: "Desktops Showcase", value: "/images/desktops.png", category: "Showcase" },
 ];
+
+export function getDussaraThemeMedia(dayNum: number): HomePageMediaState {
+  const folder = `/themes/dussara/D${dayNum}`;
+  const base = VINAYAKA_THEME_MEDIA;
+  const dussaraTitles: { [key: number]: { badge: string; goddess: string } } = {
+    1: { badge: "SHAILAPUTRI DEVI · DUSSARA DAY 1", goddess: "Swarna Kavachalankruta Durga" },
+    2: { badge: "BRAHMACHARINI DEVI · DUSSARA DAY 2", goddess: "Sri Bala Tripura Sundari" },
+    3: { badge: "CHANDRAGHANTA DEVI · DUSSARA DAY 3", goddess: "Sri Gayatri Devi" },
+    4: { badge: "KUSHMANDA DEVI · DUSSARA DAY 4", goddess: "Sri Annapurna Devi" },
+    5: { badge: "SKANDAMATA DEVI · DUSSARA DAY 5", goddess: "Sri Lakshmi Devi" },
+    6: { badge: "KATYAYANI DEVI · DUSSARA DAY 6", goddess: "Sri Saraswati Devi" },
+    7: { badge: "KALARATRI DEVI · DUSSARA DAY 7", goddess: "Sri Lalitha Tripura Sundari" },
+    8: { badge: "MAHAGAURI DEVI · DUSSARA DAY 8", goddess: "Sri Mahishasura Mardhini" },
+    9: { badge: "SIDDHIDATRI DEVI · DUSSARA DAY 9", goddess: "Sri Raja Rajeshwari Devi (Vijaya Dasami)" },
+  };
+
+  const meta = dussaraTitles[dayNum] || { badge: `DUSSARA DAY ${dayNum} SPECIAL`, goddess: "Sri Durga Devi" };
+
+  return {
+    ...base,
+    hero: {
+      main: {
+        ...base.hero.main,
+        imageSrc: `${folder}/1.png`,
+        badgeText: `DUSSARA NAVRATRI DAY ${dayNum} · UP TO 45% OFF`,
+        titleLine1: "DUSSEHRA FESTIVAL",
+        titleLine2: "MEGA SALE",
+        subtitle: `Navratri Day ${dayNum} (${meta.goddess}) — Special offers on RTX 50 series GPUs, liquid cooled rigs & high-speed SSDs.`,
+      },
+      gaming: {
+        ...base.hero.gaming,
+        imageSrc: `${folder}/2.png`,
+        badgeText: `DUSSARA DAY ${dayNum} GAMING FEST`,
+      },
+      builder: {
+        ...base.hero.builder,
+        imageSrc: `${folder}/3.png`,
+        badgeText: `DAY ${dayNum} PC BUILDER SPECIAL`,
+      },
+    },
+    promos: {
+      buildDifferent: {
+        ...base.promos.buildDifferent,
+        image: `${folder}/4.png`,
+      },
+      templeNight: {
+        ...base.promos.templeNight,
+        image: `${folder}/5.png`,
+        badge: meta.badge,
+        subtitle: `Unleash extreme gaming performance with custom liquid-cooled PC rigs and high-end components this Dussara.`,
+      },
+    },
+  };
+}
+
+export const HOME_MEDIA_STORAGE_KEY = "charmila_home_media_v2";
+
+/**
+ * Returns complete media state for a given theme
+ */
+export function getThemeMedia(themeId: ThemeId): HomePageMediaState {
+  if (themeId === "standard") return STANDARD_THEME_MEDIA;
+  if (themeId === "festive") return VINAYAKA_THEME_MEDIA;
+  if (typeof themeId === "string" && themeId.startsWith("dussara-d")) {
+    const day = parseInt(themeId.replace("dussara-d", ""), 10) || 1;
+    return getDussaraThemeMedia(day);
+  }
+  return VINAYAKA_THEME_MEDIA;
+}
+
+/**
+ * Applies a theme across all homepage images, banners, and categories, saving to Server API, Supabase & localStorage
+ */
+export async function applyThemeMedia(themeId: ThemeId): Promise<HomePageMediaState> {
+  const themeMedia = getThemeMedia(themeId);
+
+  // 1. Notify global server API
+  try {
+    await fetch("/api/theme", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ theme: themeId }),
+    });
+  } catch (e) {
+    console.warn("Failed to notify /api/theme:", e);
+  }
+
+  // 2. Persist media and Supabase
+  await saveHomeMedia(themeMedia, themeId);
+  return themeMedia;
+}
+
+/**
+ * Loads homepage media from Server API, Supabase & localStorage for all users
+ */
+export async function loadHomeMedia(themeOverride?: ThemeId): Promise<HomePageMediaState> {
+  let resolvedTheme: ThemeId = themeOverride || "standard";
+
+  // 1. If no override provided, query localStorage admin settings & server /api/theme
+  if (!themeOverride) {
+    if (typeof window !== "undefined") {
+      try {
+        const savedSettings = localStorage.getItem("charmila_admin_settings_v1");
+        if (savedSettings) {
+          const parsed = JSON.parse(savedSettings);
+          if (parsed.activeTheme) resolvedTheme = normalizeTheme(parsed.activeTheme);
+        }
+      } catch {}
+    }
+    try {
+      const res = await fetch("/api/theme", { cache: "no-store" });
+      if (res.ok) {
+        const json = await res.json();
+        if (json.activeTheme) {
+          resolvedTheme = normalizeTheme(json.activeTheme);
+        }
+      }
+    } catch {}
+  }
+
+  // 2. Fresh base state from the resolved theme
+  const baseThemeMedia = getThemeMedia(resolvedTheme);
+  let loadedState: HomePageMediaState = { ...baseThemeMedia };
+
+  // 3. Try loading theme-specific cache from localStorage with cross-theme sanitization
+  if (typeof window !== "undefined") {
+    try {
+      const saved = localStorage.getItem(`${HOME_MEDIA_STORAGE_KEY}_${resolvedTheme}`);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+
+        // Helper to sanitize cross-theme contamination
+        const isClean = (url?: string) => {
+          if (!url) return false;
+          if (resolvedTheme === "standard") {
+            return !url.includes("/themes/vinayaka/") && !url.includes("/images/festive/") && !url.includes("/themes/dussara/");
+          }
+          return true;
+        };
+
+        loadedState = {
+          ...loadedState,
+          hero: {
+            main: isClean(parsed.hero?.main?.imageSrc) ? { ...loadedState.hero.main, ...parsed.hero.main } : loadedState.hero.main,
+            gaming: isClean(parsed.hero?.gaming?.imageSrc) ? { ...loadedState.hero.gaming, ...parsed.hero.gaming } : loadedState.hero.gaming,
+            builder: isClean(parsed.hero?.builder?.imageSrc) ? { ...loadedState.hero.builder, ...parsed.hero.builder } : loadedState.hero.builder,
+          },
+          promos: {
+            buildDifferent: isClean(parsed.promos?.buildDifferent?.image) ? { ...loadedState.promos.buildDifferent, ...parsed.promos.buildDifferent } : loadedState.promos.buildDifferent,
+            templeNight: isClean(parsed.promos?.templeNight?.image) ? { ...loadedState.promos.templeNight, ...parsed.promos.templeNight } : loadedState.promos.templeNight,
+          },
+          flagship: isClean(parsed.flagship?.image) ? { ...loadedState.flagship, ...parsed.flagship } : loadedState.flagship,
+          components: Array.isArray(parsed.components) && parsed.components.every((c: { image?: string }) => isClean(c.image))
+            ? parsed.components
+            : loadedState.components,
+          gaming: Array.isArray(parsed.gaming) && parsed.gaming.every((c: { image?: string }) => isClean(c.image))
+            ? parsed.gaming
+            : loadedState.gaming,
+          accessories: Array.isArray(parsed.accessories) && parsed.accessories.every((c: { image?: string }) => isClean(c.image))
+            ? parsed.accessories
+            : loadedState.accessories,
+        };
+      }
+    } catch (e) {
+      console.warn("Failed to parse local home media cache:", e);
+    }
+  }
+
+  return loadedState;
+}
 
 
 
