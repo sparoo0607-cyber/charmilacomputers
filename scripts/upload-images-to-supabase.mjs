@@ -32,17 +32,31 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
-const IMAGES_DIR = path.join(ROOT, "public", "images");
+const PUBLIC_DIR = path.join(ROOT, "public");
 const BUCKET = "product-images";
+
+// Parse .env.local if present
+try {
+  const envLocalPath = path.join(ROOT, ".env.local");
+  const envContent = await readFile(envLocalPath, "utf-8");
+  for (const line of envContent.split("\n")) {
+    const trimmed = line.trim();
+    if (trimmed && !trimmed.startsWith("#")) {
+      const idx = trimmed.indexOf("=");
+      if (idx > 0) {
+        const k = trimmed.slice(0, idx).trim();
+        const v = trimmed.slice(idx + 1).trim();
+        if (!process.env[k]) process.env[k] = v;
+      }
+    }
+  }
+} catch {}
 
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!SUPABASE_URL || !SERVICE_ROLE_KEY) {
-  console.error(
-    "Missing env vars. Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY before running this script.\n" +
-      "See the comment at the top of this file for where to find the service role key."
-  );
+  console.error("Missing env vars SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY.");
   process.exit(1);
 }
 
@@ -60,7 +74,7 @@ const CONTENT_TYPES = {
 };
 
 async function* walk(dir) {
-  const entries = await readdir(dir, { withFileTypes: true });
+  const entries = await readdir(dir, { withFileTypes: true }).catch(() => []);
   for (const entry of entries) {
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) {
@@ -72,42 +86,46 @@ async function* walk(dir) {
 }
 
 async function main() {
-  const info = await stat(IMAGES_DIR).catch(() => null);
-  if (!info) {
-    console.error(`No such directory: ${IMAGES_DIR}`);
-    process.exit(1);
-  }
-
   const urlMap = {};
   let uploaded = 0;
   let skipped = 0;
   let failed = 0;
   let total = 0;
 
-  for await (const filePath of walk(IMAGES_DIR)) {
-    const ext = path.extname(filePath).toLowerCase();
-    if (!CONTENT_TYPES[ext]) continue; // skip non-image files
+  const targetDirs = [
+    path.join(PUBLIC_DIR, "images"),
+    path.join(PUBLIC_DIR, "themes"),
+  ];
 
-    total++;
-    const relativePath = path.relative(IMAGES_DIR, filePath).split(path.sep).join("/");
-    const storagePath = relativePath; // e.g. "products/cpu-3-intel-i3-12100f.png"
+  for (const targetDir of targetDirs) {
+    const info = await stat(targetDir).catch(() => null);
+    if (!info) continue;
 
-    const buffer = await readFile(filePath);
+    for await (const filePath of walk(targetDir)) {
+      const ext = path.extname(filePath).toLowerCase();
+      if (!CONTENT_TYPES[ext]) continue;
 
-    const { error } = await supabase.storage.from(BUCKET).upload(storagePath, buffer, {
-      contentType: CONTENT_TYPES[ext],
-      upsert: true, // re-running overwrites with the current local file — safe & idempotent
-    });
+      total++;
+      const relativePath = path.relative(PUBLIC_DIR, filePath).split(path.sep).join("/");
+      const storagePath = relativePath.replace(/[\[\]]/g, "");
 
-    const { data: publicUrlData } = supabase.storage.from(BUCKET).getPublicUrl(storagePath);
-    urlMap[relativePath] = publicUrlData.publicUrl;
+      const buffer = await readFile(filePath);
 
-    if (error) {
-      failed++;
-      console.error(`✗ ${relativePath} — ${error.message}`);
-    } else {
-      uploaded++;
-      if (uploaded % 20 === 0) console.log(`  ...${uploaded} uploaded so far`);
+      const { error } = await supabase.storage.from(BUCKET).upload(storagePath, buffer, {
+        contentType: CONTENT_TYPES[ext],
+        upsert: true,
+      });
+
+      const { data: publicUrlData } = supabase.storage.from(BUCKET).getPublicUrl(storagePath);
+      urlMap[relativePath] = publicUrlData.publicUrl;
+
+      if (error) {
+        failed++;
+        console.error(`✗ ${relativePath} — ${error.message}`);
+      } else {
+        uploaded++;
+        if (uploaded % 10 === 0) console.log(`  ...${uploaded} uploaded so far`);
+      }
     }
   }
 
@@ -117,7 +135,6 @@ async function main() {
   console.log("\n────────────────────────────────────────");
   console.log(`Done. ${uploaded} uploaded, ${skipped} skipped, ${failed} failed, ${total} total image files found.`);
   console.log(`Public URLs written to: ${path.relative(ROOT, outPath)}`);
-  console.log("Paste any of these URLs into a product's \"Image URL\" field in /admin/products.");
   console.log("────────────────────────────────────────");
 }
 

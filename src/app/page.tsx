@@ -147,7 +147,7 @@ const beastGPUs = [
     price: 26999,
     mrp: 32000,
     discount: 16,
-    image: "/images/products/gpu-2-rtx-3060.png",
+    image: "/images/products/graphic card.png",
   },
   {
     id: "gpu-1",

@@ -5,7 +5,7 @@ import { products as seedProducts } from "@/data/products";
 import { Product } from "@/data/types";
 import { supabase } from "@/lib/supabase/client";
 import type { Database } from "@/lib/supabase/types";
-import { normalizeTheme } from "@/lib/theme";
+import { normalizeTheme, ThemeId } from "@/lib/theme";
 
 /* ------------------------------------------------------------------ */
 /*  Backed by real Supabase tables (see supabase/schema.sql).             */
@@ -35,7 +35,7 @@ export interface AdminOrder {
   createdAt: string;
   status: AdminOrderStatus;
   paymentMethod: string;
-  paymentStatus: "Paid" | "Pending" | "Cash on Delivery";
+  paymentStatus: "Pending" | "Paid" | "Failed" | "Refunded";
   items: AdminOrderItem[];
   subtotal: number;
   shippingFee: number;
@@ -58,7 +58,7 @@ export interface SiteUser {
 export interface PageViewRow {
   id: number;
   path: string;
-  kind: "home" | "category" | "product" | "other";
+  kind: "product" | "category" | "page";
   slug: string | null;
   visitorId: string | null;
   createdAt: string;
@@ -74,7 +74,7 @@ export interface StoreSettings {
   taxPercent: number;
   lowStockThreshold: number;
   maintenanceMode: boolean;
-  activeTheme: "festive" | "standard";
+  activeTheme: ThemeId;
 }
 
 interface AdminContextValue {

@@ -16,12 +16,14 @@ import {
   CategoryCardMedia,
 } from "@/data/homeMedia";
 
+import { ThemeId } from "@/lib/theme";
+
 type MainTab = "hero" | "promos" | "flagship" | "components" | "gaming" | "accessories";
 
 export default function BannerEditorPage() {
   const { showToast } = useAdmin();
   const activeStoreTheme = useStoreTheme();
-  const [selectedTheme, setSelectedTheme] = useState<"festive" | "standard">(activeStoreTheme);
+  const [selectedTheme, setSelectedTheme] = useState<ThemeId>(activeStoreTheme);
   const [activeTab, setActiveTab] = useState<MainTab>("hero");
   const [media, setMedia] = useState<HomePageMediaState>(DEFAULT_HOME_MEDIA);
   const [hydrated, setHydrated] = useState(false);

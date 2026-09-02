@@ -7,22 +7,49 @@
 // normalizeTheme() so one bad row can never wedge the whole storefront onto the
 // fallback theme again.
 
-export type ThemeId = "festive" | "standard";
+export type ThemeId =
+  | "festive"
+  | "standard"
+  | "dussara-d1"
+  | "dussara-d2"
+  | "dussara-d3"
+  | "dussara-d4"
+  | "dussara-d5"
+  | "dussara-d6"
+  | "dussara-d7"
+  | "dussara-d8"
+  | "dussara-d9";
 
-export const THEME_IDS: readonly ThemeId[] = ["festive", "standard"];
+export const THEME_IDS: readonly ThemeId[] = [
+  "festive",
+  "standard",
+  "dussara-d1",
+  "dussara-d2",
+  "dussara-d3",
+  "dussara-d4",
+  "dussara-d5",
+  "dussara-d6",
+  "dussara-d7",
+  "dussara-d8",
+  "dussara-d9",
+];
 
 export const DEFAULT_THEME: ThemeId = "standard";
 
 export function isThemeId(v: unknown): v is ThemeId {
-  return v === "festive" || v === "standard";
+  return typeof v === "string" && (v === "festive" || v === "standard" || v.startsWith("dussara-d"));
 }
 
 export function normalizeTheme(v: unknown, fallback: ThemeId = DEFAULT_THEME): ThemeId {
-  if (isThemeId(v)) return v;
+  if (isThemeId(v)) return v as ThemeId;
   if (typeof v === "string") {
     const s = v.trim().toLowerCase();
     if (s === "standard") return "standard";
-    // "festival", "festive-vinayaka", "vinayaka", etc. → festive
+    if (s.startsWith("dussara") || s.startsWith("dasara") || s.startsWith("navratri")) {
+      const match = s.match(/d([1-9])/);
+      if (match) return `dussara-d${match[1]}` as ThemeId;
+      return "dussara-d1";
+    }
     if (s.startsWith("fest") || s.includes("vinayaka")) return "festive";
   }
   return fallback;

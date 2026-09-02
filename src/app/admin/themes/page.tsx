@@ -8,8 +8,10 @@ import { CheckIcon } from "@/components/icons";
 import { applyThemeMedia, getThemeMedia } from "@/data/homeMedia";
 import { useStoreTheme } from "@/hooks/useStoreTheme";
 
+import { ThemeId } from "@/lib/theme";
+
 interface ThemeDefinition {
-  id: "festive" | "standard";
+  id: ThemeId;
   name: string;
   badge: string;
   folder: string;
@@ -21,6 +23,18 @@ interface ThemeDefinition {
   description: string;
   highlights: string[];
 }
+
+const DUSSARA_DAYS = [
+  { num: 1, name: "Day 1 - Sri Shailaputri Devi", goddess: "Swarna Kavachalankruta Durga", color: "from-[#800000] via-[#A52A2A] to-[#4A0000]" },
+  { num: 2, name: "Day 2 - Sri Brahmacharini Devi", goddess: "Sri Bala Tripura Sundari", color: "from-[#8B0000] via-[#B22222] to-[#5C0000]" },
+  { num: 3, name: "Day 3 - Sri Chandraghanta Devi", goddess: "Sri Gayatri Devi", color: "from-[#7A1118] via-[#800020] to-[#3D0000]" },
+  { num: 4, name: "Day 4 - Sri Kushmanda Devi", goddess: "Sri Annapurna Devi", color: "from-[#A0522D] via-[#B8860B] to-[#5C4033]" },
+  { num: 5, name: "Day 5 - Sri Skandamata Devi", goddess: "Sri Lakshmi Devi", color: "from-[#D4AF37] via-[#FFD700] to-[#8B6508]" },
+  { num: 6, name: "Day 6 - Sri Katyayani Devi", goddess: "Sri Saraswati Devi", color: "from-[#C04000] via-[#CD5C5C] to-[#602000]" },
+  { num: 7, name: "Day 7 - Sri Kalaratri Devi", goddess: "Sri Lalitha Tripura Sundari", color: "from-[#4B0082] via-[#8A2BE2] to-[#2E004B]" },
+  { num: 8, name: "Day 8 - Sri Mahagauri Devi", goddess: "Sri Mahishasura Mardhini", color: "from-[#800080] via-[#9932CC] to-[#400040]" },
+  { num: 9, name: "Day 9 - Sri Siddhidatri Devi (Vijaya Dasami)", goddess: "Sri Raja Rajeshwari Devi", color: "from-[#D1121B] via-[#7A1118] to-[#3D0000]" },
+];
 
 const THEMES: ThemeDefinition[] = [
   {
@@ -69,15 +83,34 @@ const THEMES: ThemeDefinition[] = [
       "All 10 Peripherals & Accessory Images (printers.png, pen tablets.png, etc.)",
     ],
   },
+  ...DUSSARA_DAYS.map((d) => ({
+    id: `dussara-d${d.num}` as ThemeId,
+    name: `Dussara Navratri ${d.name}`,
+    badge: `Dussehra Day ${d.num} Special · ${d.goddess}`,
+    folder: `public/themes/dussara/D${d.num} (5 High-Res Assets)`,
+    tagline: `Navratri Day ${d.num} festive banners & Durga Navaratri celebration graphics (${d.goddess})`,
+    headerBg: d.color,
+    accentColor: "#D1121B",
+    badgeBg: "bg-amber-500 text-zinc-950 font-black",
+    bannerImage: `/themes/dussara/D${d.num}/1.png`,
+    description: `Dussehra Day ${d.num} Navratri theme honoring ${d.goddess}. Automatically swaps homepage main hero, gaming fest banner, PC builder showcase, and celebration panoramas with Day ${d.num} assets.`,
+    highlights: [
+      `Main Hero Banner (D${d.num}/1.png)`,
+      `Gaming Fest Banner (D${d.num}/2.png)`,
+      `PC Builder Deals Banner (D${d.num}/3.png)`,
+      `Build Different Wide Panorama (D${d.num}/4.png)`,
+      `Navratri Celebration Panorama (D${d.num}/5.png)`,
+    ],
+  })),
 ];
 
 export default function ThemesPage() {
   const { settings, updateSettings, showToast } = useAdmin();
   const storeTheme = useStoreTheme();
-  const currentTheme = storeTheme || settings.activeTheme || "festive";
+  const currentTheme = (storeTheme || settings.activeTheme || "festive") as ThemeId;
   const [busy, setBusy] = useState(false);
 
-  async function handleSelectTheme(themeId: "festive" | "standard") {
+  async function handleSelectTheme(themeId: ThemeId) {
     const selected = THEMES.find((t) => t.id === themeId);
     if (!selected) return;
 

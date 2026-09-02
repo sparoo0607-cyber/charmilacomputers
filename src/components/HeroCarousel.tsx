@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase/client";
 import { useStoreTheme } from "@/hooks/useStoreTheme";
-import { VINAYAKA_THEME_MEDIA, STANDARD_THEME_MEDIA } from "@/data/homeMedia";
+import { VINAYAKA_THEME_MEDIA, STANDARD_THEME_MEDIA, getThemeMedia } from "@/data/homeMedia";
 
 export interface BannerData {
   imageSrc: string;
@@ -77,8 +77,10 @@ function parseBanner(b: Partial<BannerData> | Partial<BannerRow> | undefined, fa
   };
 }
 
-function fallbackForTheme(theme: "festive" | "standard") {
-  return theme === "standard" ? STANDARD_THEME_MEDIA.hero : VINAYAKA_THEME_MEDIA.hero;
+import { ThemeId } from "@/lib/theme";
+
+function fallbackForTheme(theme: ThemeId) {
+  return getThemeMedia(theme).hero;
 }
 
 export default function HeroCarousel() {
