@@ -686,6 +686,142 @@ export const STORE_IMAGE_PRESETS = [
   { label: "Desktops Showcase", value: "/images/desktops.png", category: "Showcase" },
 ];
 
+export const DUSSARA_COMPONENTS_MEDIA: CategoryCardMedia[] = [
+  {
+    id: "comp-processors",
+    slug: "processors",
+    name: "PROCESSORS",
+    desc: "Power your next build",
+    festiveAccent: "Dussara Festival Offer",
+    startPrice: "₹9,150",
+    image: "/themes/dussara/Products/1.png",
+  },
+  {
+    id: "comp-motherboards",
+    slug: "motherboards",
+    name: "MOTHERBOARDS",
+    desc: "Solid foundation for performance",
+    festiveAccent: "DDR5 & PCIe 5.0",
+    startPrice: "₹6,600",
+    image: "/themes/dussara/Products/2.png",
+  },
+  {
+    id: "comp-custom-cooling",
+    slug: "coolers",
+    name: "CUSTOM COOLING",
+    desc: "Peak thermal dissipation",
+    festiveAccent: "ARGB & 360mm Radiators",
+    startPrice: "₹6,499",
+    image: "/themes/dussara/Products/3.png",
+  },
+  {
+    id: "comp-cpu-coolers",
+    slug: "coolers",
+    name: "CPU COOLERS",
+    desc: "Silent & efficient airflow",
+    festiveAccent: "High Static Pressure",
+    startPrice: "₹1,650",
+    image: "/themes/dussara/Products/4.png",
+  },
+  {
+    id: "comp-graphics-cards",
+    slug: "graphics-cards",
+    name: "GRAPHICS CARDS",
+    desc: "Next-gen ray tracing & DLSS",
+    festiveAccent: "RTX 50 & 40 Series",
+    startPrice: "₹14,500",
+    image: "/themes/dussara/Products/5.png",
+  },
+  {
+    id: "comp-ram",
+    slug: "memory",
+    name: "RAM (MEMORY)",
+    desc: "High-speed DDR4 & DDR5",
+    festiveAccent: "Up to 6000MHz OC",
+    startPrice: "₹1,950",
+    image: "/themes/dussara/Products/6.png",
+  },
+  {
+    id: "comp-ssd",
+    slug: "ssd",
+    name: "SSD STORAGE",
+    desc: "Blazing fast NVMe speeds",
+    festiveAccent: "Gen4 & Gen5 Speeds",
+    startPrice: "₹1,650",
+    image: "/themes/dussara/Products/7.png",
+  },
+  {
+    id: "comp-monitors",
+    slug: "monitors",
+    name: "GAMING MONITORS",
+    desc: "Ultra-fast refresh rates",
+    festiveAccent: "180Hz+ Fast IPS",
+    startPrice: "₹6,300",
+    image: "/themes/dussara/Products/8.png",
+  },
+  {
+    id: "comp-power-supply",
+    slug: "power-supply",
+    name: "POWER SUPPLIES",
+    desc: "80 Plus Gold certified",
+    festiveAccent: "ATX 3.0 Ready",
+    startPrice: "₹2,450",
+    image: "/themes/dussara/Products/9.png",
+  },
+  {
+    id: "comp-cabinets",
+    slug: "cabinets",
+    name: "PC CABINETS",
+    desc: "Optimized airflow & RGB",
+    festiveAccent: "Panoramic Dual-Chamber",
+    startPrice: "₹2,650",
+    image: "/themes/dussara/Products/10.png",
+  },
+];
+
+export const DUSSARA_GAMING_MEDIA: CategoryCardMedia[] = [
+  {
+    id: "game-keyboards",
+    slug: "keyboards",
+    name: "GAMING KEYBOARDS",
+    desc: "Mechanical switches & RGB",
+    startPrice: "₹550",
+    image: "/themes/dussara/Products/11.png",
+  },
+  {
+    id: "game-mice",
+    slug: "mice",
+    name: "GAMING MICE",
+    desc: "High-DPI precision optical sensors",
+    startPrice: "₹350",
+    image: "/themes/dussara/Products/12.png",
+  },
+  {
+    id: "game-headsets",
+    slug: "headsets",
+    name: "GAMING HEADSETS",
+    desc: "7.1 Surround & noise isolation",
+    startPrice: "₹899",
+    image: "/themes/dussara/Products/13.png",
+  },
+  {
+    id: "game-mousepads",
+    slug: "accessories",
+    name: "RGB MOUSEPADS",
+    desc: "Micro-woven smooth glide",
+    startPrice: "₹399",
+    image: "/themes/dussara/Products/14.png",
+  },
+  {
+    id: "game-gamepads",
+    slug: "accessories",
+    name: "GAMEPADS",
+    desc: "Wireless & tactile feedback",
+    startPrice: "₹1,299",
+    image: "/themes/dussara/Products/15.png",
+  },
+];
+
 export function getDussaraThemeMedia(dayNum: number): HomePageMediaState {
   const folder = `/themes/dussara/D${dayNum}`;
   const base = VINAYAKA_THEME_MEDIA;
@@ -737,6 +873,9 @@ export function getDussaraThemeMedia(dayNum: number): HomePageMediaState {
         subtitle: `Unleash extreme gaming performance with custom liquid-cooled PC rigs and high-end components this Dussara.`,
       },
     },
+    components: DUSSARA_COMPONENTS_MEDIA,
+    gaming: DUSSARA_GAMING_MEDIA,
+    accessories: base.accessories,
   };
 }
 

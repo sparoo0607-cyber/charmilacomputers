@@ -205,9 +205,10 @@ export default function Home() {
     };
   }, [activeTheme]);
 
-  const activeComponents = homeMedia.components || (activeTheme === "festive" ? VINAYAKA_THEME_MEDIA.components : STANDARD_THEME_MEDIA.components);
-  const activeGaming = homeMedia.gaming || (activeTheme === "festive" ? VINAYAKA_THEME_MEDIA.gaming : STANDARD_THEME_MEDIA.gaming);
-  const activeAccessories = homeMedia.accessories || (activeTheme === "festive" ? VINAYAKA_THEME_MEDIA.accessories : STANDARD_THEME_MEDIA.accessories);
+  const themeFallbackMedia = getThemeMedia(activeTheme);
+  const activeComponents = homeMedia.components || themeFallbackMedia.components;
+  const activeGaming = homeMedia.gaming || themeFallbackMedia.gaming;
+  const activeAccessories = homeMedia.accessories || themeFallbackMedia.accessories;
 
 
 
