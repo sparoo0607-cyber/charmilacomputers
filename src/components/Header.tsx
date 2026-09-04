@@ -104,7 +104,7 @@ export default function Header() {
   return (
     <header
       className={`sticky top-0 z-50 bg-white flex flex-col font-sans transition-all duration-200 border-b border-[#E5E0D7] ${
-        scrolled ? "shadow-md" : "shadow-xs"
+        scrolled ? "charmila-nav-scrolled shadow-md" : "shadow-xs"
       }`}
     >
       {/* LEVEL 1 — MICRO UTILITY BAR */}

@@ -18,6 +18,9 @@ import {
 } from "@/data/homeMedia";
 import FestiveDivider from "@/components/festive/FestiveDivider";
 import DiyaDecoration from "@/components/festive/DiyaDecoration";
+import CharmilaSectionHeader from "@/components/brand/CharmilaSectionHeader";
+import CharmilaTechLine from "@/components/brand/CharmilaTechLine";
+import CharmilaPcbPattern from "@/components/brand/CharmilaPcbPattern";
 
 // Vinayaka Festive Picks (6 Featured Products)
 const festivePicks = [

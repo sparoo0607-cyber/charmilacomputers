@@ -9,6 +9,8 @@ import ProductImage from "./ProductImage";
 import { CartIcon, CheckIcon, StarIcon, HeartIcon, CompareIcon } from "./icons";
 
 import FestiveBadge from "./festive/FestiveBadge";
+import CharmilaCornerAccent from "./brand/CharmilaCornerAccent";
+import HardwareDataHover from "./brand/HardwareDataHover";
 import { useStoreTheme } from "@/hooks/useStoreTheme";
 
 export default function ProductCard({ product }: { product: Product }) {
@@ -44,7 +46,10 @@ export default function ProductCard({ product }: { product: Product }) {
   const isFestiveDeal = isVinayaka && ((discount && discount >= 10) || product.inStock);
 
   return (
-    <div className={`group border border-[#E5E0D7] rounded-xl overflow-hidden bg-white hover:shadow-xl hover:-translate-y-1 ${isVinayaka ? "hover:border-[#A77A24]/50 festive-card-glow" : "hover:border-[#D1121B]/40"} transition-all duration-200 flex flex-col relative`}>
+    <div className={`group border border-[#E5E0D7] rounded-xl overflow-hidden bg-white hover:shadow-xl hover:-translate-y-1 ${isVinayaka ? "hover:border-[#A77A24]/50 festive-card-glow" : "hover:border-[#A90000]/40"} transition-all duration-200 flex flex-col relative`}>
+      {/* Signature Red Corner Accent */}
+      <CharmilaCornerAccent size="md" />
+
       {/* Top action buttons */}
       <div className="absolute top-2 right-2 z-10 flex flex-col gap-1.5 opacity-90 group-hover:opacity-100 transition-opacity">
         <button
@@ -74,10 +79,10 @@ export default function ProductCard({ product }: { product: Product }) {
         </button>
       </div>
 
-      <Link href={`/product/${product.id}`} className="block relative overflow-hidden bg-[#FAF7F2] p-4">
+      <Link href={`/product/${product.id}`} className="block relative overflow-hidden bg-[#FAF7F2] p-4 charmila-tech-scan-container">
         <div className="absolute top-2 left-2 z-10 flex flex-col items-start gap-1">
           {discount && (
-            <span className={`${isVinayaka ? "bg-[#6E0F12] text-[#FFF6E3] border border-[#A77A24]" : "bg-[#D1121B] text-white"} text-[10px] font-extrabold uppercase px-2 py-0.5 rounded shadow-xs tracking-wider`}>
+            <span className={`${isVinayaka ? "bg-[#6E0F12] text-[#FFF6E3] border border-[#A77A24]" : "bg-[#A90000] text-white"} text-[10px] font-extrabold uppercase px-2 py-0.5 rounded shadow-xs tracking-wider`}>
               -{discount}% OFF
             </span>
           )}
@@ -85,7 +90,10 @@ export default function ProductCard({ product }: { product: Product }) {
             <FestiveBadge label="VINAYAKA SPECIAL" />
           )}
         </div>
-        <ProductImage categorySlug={product.categorySlug} productId={product.id} imageUrl={product.imageUrl} className="w-full aspect-square transition-transform duration-300 group-hover:scale-108" />
+        <ProductImage categorySlug={product.categorySlug} productId={product.id} imageUrl={product.imageUrl} className="w-full aspect-square transition-transform duration-300 group-hover:scale-106" />
+
+        {/* Hardware Data Hover Spec Overlay */}
+        <HardwareDataHover product={product} />
       </Link>
 
       <div className="p-3.5 flex flex-col gap-1 flex-1">
