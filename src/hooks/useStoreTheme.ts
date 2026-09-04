@@ -67,27 +67,18 @@ export function useStoreTheme() {
   });
 
   const syncTheme = useCallback(async () => {
-    // 1. Check local hint first for instant client state
-    const hint = readLocalHint();
-    if (hint) setTheme(hint);
-
-    // 2. Sync with server API
     const serverTheme = await fetchThemeFromServer();
     if (serverTheme) {
       setTheme(serverTheme);
       writeLocalHint(serverTheme);
       return;
     }
-    // 2. Fallback: direct Supabase query
     const supabaseTheme = await fetchThemeFromSupabase();
     if (supabaseTheme) {
       setTheme(supabaseTheme);
       writeLocalHint(supabaseTheme);
       return;
     }
-    // 3. Last resort: use local hint
-    const localHint = readLocalHint();
-    if (localHint) setTheme(localHint);
   }, []);
 
   useEffect(() => {

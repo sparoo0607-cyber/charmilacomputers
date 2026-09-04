@@ -68,19 +68,7 @@
   letter-spacing: -0.02em;
 }
 
-/* Standard theme hex overrides: Replace gold and black with Red and White */
-[data-theme="standard"] [class*="bg-[#C89B3C]"] { background-color: #D1121B !important; }
-[data-theme="standard"] [class*="text-[#C89B3C]"] { color: #D1121B !important; }
-[data-theme="standard"] [class*="border-[#C89B3C]"] { border-color: #D1121B !important; }
-[data-theme="standard"] [class*="from-[#C89B3C]"] { --tw-gradient-from: #D1121B !important; }
-[data-theme="standard"] [class*="bg-[#FFD700]"] { background-color: #D1121B !important; }
-[data-theme="standard"] [class*="text-[#FFD700]"] { color: #FFFFFF !important; }
-[data-theme="standard"] [class*="to-[#FFD700]"] { --tw-gradient-to: #FF8080 !important; }
-[data-theme="standard"] [class*="via-[#FFD700]"] { --tw-gradient-via: #D1121B !important; }
-[data-theme="standard"] [class*="bg-[#FFE58F]"] { background-color: #D1121B !important; }
-[data-theme="standard"] [class*="text-[#FFE58F]"] { color: #FFFFFF !important; }
-[data-theme="standard"] [class*="hover:text-[#FFE58F]"]:hover { color: #D1121B !important; }
-[data-theme="standard"] [class*="from-[#FFE58F]"] { --tw-gradient-from: #FF4D4D !important; }
+
 
 /* ---------------------------------------------------------------------
    Unified component system — one button system, one section-header
