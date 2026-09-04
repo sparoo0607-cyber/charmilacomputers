@@ -259,6 +259,60 @@ function ProductModal({
   const [images, setImages] = useState<string[]>(initialImages);
   const [urlInput, setUrlInput] = useState("");
 
+  // Technical Specifications & Key Features State
+  type SpecRow = { key: string; value: string };
+  const initialSpecRows: SpecRow[] = product?.specs
+    ? Object.entries(product.specs).map(([key, value]) => ({ key, value }))
+    : [];
+  const initialFeaturesText: string = product?.features ? product.features.join("\n") : "";
+
+  const [specRows, setSpecRows] = useState<SpecRow[]>(initialSpecRows);
+  const [featuresText, setFeaturesText] = useState<string>(initialFeaturesText);
+
+  const CATEGORY_SPEC_TEMPLATES: Record<string, string[]> = {
+    processors: ["Socket", "Cores / Threads", "Base Frequency", "Max Turbo Frequency", "Cache", "Integrated Graphics", "TDP / Power", "Warranty"],
+    "graphics-cards": ["GPU Chipset", "VRAM / Memory", "Memory Type", "Interface", "Power Connectors", "Recommended PSU", "Warranty"],
+    motherboards: ["Form Factor", "Socket", "Chipset", "Memory Support", "PCIe Slots", "M.2 Slots", "Rear I/O Ports", "Warranty"],
+    memory: ["Memory Type", "Capacity", "Speed / Frequency", "Tested Latency", "Voltage", "Heat Spreader", "Warranty"],
+    ssd: ["Form Factor", "Capacity", "Interface", "Sequential Read Speed", "Sequential Write Speed", "NAND Flash", "Warranty"],
+    monitors: ["Screen Size", "Resolution", "Refresh Rate", "Response Time", "Panel Type", "Brightness", "Ports", "Warranty"],
+    coolers: ["Cooler Type", "Fan Speed", "Airflow / Static Pressure", "ARGB Lighting", "Radiator / Heatsink Size", "Noise Level", "Warranty"],
+    cabinets: ["Form Factor Support", "Side Panel", "Included Fans", "Radiator Support", "GPU Clearance", "Dimensions", "Warranty"],
+    "power-supply": ["Wattage", "Efficiency Rating", "Modular Type", "ATX Standard", "PCIe 5.0 / 12VHPWR", "Fan Size", "Warranty"],
+  };
+
+  function handleLoadSpecTemplate() {
+    const templateKeys = CATEGORY_SPEC_TEMPLATES[form.categorySlug] || [
+      "Brand & Model",
+      "Compatibility",
+      "Key Specification 1",
+      "Key Specification 2",
+      "Warranty",
+    ];
+
+    setSpecRows((prev) => {
+      const existingKeys = new Set(prev.map((r) => r.key.trim().toLowerCase()));
+      const newRows = templateKeys
+        .filter((k) => !existingKeys.has(k.toLowerCase()))
+        .map((key) => ({ key, value: "" }));
+      return [...prev, ...newRows];
+    });
+  }
+
+  function handleAddSpecRow() {
+    setSpecRows((prev) => [...prev, { key: "", value: "" }]);
+  }
+
+  function handleSpecRowChange(index: number, field: "key" | "value", val: string) {
+    setSpecRows((prev) =>
+      prev.map((row, i) => (i === index ? { ...row, [field]: val } : row))
+    );
+  }
+
+  function handleRemoveSpecRow(index: number) {
+    setSpecRows((prev) => prev.filter((_, i) => i !== index));
+  }
+
   function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const files = e.target.files;
     if (!files || files.length === 0) return;
@@ -298,6 +352,19 @@ function ProductModal({
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    const specObj: Record<string, string> = {};
+    specRows.forEach((row) => {
+      if (row.key.trim() && row.value.trim()) {
+        specObj[row.key.trim()] = row.value.trim();
+      }
+    });
+
+    const parsedFeatures = featuresText
+      .split("\n")
+      .map((f) => f.trim())
+      .filter((f) => f.length > 0);
+
     onSubmit({
       name: form.name.trim(),
       brand: form.brand.trim(),
@@ -312,8 +379,8 @@ function ProductModal({
       images: images.length > 0 ? images : undefined,
       rating: product?.rating,
       reviewsCount: product?.reviewsCount,
-      specs: product?.specs,
-      features: product?.features,
+      specs: Object.keys(specObj).length > 0 ? specObj : undefined,
+      features: parsedFeatures.length > 0 ? parsedFeatures : undefined,
     });
   }
 
@@ -322,7 +389,7 @@ function ProductModal({
       <form
         onSubmit={handleSubmit}
         onClick={(e) => e.stopPropagation()}
-        className="bg-white rounded-2xl p-6 sm:p-7 max-w-lg w-full shadow-xl my-auto"
+        className="bg-white rounded-2xl p-6 sm:p-7 max-w-2xl w-full shadow-xl my-auto"
       >
         <div className="flex items-center justify-between mb-5">
           <h3 className="font-bold text-lg">{mode === "add" ? "Add Product" : "Edit Product"}</h3>
@@ -331,7 +398,7 @@ function ProductModal({
           </button>
         </div>
 
-        <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-1">
+        <div className="space-y-4 max-h-[72vh] overflow-y-auto pr-1">
           <Field label="Product Name" required>
             <input
               required
@@ -429,8 +496,83 @@ function ProductModal({
             </label>
           </div>
 
+          {/* Technical Specifications Section */}
+          <div className="pt-3 border-t border-zinc-100 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-zinc-700 uppercase tracking-wide flex items-center gap-1.5">
+                <span>📊</span> Technical Specifications ({specRows.length})
+              </span>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={handleLoadSpecTemplate}
+                  className="bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 text-xs font-bold px-2.5 py-1 rounded-lg transition-colors flex items-center gap-1 shadow-2xs"
+                  title="Auto-fill recommended specification keys for this category"
+                >
+                  ⚡ Auto-Template
+                </button>
+                <button
+                  type="button"
+                  onClick={handleAddSpecRow}
+                  className="bg-zinc-100 hover:bg-zinc-200 text-zinc-800 text-xs font-bold px-2.5 py-1 rounded-lg transition-colors flex items-center gap-1"
+                >
+                  + Add Spec
+                </button>
+              </div>
+            </div>
+
+            {specRows.length > 0 ? (
+              <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                {specRows.map((row, idx) => (
+                  <div key={idx} className="flex gap-2 items-center">
+                    <input
+                      type="text"
+                      placeholder="Spec Name (e.g. Socket)"
+                      value={row.key}
+                      onChange={(e) => handleSpecRowChange(idx, "key", e.target.value)}
+                      className="w-5/12 border border-[#E5E0D7] rounded-xl px-3 py-1.5 text-xs font-semibold focus:outline-none focus:border-[#D1121B]"
+                    />
+                    <input
+                      type="text"
+                      placeholder="Value (e.g. LGA 1700)"
+                      value={row.value}
+                      onChange={(e) => handleSpecRowChange(idx, "value", e.target.value)}
+                      className="w-6/12 border border-[#E5E0D7] rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:border-[#D1121B]"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveSpecRow(idx)}
+                      className="w-1/12 text-zinc-400 hover:text-red-600 font-bold text-lg grid place-items-center"
+                      title="Remove specification"
+                    >
+                      &times;
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-xs text-zinc-400 italic bg-zinc-50 p-2.5 rounded-xl border border-dashed border-zinc-200 text-center">
+                No specifications added yet. Click &quot;+ Add Spec&quot; or &quot;⚡ Auto-Template&quot; to populate.
+              </p>
+            )}
+          </div>
+
+          {/* Key Product Features / Highlights */}
+          <div className="pt-3 border-t border-zinc-100 space-y-2">
+            <label className="block text-xs font-bold text-zinc-700 uppercase tracking-wide">
+              Key Features &amp; Highlights (1 per line)
+            </label>
+            <textarea
+              rows={3}
+              value={featuresText}
+              onChange={(e) => setFeaturesText(e.target.value)}
+              placeholder={"e.g.\n14 Cores & 20 Threads for smooth gaming and multitasking\nUp to 5.10 GHz Max Turbo Frequency\nCompatible with Intel 600 and 700 series chipsets"}
+              className="w-full border border-[#E5E0D7] rounded-xl p-3 text-xs focus:outline-none focus:border-[#D1121B] font-mono leading-relaxed"
+            />
+          </div>
+
           {/* Product Media & Multiple Images Manager */}
-          <div className="pt-2 border-t border-zinc-100 space-y-3">
+          <div className="pt-3 border-t border-zinc-100 space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-zinc-700 uppercase tracking-wide">
                 Product Media &amp; Photos ({images.length})
