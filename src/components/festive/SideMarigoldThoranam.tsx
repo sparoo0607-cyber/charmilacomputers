@@ -10,7 +10,7 @@ export default function SideMarigoldThoranam() {
       {/* Left Hanging Marigold Garland */}
       <div
         aria-hidden="true"
-        className="fixed top-0 left-1 sm:left-3 z-[60] pointer-events-none select-none hidden md:block festive-sway"
+        className="fixed top-0 left-1 sm:left-3 z-[150] pointer-events-none select-none hidden md:block festive-sway"
       >
         <svg
           width="40"
@@ -63,7 +63,7 @@ export default function SideMarigoldThoranam() {
       {/* Right Hanging Marigold Garland */}
       <div
         aria-hidden="true"
-        className="fixed top-0 right-1 sm:right-3 z-[60] pointer-events-none select-none hidden md:block festive-sway"
+        className="fixed top-0 right-1 sm:right-3 z-[150] pointer-events-none select-none hidden md:block festive-sway"
         style={{ animationDelay: "-2.5s" }}
       >
         <svg
