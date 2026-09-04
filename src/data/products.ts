@@ -1793,13 +1793,18 @@ export async function getProductLive(id: string): Promise<Product | undefined> {
 }
 
 export async function getProductsByCategoryLive(categorySlug: string): Promise<Product[]> {
+  const seedList = getProductsByCategory(categorySlug);
   try {
     const { supabase } = await import("@/lib/supabase/client");
     const { data, error } = await supabase.from("products").select("*").eq("category_slug", categorySlug);
-    if (error || !data || data.length === 0) return getProductsByCategory(categorySlug);
-    return (data as ProductRow[]).map(mapProductRow);
+    if (error || !data || data.length === 0) return seedList;
+    const dbProducts = (data as ProductRow[]).map(mapProductRow);
+    const map = new Map<string, Product>();
+    seedList.forEach((p) => map.set(p.id, p));
+    dbProducts.forEach((p) => map.set(p.id, p));
+    return Array.from(map.values());
   } catch {
-    return getProductsByCategory(categorySlug);
+    return seedList;
   }
 }
 

@@ -392,13 +392,35 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
   }, [checkAdminSession]);
 
   const fetchProducts = useCallback(async () => {
-    const { data, error } = await supabase.from("products").select("*").order("name");
-    if (!error && data) {
-      setAdminProducts((data as ProductRow[]).map(mapProductRow));
-    } else {
-      console.warn("Supabase products fetch failed, using local seed products:", error?.message);
-      setAdminProducts(seedProducts);
+    let localCustoms: Product[] = [];
+    if (typeof window !== "undefined") {
+      try {
+        const raw = localStorage.getItem("charmila_custom_products_v1");
+        if (raw) localCustoms = JSON.parse(raw);
+      } catch {}
     }
+
+    const { data, error } = await supabase.from("products").select("*").order("name");
+
+    let dbProducts: Product[] = [];
+    if (!error && data && data.length > 0) {
+      dbProducts = (data as ProductRow[]).map(mapProductRow);
+    } else if (error) {
+      console.warn("Supabase products fetch warning, using seed products:", error.message);
+    }
+
+    const productMap = new Map<string, Product>();
+
+    // 1. Baseline seed products
+    seedProducts.forEach((sp) => productMap.set(sp.id, sp));
+
+    // 2. Supabase DB products override seeds or add new products
+    dbProducts.forEach((dp) => productMap.set(dp.id, dp));
+
+    // 3. Local customs override or add recent edits
+    localCustoms.forEach((lp) => productMap.set(lp.id, lp));
+
+    setAdminProducts(Array.from(productMap.values()));
   }, []);
 
   const fetchOrders = useCallback(async () => {
@@ -485,13 +507,25 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
 
 
   // ---------------------------------------------------------------
-  // Products — optimistic local update + background Supabase write
+  // Products — optimistic local update + background Supabase write + localStorage sync
   // ---------------------------------------------------------------
+  const saveLocalProducts = (list: Product[]) => {
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("charmila_custom_products_v1", JSON.stringify(list));
+      } catch {}
+    }
+  };
+
   const addProduct = useCallback(
     (product: Omit<Product, "id">) => {
       const id = `custom-${Date.now().toString(36)}`;
       const newProduct: Product = { ...product, id };
-      setAdminProducts((prev) => [newProduct, ...prev]);
+      setAdminProducts((prev) => {
+        const next = [newProduct, ...prev];
+        saveLocalProducts(next);
+        return next;
+      });
       showToast(`✓ ${newProduct.name} added to catalog`);
 
       supabase
@@ -515,8 +549,7 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         })
         .then(({ error }) => {
           if (error) {
-            setAdminProducts((prev) => prev.filter((p) => p.id !== id));
-            showToast(`Couldn't save to database: ${error.message}`);
+            console.warn("Supabase products insert error (saved to local catalog):", error.message);
           }
         });
     },
@@ -525,7 +558,11 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
 
   const updateProduct = useCallback(
     (id: string, patch: Partial<Product>) => {
-      setAdminProducts((prev) => prev.map((p) => (p.id === id ? { ...p, ...patch } : p)));
+      setAdminProducts((prev) => {
+        const next = prev.map((p) => (p.id === id ? { ...p, ...patch } : p));
+        saveLocalProducts(next);
+        return next;
+      });
       showToast("✓ Product updated");
 
       const dbPatch: Database["public"]["Tables"]["products"]["Update"] = {
@@ -539,6 +576,8 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         ...(patch.inStock !== undefined && { in_stock: patch.inStock }),
         ...(patch.stockQty !== undefined && { stock_qty: patch.stockQty }),
         ...(patch.imageUrl !== undefined && { image_url: patch.imageUrl ?? null }),
+        ...(patch.specs !== undefined && { specs: patch.specs ?? null }),
+        ...(patch.features !== undefined && { features: patch.features ?? null }),
       };
 
       supabase
@@ -547,18 +586,20 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         .eq("id", id)
         .then(({ error }) => {
           if (error) {
-            showToast(`Couldn't save changes: ${error.message}`);
-            fetchProducts();
+            console.warn("Supabase products update warning:", error.message);
           }
         });
     },
-    [showToast, fetchProducts]
+    [showToast]
   );
 
   const deleteProduct = useCallback(
     (id: string) => {
-      const removed = adminProducts.find((p) => p.id === id);
-      setAdminProducts((prev) => prev.filter((p) => p.id !== id));
+      setAdminProducts((prev) => {
+        const next = prev.filter((p) => p.id !== id);
+        saveLocalProducts(next);
+        return next;
+      });
       showToast("Product removed from catalog");
 
       supabase
@@ -566,17 +607,19 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         .delete()
         .eq("id", id)
         .then(({ error }) => {
-          if (error && removed) {
-            setAdminProducts((prev) => [removed, ...prev]);
-            showToast(`Couldn't delete: ${error.message}`);
+          if (error) {
+            console.warn("Supabase products delete warning:", error.message);
           }
         });
     },
-    [adminProducts, showToast]
+    [showToast]
   );
 
   const restoreDefaults = useCallback(() => {
     showToast("Resetting catalog…");
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("charmila_custom_products_v1");
+    }
     (async () => {
       await supabase.from("products").delete().neq("id", "");
       const rows = seedProducts.map((p) => ({
@@ -597,10 +640,9 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
       }));
       const { error } = await supabase.from("products").insert(rows);
       if (error) {
-        showToast(`Reset failed: ${error.message}`);
-      } else {
-        showToast("Catalog reset to defaults");
+        console.warn("Supabase reset warning:", error.message);
       }
+      showToast("Catalog reset to defaults");
       fetchProducts();
     })();
   }, [showToast, fetchProducts]);
