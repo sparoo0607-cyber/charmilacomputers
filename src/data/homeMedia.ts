@@ -149,7 +149,7 @@ export const VINAYAKA_THEME_MEDIA: HomePageMediaState = {
       desc: "Power your next build",
       festiveAccent: "Flagship Performance",
       startPrice: "₹9,150",
-      image: "/images/processors.png",
+      image: "/themes/vinayaka/banner-29.png",
     },
     {
       id: "comp-motherboards",
@@ -158,7 +158,7 @@ export const VINAYAKA_THEME_MEDIA: HomePageMediaState = {
       desc: "Solid foundation for performance",
       festiveAccent: "DDR5 & PCIe 5.0",
       startPrice: "₹6,600",
-      image: "/images/motherboards.png",
+      image: "/themes/vinayaka/banner-26.png",
     },
     {
       id: "comp-custom-cooling",
@@ -167,7 +167,7 @@ export const VINAYAKA_THEME_MEDIA: HomePageMediaState = {
       desc: "Peak thermal dissipation",
       festiveAccent: "ARGB & 360mm Radiators",
       startPrice: "₹6,499",
-      image: "/images/coolers.png",
+      image: "/themes/vinayaka/banner-25.png",
     },
     {
       id: "comp-cpu-coolers",
@@ -176,7 +176,7 @@ export const VINAYAKA_THEME_MEDIA: HomePageMediaState = {
       desc: "Silent & efficient airflow",
       festiveAccent: "High Static Pressure",
       startPrice: "₹1,650",
-      image: "/images/coolers.png",
+      image: "/themes/vinayaka/banner-24.png",
     },
     {
       id: "comp-graphics-cards",
@@ -185,7 +185,7 @@ export const VINAYAKA_THEME_MEDIA: HomePageMediaState = {
       desc: "Next-gen ray tracing & DLSS",
       festiveAccent: "RTX 50 & 40 Series",
       startPrice: "₹14,500",
-      image: "/themes/vinayaka/banner-26.png",
+      image: "/themes/vinayaka/banner-23.png",
     },
     {
       id: "comp-ram",
@@ -203,7 +203,7 @@ export const VINAYAKA_THEME_MEDIA: HomePageMediaState = {
       desc: "Blazing fast NVMe speeds",
       festiveAccent: "Gen4 & Gen5 Speeds",
       startPrice: "₹1,650",
-      image: "/images/ssd.png",
+      image: "/themes/vinayaka/banner-21.png",
     },
     {
       id: "comp-monitors",
@@ -212,7 +212,7 @@ export const VINAYAKA_THEME_MEDIA: HomePageMediaState = {
       desc: "Ultra-fast refresh rates",
       festiveAccent: "180Hz+ Fast IPS",
       startPrice: "₹6,300",
-      image: "/images/monitors.png",
+      image: "/themes/vinayaka/banner-20.png",
     },
     {
       id: "comp-power-supply",
