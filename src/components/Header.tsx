@@ -103,7 +103,7 @@ export default function Header() {
 
   return (
     <header
-      className={`sticky top-0 z-50 bg-white flex flex-col font-sans transition-all duration-200 border-b border-[#E5E0D7] ${
+      className={`sticky top-0 z-[100] w-full bg-white flex flex-col font-sans transition-all duration-200 border-b border-[#E5E0D7] ${
         scrolled ? "charmila-nav-scrolled shadow-md" : "shadow-xs"
       }`}
     >
