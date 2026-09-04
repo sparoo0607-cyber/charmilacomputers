@@ -694,7 +694,7 @@ export const DUSSARA_COMPONENTS_MEDIA: CategoryCardMedia[] = [
     desc: "Power your next build",
     festiveAccent: "Dussara Festival Offer",
     startPrice: "₹9,150",
-    image: "/images/processors.png",
+    image: "/themes/dussara/Products/1.png",
   },
   {
     id: "comp-motherboards",
@@ -703,7 +703,7 @@ export const DUSSARA_COMPONENTS_MEDIA: CategoryCardMedia[] = [
     desc: "Solid foundation for performance",
     festiveAccent: "DDR5 & PCIe 5.0",
     startPrice: "₹6,600",
-    image: "/images/motherboards.png",
+    image: "/themes/dussara/Products/2.png",
   },
   {
     id: "comp-custom-cooling",
@@ -712,7 +712,7 @@ export const DUSSARA_COMPONENTS_MEDIA: CategoryCardMedia[] = [
     desc: "Peak thermal dissipation",
     festiveAccent: "ARGB & 360mm Radiators",
     startPrice: "₹6,499",
-    image: "/images/coolers.png",
+    image: "/themes/dussara/Products/3.png",
   },
   {
     id: "comp-cpu-coolers",
@@ -721,7 +721,7 @@ export const DUSSARA_COMPONENTS_MEDIA: CategoryCardMedia[] = [
     desc: "Silent & efficient airflow",
     festiveAccent: "High Static Pressure",
     startPrice: "₹1,650",
-    image: "/images/coolers.png",
+    image: "/themes/dussara/Products/4.png",
   },
   {
     id: "comp-graphics-cards",
@@ -730,7 +730,7 @@ export const DUSSARA_COMPONENTS_MEDIA: CategoryCardMedia[] = [
     desc: "Next-gen ray tracing & DLSS",
     festiveAccent: "RTX 50 & 40 Series",
     startPrice: "₹14,500",
-    image: "/themes/dussara/Products/2.png",
+    image: "/themes/dussara/Products/5.png",
   },
   {
     id: "comp-ram",
@@ -739,7 +739,7 @@ export const DUSSARA_COMPONENTS_MEDIA: CategoryCardMedia[] = [
     desc: "High-speed DDR4 & DDR5",
     festiveAccent: "Up to 6000MHz OC",
     startPrice: "₹1,950",
-    image: "/themes/dussara/Products/14.png",
+    image: "/themes/dussara/Products/6.png",
   },
   {
     id: "comp-ssd",
@@ -748,7 +748,7 @@ export const DUSSARA_COMPONENTS_MEDIA: CategoryCardMedia[] = [
     desc: "Blazing fast NVMe speeds",
     festiveAccent: "Gen4 & Gen5 Speeds",
     startPrice: "₹1,650",
-    image: "/images/ssd.png",
+    image: "/themes/dussara/Products/7.png",
   },
   {
     id: "comp-monitors",
@@ -757,7 +757,7 @@ export const DUSSARA_COMPONENTS_MEDIA: CategoryCardMedia[] = [
     desc: "Ultra-fast refresh rates",
     festiveAccent: "180Hz+ Fast IPS",
     startPrice: "₹6,300",
-    image: "/images/monitors.png",
+    image: "/themes/dussara/Products/8.png",
   },
   {
     id: "comp-power-supply",
@@ -766,7 +766,7 @@ export const DUSSARA_COMPONENTS_MEDIA: CategoryCardMedia[] = [
     desc: "80 Plus Gold certified",
     festiveAccent: "ATX 3.0 Ready",
     startPrice: "₹2,450",
-    image: "/themes/dussara/Products/8.png",
+    image: "/themes/dussara/Products/9.png",
   },
   {
     id: "comp-cabinets",
@@ -775,7 +775,7 @@ export const DUSSARA_COMPONENTS_MEDIA: CategoryCardMedia[] = [
     desc: "Optimized airflow & RGB",
     festiveAccent: "Panoramic Dual-Chamber",
     startPrice: "₹2,650",
-    image: "/themes/dussara/Products/1.png",
+    image: "/themes/dussara/Products/10.png",
   },
 ];
 
@@ -822,6 +822,89 @@ export const DUSSARA_GAMING_MEDIA: CategoryCardMedia[] = [
   },
 ];
 
+export const DUSSARA_ACCESSORIES_MEDIA: CategoryCardMedia[] = [
+  {
+    id: "acc-printers",
+    slug: "printers",
+    name: "PRINTERS & INK",
+    desc: "All-in-one wireless printing",
+    startPrice: "₹6,999",
+    image: "/themes/dussara/Products/16.png",
+  },
+  {
+    id: "acc-laptop-coolers",
+    slug: "accessories",
+    name: "LAPTOP COOLERS",
+    desc: "Multi-fan active cooling",
+    startPrice: "₹850",
+    image: "/themes/dussara/Products/17.png",
+  },
+  {
+    id: "acc-pen-drives",
+    slug: "ssd",
+    name: "PEN DRIVES",
+    desc: "High-speed portable USB",
+    startPrice: "₹399",
+    image: "/themes/dussara/Products/19.png",
+  },
+  {
+    id: "acc-routers",
+    slug: "networking",
+    name: "WIFI ROUTERS",
+    desc: "Dual-band WiFi 6 coverage",
+    startPrice: "₹1,199",
+    image: "/themes/dussara/Products/18.png",
+  },
+  {
+    id: "acc-ups",
+    slug: "power-supply",
+    name: "UPS SYSTEMS",
+    desc: "Uninterrupted power backup",
+    startPrice: "₹2,899",
+    image: "/themes/dussara/Products/20.png",
+  },
+  {
+    id: "acc-webcams",
+    slug: "cctv",
+    name: "HD WEBCAMS",
+    desc: "1080p stream & mic clarity",
+    startPrice: "₹1,450",
+    image: "/themes/dussara/Products/21.png",
+  },
+  {
+    id: "acc-pen-tablets",
+    slug: "accessories",
+    name: "PEN TABLETS",
+    desc: "Digital art & design stylus",
+    startPrice: "₹3,200",
+    image: "/themes/dussara/Products/22.png",
+  },
+  {
+    id: "acc-speakers",
+    slug: "accessories",
+    name: "SPEAKER SYSTEMS",
+    desc: "Immersive audio & bass",
+    startPrice: "₹1,150",
+    image: "/themes/dussara/Products/23.png",
+  },
+  {
+    id: "acc-surge-protectors",
+    slug: "accessories",
+    name: "SURGE PROTECTORS",
+    desc: "Multi-socket voltage defense",
+    startPrice: "₹450",
+    image: "/themes/dussara/Products/24.png",
+  },
+  {
+    id: "acc-software",
+    slug: "services",
+    name: "SOFTWARE & OS",
+    desc: "Genuine Windows & Antivirus",
+    startPrice: "₹1,999",
+    image: "/themes/dussara/Products/25.png",
+  },
+];
+
 export function getDussaraThemeMedia(dayNum: number): HomePageMediaState {
   const folder = `/themes/dussara/D${dayNum}`;
   const base = VINAYAKA_THEME_MEDIA;
@@ -865,17 +948,21 @@ export function getDussaraThemeMedia(dayNum: number): HomePageMediaState {
       buildDifferent: {
         ...base.promos.buildDifferent,
         image: `${folder}/4.png`,
+        alt: `Dussara Day ${dayNum} - Build Different Custom Rigs`,
       },
       templeNight: {
         ...base.promos.templeNight,
         image: `${folder}/5.png`,
         badge: meta.badge,
+        alt: `${meta.badge} - Dussara Navratri Special`,
+        titleLine1: "NAVRATRI FESTIVAL",
+        titleLine2: "GAMING RIGS",
         subtitle: `Unleash extreme gaming performance with custom liquid-cooled PC rigs and high-end components this Dussara.`,
       },
     },
     components: DUSSARA_COMPONENTS_MEDIA,
     gaming: DUSSARA_GAMING_MEDIA,
-    accessories: base.accessories,
+    accessories: DUSSARA_ACCESSORIES_MEDIA,
   };
 }
 

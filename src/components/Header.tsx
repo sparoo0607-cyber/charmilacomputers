@@ -548,7 +548,13 @@ export default function Header() {
 
           <div className={`ml-auto text-[10px] font-bold uppercase tracking-widest hidden lg:flex items-center gap-1.5 ${isFestive ? "text-[#FFE58F]" : "text-white"}`}>
             <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${isFestive ? "bg-[#FFD700]" : "bg-white"}`} />
-            <span>{isFestive ? "Vinayaka Chavithi Mega Deals Live" : "Official Brand Warranty & Express Shipping"}</span>
+            <span>
+              {activeTheme.startsWith("dussara-d")
+                ? "Dussara Navratri Deals Live"
+                : isFestive
+                ? "Vinayaka Chavithi Mega Deals Live"
+                : "Official Brand Warranty & Express Shipping"}
+            </span>
           </div>
         </div>
       </nav>

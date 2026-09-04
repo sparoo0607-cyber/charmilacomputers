@@ -5,12 +5,15 @@ import Link from "next/link";
 import { getDealsProducts, sampleComboDeals, getProduct } from "@/data/products";
 import { formatINR } from "@/lib/format";
 import { useCart } from "@/context/CartContext";
+import { useStoreTheme } from "@/hooks/useStoreTheme";
 import ProductCard from "@/components/ProductCard";
 import { BoltIcon, ClockIcon, CartIcon } from "@/components/icons";
 
 export default function DealsPage() {
   const dealsProducts = getDealsProducts().slice(0, 8);
   const { addToCart, showToast } = useCart();
+  const activeTheme = useStoreTheme();
+  const isDussara = activeTheme.startsWith("dussara-d");
 
   // Countdown timer simulation for festive flash sale
   const [timeLeft, setTimeLeft] = useState({ hours: 14, minutes: 32, seconds: 48 });
@@ -39,6 +42,8 @@ export default function DealsPage() {
     showToast(`Coupon ${code} copied to clipboard!`);
   }
 
+  const mainCouponCode = isDussara ? "DUSSARA500" : "VINAYAKA500";
+
   return (
     <div className="mx-auto max-w-[1440px] px-4 sm:px-6 py-8 font-sans">
       {/* Breadcrumb */}
@@ -53,7 +58,7 @@ export default function DealsPage() {
         <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8">
           <div className="space-y-3 text-center lg:text-left max-w-xl">
             <div className="inline-flex items-center gap-2 bg-[#FFD700] text-[#4E0B10] font-black text-xs uppercase tracking-widest px-3.5 py-1 rounded-full shadow">
-              <BoltIcon className="w-4 h-4" /> Vinayaka Chavithi Mega Hardware Fest
+              <BoltIcon className="w-4 h-4" /> {isDussara ? "Dussara Navratri Hardware Fest" : "Vinayaka Chavithi Mega Hardware Fest"}
             </div>
             <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
               Unbeatable Deals on GPUs, CPUs &amp; Rigs
@@ -104,7 +109,7 @@ export default function DealsPage() {
             <div>
               <div className="flex justify-between items-start">
                 <span className="font-mono font-black text-base text-[#D1121B] bg-red-50 px-3 py-1 rounded-lg border border-red-200">
-                  VINAYAKA500
+                  {mainCouponCode}
                 </span>
                 <span className="text-[10px] font-extrabold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
                   Active
@@ -114,7 +119,7 @@ export default function DealsPage() {
               <p className="text-[11px] text-zinc-500 mt-0.5">Valid on all hardware orders above ₹5,000.</p>
             </div>
             <button
-              onClick={() => handleCopyCoupon("VINAYAKA500")}
+              onClick={() => handleCopyCoupon(mainCouponCode)}
               className="w-full py-2 bg-[#FAF7F2] hover:bg-red-50 text-[#7A1118] font-bold text-xs rounded-xl border border-[#E5E0D7] transition-colors uppercase tracking-wider"
             >
               Copy Code

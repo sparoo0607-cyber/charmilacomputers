@@ -19,6 +19,7 @@ export interface Coupon {
 }
 
 export const AVAILABLE_COUPONS: Coupon[] = [
+  { code: "DUSSARA500", discountType: "fixed", discountValue: 500, minOrder: 5000, description: "Flat ₹500 off on orders above ₹5,000" },
   { code: "VINAYAKA500", discountType: "fixed", discountValue: 500, minOrder: 5000, description: "Flat ₹500 off on orders above ₹5,000" },
   { code: "GAMER5", discountType: "percentage", discountValue: 5, minOrder: 15000, description: "5% off up to ₹2,500 on gaming rigs & components" },
   { code: "FREESHIP", discountType: "fixed", discountValue: 150, minOrder: 2000, description: "Free Express Pan-India Shipping waiver" },

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCart, AVAILABLE_COUPONS } from "@/context/CartContext";
+import { useStoreTheme } from "@/hooks/useStoreTheme";
 import { getProduct } from "@/data/products";
 import { formatINR, STORE, whatsappOrderLink } from "@/lib/format";
 import ProductImage from "@/components/ProductImage";
@@ -14,6 +15,7 @@ import {
 
 export default function CartPage() {
   const router = useRouter();
+  const activeTheme = useStoreTheme();
   const {
     lines, updateQty, removeFromCart, subtotal, shippingFee, discount, total,
     appliedCoupon, applyCoupon, removeCoupon, clearCart, user
@@ -287,7 +289,7 @@ export default function CartPage() {
                     type="text"
                     value={couponInput}
                     onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
-                    placeholder="e.g. VINAYAKA500"
+                    placeholder={activeTheme.startsWith("dussara-d") ? "e.g. DUSSARA500" : "e.g. VINAYAKA500"}
                     className="w-full px-3 py-2 border border-zinc-300 rounded-xl text-xs uppercase font-bold focus:outline-none focus:border-[#7A1118]"
                   />
                   <button
