@@ -218,6 +218,8 @@ function MaintenanceScreen() {
  * on storefront pages. The /admin section renders its own dedicated shell
  * (see src/app/admin/AdminShell.tsx), so we hide the storefront chrome there.
  */
+import FestivalEffects from "./festive/FestivalEffects";
+
 export default function SiteChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith("/admin");
@@ -252,6 +254,7 @@ export default function SiteChrome({ children }: { children: React.ReactNode }) 
 
   return (
     <>
+      <FestivalEffects />
       <Header />
       <main id="main-content" className="flex-1">
         {children}

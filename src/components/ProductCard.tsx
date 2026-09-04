@@ -8,8 +8,13 @@ import { useCart } from "@/context/CartContext";
 import ProductImage from "./ProductImage";
 import { CartIcon, CheckIcon, StarIcon, HeartIcon, CompareIcon } from "./icons";
 
+import FestiveBadge from "./festive/FestiveBadge";
+import { useStoreTheme } from "@/hooks/useStoreTheme";
+
 export default function ProductCard({ product }: { product: Product }) {
   const { addToCart, isInWishlist, toggleWishlist, addToCompare, isInCompare } = useCart();
+  const activeTheme = useStoreTheme();
+  const isVinayaka = activeTheme === "festive";
   const [added, setAdded] = useState(false);
 
   const inWishlist = isInWishlist(product.id);
@@ -36,9 +41,10 @@ export default function ProductCard({ product }: { product: Product }) {
   }
 
   const discount = product.mrp && product.mrp > product.price ? Math.round(100 - (product.price / product.mrp) * 100) : null;
+  const isFestiveDeal = isVinayaka && ((discount && discount >= 10) || product.inStock);
 
   return (
-    <div className="group border border-[#E5E0D7] rounded-xl overflow-hidden bg-white hover:shadow-xl hover:-translate-y-1 hover:border-[#D1121B]/40 transition-all duration-200 flex flex-col relative">
+    <div className={`group border border-[#E5E0D7] rounded-xl overflow-hidden bg-white hover:shadow-xl hover:-translate-y-1 ${isVinayaka ? "hover:border-[#A77A24]/50 festive-card-glow" : "hover:border-[#D1121B]/40"} transition-all duration-200 flex flex-col relative`}>
       {/* Top action buttons */}
       <div className="absolute top-2 right-2 z-10 flex flex-col gap-1.5 opacity-90 group-hover:opacity-100 transition-opacity">
         <button
@@ -69,11 +75,16 @@ export default function ProductCard({ product }: { product: Product }) {
       </div>
 
       <Link href={`/product/${product.id}`} className="block relative overflow-hidden bg-[#FAF7F2] p-4">
-        {discount && (
-          <span className="absolute top-2 left-2 z-10 bg-[#D1121B] text-white text-[10px] font-extrabold uppercase px-2 py-0.5 rounded shadow-xs tracking-wider">
-            -{discount}% OFF
-          </span>
-        )}
+        <div className="absolute top-2 left-2 z-10 flex flex-col items-start gap-1">
+          {discount && (
+            <span className={`${isVinayaka ? "bg-[#6E0F12] text-[#FFF6E3] border border-[#A77A24]" : "bg-[#D1121B] text-white"} text-[10px] font-extrabold uppercase px-2 py-0.5 rounded shadow-xs tracking-wider`}>
+              -{discount}% OFF
+            </span>
+          )}
+          {isVinayaka && isFestiveDeal && discount && discount > 12 && (
+            <FestiveBadge label="VINAYAKA SPECIAL" />
+          )}
+        </div>
         <ProductImage categorySlug={product.categorySlug} productId={product.id} imageUrl={product.imageUrl} className="w-full aspect-square transition-transform duration-300 group-hover:scale-108" />
       </Link>
 

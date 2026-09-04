@@ -16,6 +16,8 @@ import {
   STANDARD_THEME_MEDIA,
   HomePageMediaState,
 } from "@/data/homeMedia";
+import FestiveDivider from "@/components/festive/FestiveDivider";
+import DiyaDecoration from "@/components/festive/DiyaDecoration";
 
 // Vinayaka Festive Picks (6 Featured Products)
 const festivePicks = [
@@ -263,9 +265,23 @@ export default function Home() {
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 py-4 sm:py-6 space-y-10 sm:space-y-14">
         
         {/* 01. HERO SECTION (70% Left + 30% Stacked Right) */}
-        <section aria-label="Festive Hero Showcase">
+        <section aria-label="Festive Hero Showcase" className="relative">
+          {activeTheme === "festive" && (
+            <>
+              <div className="hidden sm:block absolute -top-3 -left-3 z-20">
+                <DiyaDecoration size="md" />
+              </div>
+              <div className="hidden sm:block absolute -top-3 -right-3 z-20">
+                <DiyaDecoration size="md" />
+              </div>
+            </>
+          )}
           <HeroCarousel />
         </section>
+
+        {activeTheme === "festive" && (
+          <FestiveDivider title="Vinayaka Festive Hardware Edition" subtitle="Curated PC Components & Rigs" />
+        )}
 
         {/* 02. BUILD DIFFERENT PC & CABINET BANNER (Dynamic Home Media) */}
         <section aria-label="Build Different Custom PC Banner" className="w-full">
