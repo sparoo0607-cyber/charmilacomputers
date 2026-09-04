@@ -236,6 +236,10 @@ function ProductModal({
   onClose: () => void;
   onSubmit: (data: Omit<Product, "id">) => void;
 }) {
+  const initialImages = product?.images && product.images.length > 0 
+    ? product.images 
+    : (product?.imageUrl ? [product.imageUrl] : []);
+
   const [form, setForm] = useState(
     product
       ? {
@@ -248,10 +252,49 @@ function ProductModal({
           wattage: product.wattage ? String(product.wattage) : "",
           stockQty: String(product.stockQty),
           inStock: product.inStock,
-          imageUrl: product.imageUrl || "",
         }
       : emptyForm
   );
+
+  const [images, setImages] = useState<string[]>(initialImages);
+  const [urlInput, setUrlInput] = useState("");
+
+  function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    Array.from(files).forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const result = event.target?.result as string;
+        if (result) {
+          setImages((prev) => [...prev, result]);
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+
+    e.target.value = "";
+  }
+
+  function handleAddUrl() {
+    if (!urlInput.trim()) return;
+    setImages((prev) => [...prev, urlInput.trim()]);
+    setUrlInput("");
+  }
+
+  function handleRemoveImage(index: number) {
+    setImages((prev) => prev.filter((_, i) => i !== index));
+  }
+
+  function handleMakePrimary(index: number) {
+    if (index === 0) return;
+    setImages((prev) => {
+      const item = prev[index];
+      const rest = prev.filter((_, i) => i !== index);
+      return [item, ...rest];
+    });
+  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -265,7 +308,8 @@ function ProductModal({
       wattage: form.wattage ? Number(form.wattage) : undefined,
       stockQty: Number(form.stockQty) || 0,
       inStock: form.inStock,
-      imageUrl: form.imageUrl.trim() || undefined,
+      imageUrl: images[0] || undefined,
+      images: images.length > 0 ? images : undefined,
       rating: product?.rating,
       reviewsCount: product?.reviewsCount,
       specs: product?.specs,
@@ -287,7 +331,7 @@ function ProductModal({
           </button>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-1">
           <Field label="Product Name" required>
             <input
               required
@@ -385,20 +429,95 @@ function ProductModal({
             </label>
           </div>
 
-          <Field label="Image URL">
-            <input
-              value={form.imageUrl}
-              onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
-              className="w-full border border-[#E5E0D7] rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-[#D1121B]"
-              placeholder="https://<project>.supabase.co/storage/v1/object/public/product-images/..."
-            />
-            <p className="text-[11px] text-zinc-400 mt-1">
-              Upload the photo to Supabase Storage (bucket <code className="font-mono">product-images</code>) and paste its public URL here. Leave blank to use the category&apos;s default placeholder image.
-            </p>
-          </Field>
+          {/* Product Media & Multiple Images Manager */}
+          <div className="pt-2 border-t border-zinc-100 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-zinc-700 uppercase tracking-wide">
+                Product Media &amp; Photos ({images.length})
+              </span>
+              <label
+                htmlFor="product-images-upload"
+                className="cursor-pointer bg-[#1B1B1B] hover:bg-[#D1121B] text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 shadow-xs"
+              >
+                <span>📁 Upload Photos</span>
+                <input
+                  id="product-images-upload"
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleFileUpload}
+                  className="hidden"
+                />
+              </label>
+            </div>
+
+            {/* Optional URL Adder Input */}
+            <div className="flex gap-2">
+              <input
+                type="url"
+                value={urlInput}
+                onChange={(e) => setUrlInput(e.target.value)}
+                placeholder="Or paste image URL here…"
+                className="flex-1 border border-[#E5E0D7] rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:border-[#D1121B]"
+              />
+              <button
+                type="button"
+                onClick={handleAddUrl}
+                className="bg-zinc-100 hover:bg-zinc-200 text-zinc-700 font-bold text-xs px-3 py-1.5 rounded-xl transition-colors"
+              >
+                + Add URL
+              </button>
+            </div>
+
+            {/* Thumbnail Preview Grid */}
+            {images.length > 0 ? (
+              <div className="grid grid-cols-4 gap-2.5 pt-1">
+                {images.map((img, idx) => (
+                  <div
+                    key={idx}
+                    className={`relative group aspect-square rounded-xl overflow-hidden border-2 bg-zinc-50 flex items-center justify-center ${
+                      idx === 0 ? "border-[#D1121B] ring-2 ring-red-500/20" : "border-zinc-200"
+                    }`}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={img} alt={`Product ${idx + 1}`} className="w-full h-full object-contain p-1" />
+
+                    {/* Primary Badge */}
+                    {idx === 0 ? (
+                      <span className="absolute top-1 left-1 bg-[#D1121B] text-white text-[9px] font-black px-1.5 py-0.5 rounded shadow-xs uppercase">
+                        ★ Main
+                      </span>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => handleMakePrimary(idx)}
+                        className="absolute top-1 left-1 opacity-0 group-hover:opacity-100 bg-black/70 hover:bg-[#D1121B] text-white text-[9px] font-bold px-1.5 py-0.5 rounded transition-all"
+                      >
+                        Set Main
+                      </button>
+                    )}
+
+                    {/* Delete Button */}
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveImage(idx)}
+                      className="absolute top-1 right-1 bg-red-600 hover:bg-red-700 text-white w-5 h-5 rounded-full grid place-items-center opacity-80 group-hover:opacity-100 transition-opacity shadow-sm"
+                      title="Remove image"
+                    >
+                      <CloseIcon className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-xs text-zinc-400 italic bg-zinc-50 p-3 rounded-xl border border-dashed border-zinc-200 text-center">
+                No custom photos uploaded yet. Category placeholder will be used by default.
+              </p>
+            )}
+          </div>
         </div>
 
-        <div className="flex gap-3 mt-7">
+        <div className="flex gap-3 mt-6 pt-3 border-t border-zinc-100">
           <button
             type="button"
             onClick={onClose}
@@ -408,7 +527,7 @@ function ProductModal({
           </button>
           <button
             type="submit"
-            className="flex-1 bg-[#D1121B] hover:bg-[#7A1118] text-white font-bold text-sm py-2.5 rounded-xl transition-colors"
+            className="flex-1 bg-[#D1121B] hover:bg-[#7A1118] text-white font-bold text-sm py-2.5 rounded-xl transition-colors shadow-sm"
           >
             {mode === "add" ? "Add Product" : "Save Changes"}
           </button>

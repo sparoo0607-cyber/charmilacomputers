@@ -38,6 +38,7 @@ export interface Product {
   features?: string[];
   reviews?: ProductReview[];
   imageUrl?: string;
+  images?: string[];
 }
 
 export interface Address {

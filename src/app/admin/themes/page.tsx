@@ -166,7 +166,7 @@ export default function ThemesPage() {
           <div className="flex items-center gap-2 bg-zinc-100 p-1.5 rounded-xl text-xs font-bold shrink-0">
             <span className="text-zinc-500 pl-2">Active:</span>
             <span className="bg-[#1B1B1B] text-white px-3 py-1 rounded-lg uppercase tracking-wider text-[11px]">
-              {currentTheme === "festive" ? "Festive Theme" : "Standard Theme"}
+              {THEMES.find((t) => t.id === currentTheme)?.name || currentTheme}
             </span>
           </div>
         </div>

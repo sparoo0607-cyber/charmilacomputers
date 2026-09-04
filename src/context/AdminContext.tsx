@@ -165,6 +165,9 @@ function mapProductRow(row: ProductRow): Product {
     specs: row.specs ?? undefined,
     features: row.features ?? undefined,
     imageUrl: row.image_url ?? undefined,
+    images: Array.isArray((row as unknown as { images?: string[] }).images)
+      ? (row as unknown as { images?: string[] }).images
+      : (row.image_url ? [row.image_url] : undefined),
   };
 }
 
@@ -630,11 +633,12 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
       setSettings((prev) => {
         const next = { ...prev, ...patch };
 
+        const dbTheme = next.activeTheme.startsWith("dussara-d") ? "festive" : next.activeTheme;
         supabase
           .from("store_settings")
           .upsert({
             id: "default",
-            active_theme: next.activeTheme,
+            active_theme: dbTheme,
             store_name: next.storeName,
             support_email: next.supportEmail,
             support_phone: next.supportPhone,

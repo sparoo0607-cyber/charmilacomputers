@@ -14,6 +14,8 @@ import {
 } from "./icons";
 import { useStoreTheme } from "@/hooks/useStoreTheme";
 
+import { isFestiveTheme } from "@/lib/theme";
+
 const trendingSearches = [
   "RTX 5060 Ti",
   "Ryzen 7 5700X",
@@ -40,7 +42,7 @@ export default function Header() {
   // gate rendered the header in standard styling on first paint and then
   // snapped it to festive after hydration, which is the refresh flash.
   const activeTheme = useStoreTheme();
-  const isFestive = activeTheme === "festive";
+  const isFestive = isFestiveTheme(activeTheme);
 
   const router = useRouter();
   const [query, setQuery] = useState("");

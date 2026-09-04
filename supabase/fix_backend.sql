@@ -39,7 +39,7 @@ alter table public.store_settings
 
 alter table public.store_settings
   add constraint store_settings_active_theme_check
-  check (active_theme in ('festive', 'standard'));
+  check (active_theme in ('festive', 'standard') or active_theme like 'dussara-d%');
 
 -- Guarantee the singleton row exists.
 insert into public.store_settings (id, active_theme)

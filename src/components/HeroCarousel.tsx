@@ -75,7 +75,7 @@ function parseBanner(b: Partial<BannerData> | Partial<BannerRow> | undefined, fa
   };
 }
 
-import { ThemeId } from "@/lib/theme";
+import { ThemeId, isFestiveTheme } from "@/lib/theme";
 
 function fallbackForTheme(theme: ThemeId) {
   return getThemeMedia(theme).hero;
@@ -85,6 +85,7 @@ export default function HeroCarousel() {
   // Seeded from the server-resolved theme, so SSR and first client render agree
   // — no festive→standard banner swap on refresh.
   const activeTheme = useStoreTheme();
+  const isFestive = isFestiveTheme(activeTheme);
   const themeFallback = fallbackForTheme(activeTheme);
   const [banners, setBanners] = useState<Record<string, BannerData | BannerRow>>(themeFallback);
 
@@ -156,11 +157,11 @@ export default function HeroCarousel() {
               
               {/* Badge */}
               <div className={`inline-flex items-center gap-1.5 text-[9px] sm:text-xs font-black uppercase px-3 py-1 rounded-full shadow-md tracking-wider backdrop-blur-xs ${
-                activeTheme === "festive"
+                isFestive
                   ? "bg-[#D1121B]/90 text-[#FFE58F] border border-[#C89B3C]/60"
                   : "bg-[#D1121B]/90 text-white border border-[#D1121B]/60"
               }`}>
-                <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${activeTheme === "festive" ? "bg-[#FFE58F]" : "bg-white"}`} />
+                <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${isFestive ? "bg-[#FFE58F]" : "bg-white"}`} />
                 <span>{main.badgeText}</span>
               </div>
 
@@ -168,7 +169,7 @@ export default function HeroCarousel() {
               <h1 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-black tracking-tight text-white uppercase leading-[1.08] font-serif drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
                 {main.titleLine1} <br className="hidden sm:inline" />
                 <span className={
-                  activeTheme === "festive"
+                  isFestive
                     ? "bg-gradient-to-r from-[#FFE58F] via-[#FFD700] to-[#FFA726] bg-clip-text text-transparent"
                     : "bg-gradient-to-r from-[#FF4D4D] via-[#D1121B] to-[#FF8080] bg-clip-text text-transparent"
                 }>
@@ -194,7 +195,7 @@ export default function HeroCarousel() {
                   <Link
                     href={main.button2Link || "/build-your-pc"}
                     className={
-                      activeTheme === "festive"
+                      isFestive
                         ? "bg-black/60 hover:bg-black/80 backdrop-blur-md text-[#FFE58F] hover:text-white border border-[#C89B3C]/70 font-extrabold text-xs sm:text-sm px-5 py-2.5 sm:py-3 rounded-lg transition-all duration-200 hover:scale-105 uppercase tracking-wider hidden sm:inline-flex items-center gap-1.5 shadow-md"
                         : "bg-transparent hover:bg-white/10 text-white border border-white/70 hover:border-white font-extrabold text-xs sm:text-sm px-5 py-2.5 sm:py-3 rounded-lg transition-all duration-200 hover:scale-105 uppercase tracking-wider hidden sm:inline-flex items-center gap-1.5 shadow-md"
                     }
@@ -228,17 +229,17 @@ export default function HeroCarousel() {
             <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/55 to-transparent flex items-center">
               <div className="p-3.5 sm:p-5 text-white max-w-[75%] space-y-1 sm:space-y-2">
                 <div className={`inline-flex items-center gap-1.5 text-[8px] sm:text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full backdrop-blur-xs ${
-                  activeTheme === "festive"
+                  isFestive
                     ? "bg-amber-500/20 text-amber-300 border border-amber-400/50"
                     : "bg-red-500/20 text-red-200 border border-red-500/40"
                 }`}>
-                  <span className={`w-1 h-1 rounded-full ${activeTheme === "festive" ? "bg-amber-300" : "bg-red-400"}`} />
+                  <span className={`w-1 h-1 rounded-full ${isFestive ? "bg-amber-300" : "bg-red-400"}`} />
                   <span>{gaming.badgeText}</span>
                 </div>
                 <h3 className="text-sm sm:text-base md:text-lg lg:text-xl font-extrabold text-white uppercase leading-tight font-serif drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
                   {gaming.titleLine1} <br />
                   <span className={
-                    activeTheme === "festive"
+                    isFestive
                       ? "bg-gradient-to-r from-[#FFE58F] to-[#FFD700] bg-clip-text text-transparent"
                       : "bg-gradient-to-r from-[#FF4D4D] via-[#D1121B] to-[#FF8080] bg-clip-text text-transparent"
                   }>{gaming.titleLine2}</span>
@@ -248,7 +249,7 @@ export default function HeroCarousel() {
                 </p>
                 <div className="pt-1">
                   <span className={`inline-flex items-center gap-1 text-[9px] sm:text-[11px] font-bold group-hover:text-white group-hover:translate-x-1 transition-all uppercase tracking-wider ${
-                    activeTheme === "festive" ? "text-amber-300" : "text-red-300"
+                    isFestive ? "text-amber-300" : "text-red-300"
                   }`}>
                     <span>{gaming.buttonText}</span>
                     <span>→</span>
@@ -275,18 +276,18 @@ export default function HeroCarousel() {
             <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/55 to-transparent flex items-center">
               <div className="p-3.5 sm:p-5 text-white max-w-[75%] space-y-1 sm:space-y-2">
                 <div className={`inline-flex items-center gap-1.5 text-[8px] sm:text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full backdrop-blur-xs ${
-                  activeTheme === "festive"
+                  isFestive
                     ? "bg-amber-500/20 text-amber-300 border border-amber-400/50"
                     : "bg-red-500/20 text-red-200 border border-red-500/40"
                 }`}>
-                  <span className={`w-1 h-1 rounded-full ${activeTheme === "festive" ? "bg-amber-300" : "bg-red-400"}`} />
+                  <span className={`w-1 h-1 rounded-full ${isFestive ? "bg-amber-300" : "bg-red-400"}`} />
                   <span>{builder.badgeText}</span>
                 </div>
                 <h3 className="text-sm sm:text-base md:text-lg lg:text-xl font-extrabold uppercase leading-tight font-serif drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
                   <span className="text-white">{builder.titleLine1} </span>
                   <br />
                   <span className={
-                    activeTheme === "festive"
+                    isFestive
                       ? "bg-gradient-to-r from-[#FFE58F] via-[#FFD700] to-[#FFA726] bg-clip-text text-transparent"
                       : "bg-gradient-to-r from-[#FF4D4D] via-[#D1121B] to-[#FF8080] bg-clip-text text-transparent"
                   }>{builder.titleLine2}</span>
@@ -296,7 +297,7 @@ export default function HeroCarousel() {
                 </p>
                 <div className="pt-1">
                   <span className={`inline-flex items-center gap-1 text-[9px] sm:text-[11px] font-extrabold bg-[#D1121B] hover:bg-[#B81017] px-3 py-1 rounded-md transition-all shadow-md uppercase tracking-wider ${
-                    activeTheme === "festive" ? "text-[#FFE58F]" : "text-white"
+                    isFestive ? "text-[#FFE58F]" : "text-white"
                   }`}>
                     <span>{builder.buttonText}</span>
                     <span>›</span>

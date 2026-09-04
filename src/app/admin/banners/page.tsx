@@ -134,31 +134,28 @@ export default function BannerEditorPage() {
       </div>
 
       {/* Theme Selector Strip */}
-      <div className="flex items-center justify-between bg-zinc-100 p-2 rounded-xl border border-zinc-200 text-xs">
-        <span className="font-bold text-zinc-600 pl-2">Editing Banners &amp; Images For:</span>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-zinc-100 p-3 rounded-xl border border-zinc-200 text-xs">
+        <span className="font-bold text-zinc-700 pl-1">Editing Banners &amp; Images For:</span>
         <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setSelectedTheme("festive")}
-            className={`px-3.5 py-1.5 rounded-lg font-extrabold transition-all ${
-              selectedTheme === "festive"
-                ? "bg-[#D1121B] text-white shadow-sm"
-                : "bg-white text-zinc-700 hover:bg-zinc-50 border border-zinc-200"
-            }`}
+          <select
+            value={selectedTheme}
+            onChange={(e) => setSelectedTheme(e.target.value as ThemeId)}
+            className="bg-white border border-zinc-300 font-extrabold text-zinc-800 px-3 py-1.5 rounded-lg text-xs shadow-xs focus:ring-2 focus:ring-red-500 focus:outline-none"
           >
-            🏮 Vinayaka Festive Theme {activeStoreTheme === "festive" && "(Active Store)"}
-          </button>
-          <button
-            type="button"
-            onClick={() => setSelectedTheme("standard")}
-            className={`px-3.5 py-1.5 rounded-lg font-extrabold transition-all ${
-              selectedTheme === "standard"
-                ? "bg-blue-600 text-white shadow-sm"
-                : "bg-white text-zinc-700 hover:bg-zinc-50 border border-zinc-200"
-            }`}
-          >
-            💻 Standard Corporate Theme {activeStoreTheme === "standard" && "(Active Store)"}
-          </button>
+            <option value="standard">💻 Standard Corporate Theme {activeStoreTheme === "standard" ? "★ (Active Store)" : ""}</option>
+            <option value="festive">🏮 Vinayaka Festive Theme {activeStoreTheme === "festive" ? "★ (Active Store)" : ""}</option>
+            <optgroup label="🪔 Dussara Navratri Themes">
+              <option value="dussara-d1">Day 1 - Sri Shailaputri Devi {activeStoreTheme === "dussara-d1" ? "★ (Active Store)" : ""}</option>
+              <option value="dussara-d2">Day 2 - Sri Brahmacharini Devi {activeStoreTheme === "dussara-d2" ? "★ (Active Store)" : ""}</option>
+              <option value="dussara-d3">Day 3 - Sri Chandraghanta Devi {activeStoreTheme === "dussara-d3" ? "★ (Active Store)" : ""}</option>
+              <option value="dussara-d4">Day 4 - Sri Kushmanda Devi {activeStoreTheme === "dussara-d4" ? "★ (Active Store)" : ""}</option>
+              <option value="dussara-d5">Day 5 - Sri Skandamata Devi {activeStoreTheme === "dussara-d5" ? "★ (Active Store)" : ""}</option>
+              <option value="dussara-d6">Day 6 - Sri Katyayani Devi {activeStoreTheme === "dussara-d6" ? "★ (Active Store)" : ""}</option>
+              <option value="dussara-d7">Day 7 - Sri Kalaratri Devi {activeStoreTheme === "dussara-d7" ? "★ (Active Store)" : ""}</option>
+              <option value="dussara-d8">Day 8 - Sri Mahagauri Devi {activeStoreTheme === "dussara-d8" ? "★ (Active Store)" : ""}</option>
+              <option value="dussara-d9">Day 9 - Sri Siddhidatri Devi (Vijaya Dasami) {activeStoreTheme === "dussara-d9" ? "★ (Active Store)" : ""}</option>
+            </optgroup>
+          </select>
         </div>
       </div>
 

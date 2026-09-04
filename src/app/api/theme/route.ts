@@ -4,7 +4,7 @@ import path from "path";
 import { getThemeMedia, HomePageMediaState } from "@/data/homeMedia";
 import { supabase } from "@/lib/supabase/client";
 import { supabaseAdmin } from "@/lib/supabase/admin";
-import { normalizeTheme, type ThemeId } from "@/lib/theme";
+import { normalizeTheme, isThemeId, type ThemeId } from "@/lib/theme";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -61,12 +61,18 @@ export async function GET() {
   const localState = getLocalThemeState();
 
   // Supabase store_settings is the single source of truth for the active theme.
-  // The local file is only consulted if Supabase is unreachable.
+  // Note: Database check constraint maps dussara themes to 'festive' in DB,
+  // so we check localState to preserve exact dussara day variant when DB holds 'festive'.
   const supabaseTheme = await readThemeFromSupabase();
-  const activeTheme: ThemeId = supabaseTheme ?? localState?.activeTheme ?? "standard";
+  let activeTheme: ThemeId = localState?.activeTheme ?? supabaseTheme ?? "standard";
+  if (supabaseTheme === "standard") {
+    activeTheme = "standard";
+  } else if (supabaseTheme && isThemeId(supabaseTheme) && supabaseTheme !== "festive") {
+    activeTheme = supabaseTheme;
+  }
 
   const defaultMedia = getThemeMedia(activeTheme);
-  const customMedia = activeTheme === "standard" ? localState?.standardMedia : localState?.festiveMedia;
+  const customMedia = activeTheme === "standard" ? localState?.standardMedia : (activeTheme === "festive" ? localState?.festiveMedia : undefined);
   const media = customMedia ? { ...defaultMedia, ...customMedia } : defaultMedia;
 
   return NextResponse.json({
@@ -91,7 +97,7 @@ export async function POST(req: Request) {
     if (customMedia) {
       if (theme === "standard") {
         state.standardMedia = customMedia;
-      } else {
+      } else if (theme === "festive") {
         state.festiveMedia = customMedia;
       }
     }
@@ -100,12 +106,13 @@ export async function POST(req: Request) {
     saveLocalThemeState(state);
 
     // 2. Persist the active theme to Supabase — the source of truth.
-    //    Prefer the service-role client so this succeeds even with the
-    //    "admins write" RLS policy in place; fall back to the anon client.
+    // DB check constraint on store_settings.active_theme permits 'festive' / 'standard'.
+    // Map dussara-d* to 'festive' for DB compatibility while keeping localState as dussara-d*.
+    const dbTheme = theme.startsWith("dussara-d") ? "festive" : theme;
     const writer = supabaseAdmin ?? supabase;
     const { error: upsertError } = await writer.from("store_settings").upsert({
       id: "default",
-      active_theme: theme,
+      active_theme: dbTheme,
       updated_at: new Date().toISOString(),
     });
     if (upsertError) {
@@ -113,7 +120,7 @@ export async function POST(req: Request) {
     }
 
     const defaultMedia = getThemeMedia(theme);
-    const savedCustomMedia = theme === "standard" ? state.standardMedia : state.festiveMedia;
+    const savedCustomMedia = theme === "standard" ? state.standardMedia : (theme === "festive" ? state.festiveMedia : undefined);
     const media = savedCustomMedia ? { ...defaultMedia, ...savedCustomMedia } : defaultMedia;
 
     return NextResponse.json({

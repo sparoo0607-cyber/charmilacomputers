@@ -37,7 +37,11 @@ export const THEME_IDS: readonly ThemeId[] = [
 export const DEFAULT_THEME: ThemeId = "standard";
 
 export function isThemeId(v: unknown): v is ThemeId {
-  return typeof v === "string" && (v === "festive" || v === "standard" || v.startsWith("dussara-d"));
+  return typeof v === "string" && (THEME_IDS as readonly string[]).includes(v);
+}
+
+export function isFestiveTheme(v: string): boolean {
+  return v === "festive" || v.startsWith("dussara-d");
 }
 
 export function normalizeTheme(v: unknown, fallback: ThemeId = DEFAULT_THEME): ThemeId {

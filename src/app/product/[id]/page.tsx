@@ -6,6 +6,7 @@ import { getCategory } from "@/data/categories";
 import ProductImage from "@/components/ProductImage";
 import ProductCard from "@/components/ProductCard";
 import ProductActions from "./ProductActions";
+import ProductGallery from "./ProductGallery";
 import PageViewTracker from "@/components/PageViewTracker";
 import { StarIcon, ShieldCheckIcon, TruckIcon, BoltIcon, CheckIcon, CheckCircleIcon } from "@/components/icons";
 import { formatINR } from "@/lib/format";
@@ -75,6 +76,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.name,
+    image: product.imageUrl || "/icon.png",
     brand: { "@type": "Brand", name: product.brand },
     sku: product.model,
     description: product.features?.join(". ") || product.name,
@@ -117,51 +119,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
       {/* Main Product Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 bg-white p-6 sm:p-8 rounded-2xl border border-[#E5E0D7] shadow-sm">
         {/* Left Column: Image Gallery Showcase (5 cols) */}
-        <div className="lg:col-span-5 flex flex-col gap-4">
-          <div className="relative bg-[#FAF7F2] rounded-2xl p-8 border border-[#E5E0D7] flex items-center justify-center overflow-hidden group">
-            {product.mrp && product.mrp > product.price && (
-              <span className="absolute top-4 left-4 bg-[#D1121B] text-white text-xs font-black px-2.5 py-1 rounded shadow uppercase tracking-wider">
-                SAVE {Math.round(100 - (product.price / product.mrp) * 100)}%
-              </span>
-            )}
-            <ProductImage
-              categorySlug={product.categorySlug}
-              productId={product.id}
-              imageUrl={product.imageUrl}
-              className="w-full max-w-[340px] aspect-square object-contain transition-transform duration-300 group-hover:scale-105"
-            />
-          </div>
-
-          {/* Thumbnail Strip */}
-          <div className="grid grid-cols-4 gap-3">
-            {[1, 2, 3, 4].map((idx) => (
-              <div
-                key={idx}
-                className={`p-2 bg-[#FAF7F2] rounded-xl border-2 transition-all cursor-pointer ${
-                  idx === 1 ? "border-[#D1121B] shadow-xs" : "border-[#E5E0D7] hover:border-zinc-400 opacity-70 hover:opacity-100"
-                }`}
-              >
-                <ProductImage categorySlug={product.categorySlug} productId={product.id} imageUrl={product.imageUrl} className="w-full aspect-square object-contain" />
-              </div>
-            ))}
-          </div>
-
-          {/* Key Product Assurance Badges */}
-          <div className="grid grid-cols-3 gap-2 pt-4 border-t border-zinc-100 text-center text-[11px] text-zinc-600">
-            <div className="p-2 rounded-lg bg-[#FAF7F2]">
-              <span className="block font-bold text-[#1B1B1B]">100% Genuine</span>
-              <span className="text-[10px] text-zinc-500">Official Brand Seal</span>
-            </div>
-            <div className="p-2 rounded-lg bg-[#FAF7F2]">
-              <span className="block font-bold text-[#1B1B1B]">7 Days</span>
-              <span className="text-[10px] text-zinc-500">Replacement Guarantee</span>
-            </div>
-            <div className="p-2 rounded-lg bg-[#FAF7F2]">
-              <span className="block font-bold text-[#1B1B1B]">GST Invoice</span>
-              <span className="text-[10px] text-zinc-500">Input Tax Credit</span>
-            </div>
-          </div>
-        </div>
+        <ProductGallery product={product} />
 
         {/* Right Column: Title, Pricing & Actions (7 cols) */}
         <div className="lg:col-span-7 flex flex-col">

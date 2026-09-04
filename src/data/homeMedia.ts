@@ -149,7 +149,7 @@ export const VINAYAKA_THEME_MEDIA: HomePageMediaState = {
       desc: "Power your next build",
       festiveAccent: "Flagship Performance",
       startPrice: "₹9,150",
-      image: "/themes/vinayaka/banner-17.png",
+      image: "/images/processors.png",
     },
     {
       id: "comp-motherboards",
@@ -158,7 +158,7 @@ export const VINAYAKA_THEME_MEDIA: HomePageMediaState = {
       desc: "Solid foundation for performance",
       festiveAccent: "DDR5 & PCIe 5.0",
       startPrice: "₹6,600",
-      image: "/themes/vinayaka/banner-26.png",
+      image: "/images/motherboards.png",
     },
     {
       id: "comp-custom-cooling",
@@ -167,7 +167,7 @@ export const VINAYAKA_THEME_MEDIA: HomePageMediaState = {
       desc: "Peak thermal dissipation",
       festiveAccent: "ARGB & 360mm Radiators",
       startPrice: "₹6,499",
-      image: "/themes/vinayaka/banner-25.png",
+      image: "/images/coolers.png",
     },
     {
       id: "comp-cpu-coolers",
@@ -176,7 +176,7 @@ export const VINAYAKA_THEME_MEDIA: HomePageMediaState = {
       desc: "Silent & efficient airflow",
       festiveAccent: "High Static Pressure",
       startPrice: "₹1,650",
-      image: "/themes/vinayaka/banner-24.png",
+      image: "/images/coolers.png",
     },
     {
       id: "comp-graphics-cards",
@@ -185,7 +185,7 @@ export const VINAYAKA_THEME_MEDIA: HomePageMediaState = {
       desc: "Next-gen ray tracing & DLSS",
       festiveAccent: "RTX 50 & 40 Series",
       startPrice: "₹14,500",
-      image: "/themes/vinayaka/banner-23.png",
+      image: "/themes/vinayaka/banner-26.png",
     },
     {
       id: "comp-ram",
@@ -203,7 +203,7 @@ export const VINAYAKA_THEME_MEDIA: HomePageMediaState = {
       desc: "Blazing fast NVMe speeds",
       festiveAccent: "Gen4 & Gen5 Speeds",
       startPrice: "₹1,650",
-      image: "/themes/vinayaka/banner-21.png",
+      image: "/images/ssd.png",
     },
     {
       id: "comp-monitors",
@@ -212,7 +212,7 @@ export const VINAYAKA_THEME_MEDIA: HomePageMediaState = {
       desc: "Ultra-fast refresh rates",
       festiveAccent: "180Hz+ Fast IPS",
       startPrice: "₹6,300",
-      image: "/themes/vinayaka/banner-20.png",
+      image: "/images/monitors.png",
     },
     {
       id: "comp-power-supply",
@@ -230,7 +230,7 @@ export const VINAYAKA_THEME_MEDIA: HomePageMediaState = {
       desc: "Optimized airflow & RGB",
       festiveAccent: "Panoramic Dual-Chamber",
       startPrice: "₹2,650",
-      image: "/themes/vinayaka/banner-18.png",
+      image: "/themes/vinayaka/banner-17.png",
     },
   ],
   gaming: [
@@ -694,7 +694,7 @@ export const DUSSARA_COMPONENTS_MEDIA: CategoryCardMedia[] = [
     desc: "Power your next build",
     festiveAccent: "Dussara Festival Offer",
     startPrice: "₹9,150",
-    image: "/themes/dussara/Products/1.png",
+    image: "/images/processors.png",
   },
   {
     id: "comp-motherboards",
@@ -703,7 +703,7 @@ export const DUSSARA_COMPONENTS_MEDIA: CategoryCardMedia[] = [
     desc: "Solid foundation for performance",
     festiveAccent: "DDR5 & PCIe 5.0",
     startPrice: "₹6,600",
-    image: "/themes/dussara/Products/2.png",
+    image: "/images/motherboards.png",
   },
   {
     id: "comp-custom-cooling",
@@ -712,7 +712,7 @@ export const DUSSARA_COMPONENTS_MEDIA: CategoryCardMedia[] = [
     desc: "Peak thermal dissipation",
     festiveAccent: "ARGB & 360mm Radiators",
     startPrice: "₹6,499",
-    image: "/themes/dussara/Products/3.png",
+    image: "/images/coolers.png",
   },
   {
     id: "comp-cpu-coolers",
@@ -721,7 +721,7 @@ export const DUSSARA_COMPONENTS_MEDIA: CategoryCardMedia[] = [
     desc: "Silent & efficient airflow",
     festiveAccent: "High Static Pressure",
     startPrice: "₹1,650",
-    image: "/themes/dussara/Products/4.png",
+    image: "/images/coolers.png",
   },
   {
     id: "comp-graphics-cards",
@@ -730,7 +730,7 @@ export const DUSSARA_COMPONENTS_MEDIA: CategoryCardMedia[] = [
     desc: "Next-gen ray tracing & DLSS",
     festiveAccent: "RTX 50 & 40 Series",
     startPrice: "₹14,500",
-    image: "/themes/dussara/Products/5.png",
+    image: "/themes/dussara/Products/2.png",
   },
   {
     id: "comp-ram",
@@ -739,7 +739,7 @@ export const DUSSARA_COMPONENTS_MEDIA: CategoryCardMedia[] = [
     desc: "High-speed DDR4 & DDR5",
     festiveAccent: "Up to 6000MHz OC",
     startPrice: "₹1,950",
-    image: "/themes/dussara/Products/6.png",
+    image: "/themes/dussara/Products/14.png",
   },
   {
     id: "comp-ssd",
@@ -748,7 +748,7 @@ export const DUSSARA_COMPONENTS_MEDIA: CategoryCardMedia[] = [
     desc: "Blazing fast NVMe speeds",
     festiveAccent: "Gen4 & Gen5 Speeds",
     startPrice: "₹1,650",
-    image: "/themes/dussara/Products/7.png",
+    image: "/images/ssd.png",
   },
   {
     id: "comp-monitors",
@@ -757,7 +757,7 @@ export const DUSSARA_COMPONENTS_MEDIA: CategoryCardMedia[] = [
     desc: "Ultra-fast refresh rates",
     festiveAccent: "180Hz+ Fast IPS",
     startPrice: "₹6,300",
-    image: "/themes/dussara/Products/8.png",
+    image: "/images/monitors.png",
   },
   {
     id: "comp-power-supply",
@@ -766,7 +766,7 @@ export const DUSSARA_COMPONENTS_MEDIA: CategoryCardMedia[] = [
     desc: "80 Plus Gold certified",
     festiveAccent: "ATX 3.0 Ready",
     startPrice: "₹2,450",
-    image: "/themes/dussara/Products/9.png",
+    image: "/themes/dussara/Products/8.png",
   },
   {
     id: "comp-cabinets",
@@ -775,7 +775,7 @@ export const DUSSARA_COMPONENTS_MEDIA: CategoryCardMedia[] = [
     desc: "Optimized airflow & RGB",
     festiveAccent: "Panoramic Dual-Chamber",
     startPrice: "₹2,650",
-    image: "/themes/dussara/Products/10.png",
+    image: "/themes/dussara/Products/1.png",
   },
 ];
 
@@ -960,6 +960,15 @@ export async function loadHomeMedia(themeOverride?: ThemeId): Promise<HomePageMe
           if (!url) return false;
           if (resolvedTheme === "standard") {
             return !url.includes("/themes/vinayaka/") && !url.includes("/images/festive/") && !url.includes("/themes/dussara/");
+          }
+          if (resolvedTheme.startsWith("dussara-d")) {
+            const dayNum = resolvedTheme.replace("dussara-d", "");
+            if (url.includes("/themes/vinayaka/") || url.includes("/themes/standard/")) return false;
+            if (url.includes("/themes/dussara/D") && !url.includes(`/themes/dussara/D${dayNum}/`)) return false;
+            return true;
+          }
+          if (resolvedTheme === "festive") {
+            return !url.includes("/themes/standard/") && !url.includes("/themes/dussara/");
           }
           return true;
         };

@@ -8,6 +8,7 @@ import PageViewTracker from "@/components/PageViewTracker";
 import { useCart } from "@/context/CartContext";
 import { CheckIcon, HeartIcon, StarIcon, BoltIcon, ChevronRightIcon, TruckIcon, ShieldIcon, HeadsetSupportIcon, CloseIcon } from "@/components/icons";
 import { useStoreTheme } from "@/hooks/useStoreTheme";
+import { isFestiveTheme } from "@/lib/theme";
 import {
   loadHomeMedia,
   getThemeMedia,
@@ -179,6 +180,7 @@ export default function Home() {
   const { addToCart, toast } = useCart();
   // Seeded from the server-resolved theme, so SSR and first client render agree.
   const activeTheme = useStoreTheme();
+  const isFestive = isFestiveTheme(activeTheme);
   const [homeMedia, setHomeMedia] = useState<HomePageMediaState>(() => getThemeMedia(activeTheme));
   const [addedItems, setAddedItems] = useState<{ [key: string]: boolean }>({});
   const [wishlist, setWishlist] = useState<{ [key: string]: boolean }>({});
@@ -272,8 +274,8 @@ export default function Home() {
             className="relative w-full aspect-[1756/896] rounded-2xl overflow-hidden shadow-sm group border border-[#E5E0D7] block bg-[#120B05]"
           >
             <Image
-              src={homeMedia.promos.buildDifferent?.image || (activeTheme === "festive" ? "/themes/vinayaka/banner-30.png" : "/themes/standard/promo-build-different.png")}
-              alt={homeMedia.promos.buildDifferent?.alt || (activeTheme === "festive" ? "Build Different - Festive, Powerful, Yours" : "Precision Engineering - Custom Rig Configurator")}
+              src={homeMedia.promos.buildDifferent?.image || (isFestive ? "/themes/vinayaka/banner-30.png" : "/themes/standard/promo-build-different.png")}
+              alt={homeMedia.promos.buildDifferent?.alt || (isFestive ? "Build Different - Festive, Powerful, Yours" : "Precision Engineering - Custom Rig Configurator")}
               fill
               sizes="(max-width: 1440px) 100vw, 1440px"
               className="object-cover object-center transition-transform duration-700 group-hover:scale-[1.01]"
@@ -283,7 +285,7 @@ export default function Home() {
             {/* Standard-theme typographic overlay — the standard banner art is a
                 clean render with open space on the left, so the headline lives
                 there. Festive art already carries baked-in lettering. */}
-            {activeTheme === "standard" && (
+            {!isFestive && (
               <>
                 <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/35 to-transparent" />
                 <div className="absolute inset-0 flex items-center">
@@ -311,8 +313,8 @@ export default function Home() {
         </section>
 
 
-        {/* 04. VINAYAKA FESTIVE PICKS (Section 13, 14, 15: Clean White Container, 6 Premium Cards) */}
-        <section className="bg-white border border-[#E5E0D7] rounded-2xl shadow-sm overflow-hidden" aria-label="Vinayaka Festive Picks">
+        {/* 04. FESTIVE PICKS (Section 13, 14, 15: Clean White Container, 6 Premium Cards) */}
+        <section className="bg-white border border-[#E5E0D7] rounded-2xl shadow-sm overflow-hidden" aria-label="Festive Picks">
           {/* Section Header with Deep Maroon accent and Golden Badge */}
           <div className="bg-gradient-to-r from-[#4E0B10] via-[#7A1118] to-[#4E0B10] text-white px-5 sm:px-8 py-5 flex flex-col md:flex-row items-center justify-between gap-4 border-b-2 border-[#C89B3C]/50 shadow-inner">
             <div className="flex items-center gap-3.5 sm:gap-4 text-center md:text-left">
@@ -322,22 +324,22 @@ export default function Home() {
               <div>
                 <div className="flex items-center gap-2 justify-center md:justify-start">
                   <h2 className={`text-lg sm:text-2xl font-extrabold tracking-wider uppercase font-serif ${
-                    activeTheme === "festive"
+                    isFestive
                       ? "bg-gradient-to-r from-[#FFF4CC] via-[#FFD700] to-[#FFA726] bg-clip-text text-transparent"
                       : "text-white"
                   }`}>
-                    {activeTheme === "festive" ? "VINAYAKA FESTIVE PICKS" : "FEATURED HARDWARE DEALS"}
+                    {activeTheme.startsWith("dussara-d") ? "DUSSARA FESTIVE PICKS" : (activeTheme === "festive" ? "VINAYAKA FESTIVE PICKS" : "FEATURED HARDWARE DEALS")}
                   </h2>
                   <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded tracking-wider ${
-                    activeTheme === "festive"
+                    isFestive
                       ? "bg-[#D1121B] text-[#FFE58F] border border-[#C89B3C]/50"
                       : "bg-[#D1121B] text-white border border-red-500/50"
                   }`}>
-                    {activeTheme === "festive" ? "FESTIVE SPECIAL" : "BEST SELLER"}
+                    {activeTheme.startsWith("dussara-d") ? "DUSSARA SPECIAL" : (activeTheme === "festive" ? "FESTIVE SPECIAL" : "BEST SELLER")}
                   </span>
                 </div>
                 <p className="text-xs sm:text-sm text-amber-100/90 font-medium">
-                  {activeTheme === "festive" ? "Power up your build with limited-time festive offers on top-rated hardware." : "Enterprise-grade PC hardware handpicked with official manufacturer warranty."}
+                  {isFestive ? "Power up your build with limited-time festive offers on top-rated hardware." : "Enterprise-grade PC hardware handpicked with official manufacturer warranty."}
                 </p>
               </div>
             </div>
@@ -769,20 +771,20 @@ export default function Home() {
               <div className="p-4 sm:p-8 md:p-12 lg:p-14 max-w-xl text-white space-y-2.5 sm:space-y-4">
                 {/* Top Badge */}
                 <div className={`inline-flex items-center gap-1.5 text-[9px] sm:text-xs font-extrabold uppercase px-3 py-1 rounded-full shadow-md tracking-wider ${
-                  activeTheme === "festive"
+                  isFestive
                     ? "bg-gradient-to-r from-[#D1121B] to-[#7A1118] text-[#FFE58F] border border-[#C89B3C]/50"
                     : "bg-gradient-to-r from-[#D1121B] to-[#7A1118] text-white border border-red-500/50"
                 }`}>
-                  <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${activeTheme === "festive" ? "bg-[#FFE58F]" : "bg-white"}`} />
-                  <span>{homeMedia.promos.templeNight?.badge || (activeTheme === "standard" ? "ENTERPRISE HARDWARE SPECIAL" : "VINAYAKA CHAVITHI MEGA FEST")}</span>
+                  <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${isFestive ? "bg-[#FFE58F]" : "bg-white"}`} />
+                  <span>{homeMedia.promos.templeNight?.badge || (activeTheme === "standard" ? "ENTERPRISE HARDWARE SPECIAL" : "FESTIVE MEGA FEST")}</span>
                 </div>
 
                 {/* Main Headline */}
                 <h2 className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight leading-tight uppercase font-serif">
                   <span className="block text-white">{homeMedia.promos.templeNight?.titleLine1 || (activeTheme === "standard" ? "ULTRA PERFORMANCE" : "IGNITE YOUR")}</span>
                   <span className={
-                    activeTheme === "festive"
-                      ? "bg-gradient-to-r from-[#FFE58F] via-[#FFD700] to-[#FFA726] bg-clip-text text-transparent drop-shadow-md"
+                    isFestive
+                      ? "bg-gradient-to-r from-[#FFF4CC] via-[#FFD700] to-[#FFA726] bg-clip-text text-transparent drop-shadow-md"
                       : "bg-gradient-to-r from-[#FF4D4D] via-[#D1121B] to-[#FF8080] bg-clip-text text-transparent drop-shadow-md"
                   }>
                     {homeMedia.promos.templeNight?.titleLine2 || (activeTheme === "standard" ? "WORKSTATIONS" : "GAMING DREAMS")}
@@ -796,15 +798,15 @@ export default function Home() {
 
                 {/* Offer Feature Badges */}
                 <div className={`flex flex-wrap gap-2 pt-0.5 sm:pt-1 text-[9px] sm:text-[11px] font-semibold ${
-                  activeTheme === "festive" ? "text-amber-200" : "text-red-200"
+                  isFestive ? "text-amber-200" : "text-red-200"
                 }`}>
-                  <span className={`bg-black/50 backdrop-blur-xs px-2.5 py-1 rounded border ${activeTheme === "festive" ? "border-amber-500/30" : "border-red-500/30"}`}>
+                  <span className={`bg-black/50 backdrop-blur-xs px-2.5 py-1 rounded border ${isFestive ? "border-amber-500/30" : "border-red-500/30"}`}>
                     ✓ 0% Easy EMI
                   </span>
-                  <span className={`bg-black/50 backdrop-blur-xs px-2.5 py-1 rounded border ${activeTheme === "festive" ? "border-amber-500/30" : "border-red-500/30"}`}>
+                  <span className={`bg-black/50 backdrop-blur-xs px-2.5 py-1 rounded border ${isFestive ? "border-amber-500/30" : "border-red-500/30"}`}>
                     ✓ 3-Yr Warranty
                   </span>
-                  <span className={`bg-black/50 backdrop-blur-xs px-2.5 py-1 rounded border ${activeTheme === "festive" ? "border-amber-500/30" : "border-red-500/30"}`}>
+                  <span className={`bg-black/50 backdrop-blur-xs px-2.5 py-1 rounded border ${isFestive ? "border-amber-500/30" : "border-red-500/30"}`}>
                     ✓ Free Pan-India Delivery
                   </span>
                 </div>
