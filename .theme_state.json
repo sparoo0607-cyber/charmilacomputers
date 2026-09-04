@@ -1,7 +1,293 @@
 {
-  "activeTheme": "standard",
-  "updatedAt": "2026-09-04T09:56:05.734Z",
-  "festiveMedia": {},
+  "activeTheme": "dussara-d6",
+  "updatedAt": "2026-09-04T10:04:29.613Z",
+  "festiveMedia": {
+    "hero": {
+      "main": {
+        "id": "main",
+        "imageSrc": "/themes/vinayaka/banner-33.png",
+        "badgeText": "VINAYAKA CHAVITHI SALE · UP TO 40% OFF",
+        "titleLine1": "ELEVATE YOUR",
+        "titleLine2": "SETUP TODAY",
+        "subtitle": "Next-gen processors, RTX 50 GPUs & custom liquid-cooled rigs at unbeatable festive prices.",
+        "buttonText": "Explore Offers",
+        "buttonLink": "/offers",
+        "button2Text": "Build Your PC",
+        "button2Link": "/build-your-pc"
+      },
+      "gaming": {
+        "id": "gaming",
+        "imageSrc": "/themes/vinayaka/banner-32.png",
+        "badgeText": "GAMING FEST · UP TO 45% OFF",
+        "titleLine1": "PRO GAMING",
+        "titleLine2": "GEAR",
+        "subtitle": "Keyboards, mice & RGB headsets",
+        "buttonText": "Shop Gear",
+        "buttonLink": "/category/gaming"
+      },
+      "builder": {
+        "id": "builder",
+        "imageSrc": "/themes/vinayaka/banner-31.png",
+        "badgeText": "PC BUILDER DEALS",
+        "titleLine1": "SAVE MORE",
+        "titleLine2": "BUILD MORE",
+        "subtitle": "Motherboards, RAM & Fast SSDs",
+        "buttonText": "Start Building",
+        "buttonLink": "/build-your-pc"
+      }
+    },
+    "promos": {
+      "buildDifferent": {
+        "id": "buildDifferent",
+        "image": "/themes/vinayaka/banner-30.png",
+        "alt": "Build Different - Festive, Powerful, Yours",
+        "link": "/build-your-pc"
+      },
+      "templeNight": {
+        "id": "templeNight",
+        "image": "/themes/vinayaka/banner-16.png",
+        "alt": "Vinayaka Chavithi Mega Fest - Ignite Your Gaming Dreams",
+        "link": "/category/gaming",
+        "badge": "VINAYAKA CHAVITHI MEGA FEST",
+        "titleLine1": "IGNITE YOUR",
+        "titleLine2": "GAMING DREAMS",
+        "subtitle": "Unleash unmatched performance with Custom High-End Gaming Rigs, RTX 50-Series Graphics Cards & Liquid Cooled Beast Setups.",
+        "buttonText": "Shop Gaming Deals",
+        "buttonLink": "/category/gaming",
+        "button2Text": "Build Custom PC",
+        "button2Link": "/build-your-pc"
+      }
+    },
+    "flagship": {
+      "id": "flagshipGpu",
+      "badge": "FLAGSHIP BEAST",
+      "brand": "MSI",
+      "series": "MSI SUPRIM X SERIES",
+      "name": "MSI GeForce RTX 4090 SUPRIM X 24G",
+      "specs": "24GB GDDR6X • TRI FROZR 3S Cooling • DLSS 3.5 • Dual BIOS",
+      "price": 199999,
+      "mrp": 220000,
+      "discount": 9,
+      "image": "/images/graphics-cards.png",
+      "link": "/product/gpu-suprim"
+    },
+    "components": [
+      {
+        "id": "comp-processors",
+        "slug": "processors",
+        "name": "PROCESSORS",
+        "desc": "Power your next build",
+        "festiveAccent": "Flagship Performance",
+        "startPrice": "₹9,150",
+        "image": "/themes/vinayaka/banner-29.png"
+      },
+      {
+        "id": "comp-motherboards",
+        "slug": "motherboards",
+        "name": "MOTHERBOARDS",
+        "desc": "Solid foundation for performance",
+        "festiveAccent": "DDR5 & PCIe 5.0",
+        "startPrice": "₹6,600",
+        "image": "/themes/vinayaka/banner-26.png"
+      },
+      {
+        "id": "comp-custom-cooling",
+        "slug": "coolers",
+        "name": "CUSTOM COOLING",
+        "desc": "Peak thermal dissipation",
+        "festiveAccent": "ARGB & 360mm Radiators",
+        "startPrice": "₹6,499",
+        "image": "/themes/vinayaka/banner-25.png"
+      },
+      {
+        "id": "comp-cpu-coolers",
+        "slug": "coolers",
+        "name": "CPU COOLERS",
+        "desc": "Silent & efficient airflow",
+        "festiveAccent": "High Static Pressure",
+        "startPrice": "₹1,650",
+        "image": "/themes/vinayaka/banner-24.png"
+      },
+      {
+        "id": "comp-graphics-cards",
+        "slug": "graphics-cards",
+        "name": "GRAPHICS CARDS",
+        "desc": "Next-gen ray tracing & DLSS",
+        "festiveAccent": "RTX 50 & 40 Series",
+        "startPrice": "₹14,500",
+        "image": "/themes/vinayaka/banner-23.png"
+      },
+      {
+        "id": "comp-ram",
+        "slug": "memory",
+        "name": "RAM (MEMORY)",
+        "desc": "High-speed DDR4 & DDR5",
+        "festiveAccent": "Up to 6000MHz OC",
+        "startPrice": "₹1,950",
+        "image": "/themes/vinayaka/banner-22.png"
+      },
+      {
+        "id": "comp-ssd",
+        "slug": "ssd",
+        "name": "SSD STORAGE",
+        "desc": "Blazing fast NVMe speeds",
+        "festiveAccent": "Gen4 & Gen5 Speeds",
+        "startPrice": "₹1,650",
+        "image": "/themes/vinayaka/banner-21.png"
+      },
+      {
+        "id": "comp-monitors",
+        "slug": "monitors",
+        "name": "GAMING MONITORS",
+        "desc": "Ultra-fast refresh rates",
+        "festiveAccent": "180Hz+ Fast IPS",
+        "startPrice": "₹6,300",
+        "image": "/themes/vinayaka/banner-20.png"
+      },
+      {
+        "id": "comp-power-supply",
+        "slug": "power-supply",
+        "name": "POWER SUPPLIES",
+        "desc": "80 Plus Gold certified",
+        "festiveAccent": "ATX 3.0 Ready",
+        "startPrice": "₹2,450",
+        "image": "/themes/vinayaka/banner-19.png"
+      },
+      {
+        "id": "comp-cabinets",
+        "slug": "cabinets",
+        "name": "PC CABINETS",
+        "desc": "Optimized airflow & RGB",
+        "festiveAccent": "Panoramic Dual-Chamber",
+        "startPrice": "₹2,650",
+        "image": "/themes/vinayaka/banner-17.png"
+      }
+    ],
+    "gaming": [
+      {
+        "id": "game-keyboards",
+        "slug": "keyboards",
+        "name": "GAMING KEYBOARDS",
+        "desc": "Mechanical switches & RGB",
+        "startPrice": "₹550",
+        "image": "/themes/vinayaka/banner-15.png"
+      },
+      {
+        "id": "game-mice",
+        "slug": "mice",
+        "name": "GAMING MICE",
+        "desc": "High-DPI precision optical sensors",
+        "startPrice": "₹350",
+        "image": "/themes/vinayaka/banner-14.png"
+      },
+      {
+        "id": "game-headsets",
+        "slug": "headsets",
+        "name": "GAMING HEADSETS",
+        "desc": "7.1 Surround & noise isolation",
+        "startPrice": "₹899",
+        "image": "/themes/vinayaka/banner-13.png"
+      },
+      {
+        "id": "game-mousepads",
+        "slug": "accessories",
+        "name": "RGB MOUSEPADS",
+        "desc": "Micro-woven smooth glide",
+        "startPrice": "₹399",
+        "image": "/themes/vinayaka/banner-12.png"
+      },
+      {
+        "id": "game-gamepads",
+        "slug": "accessories",
+        "name": "GAMEPADS",
+        "desc": "Wireless & tactile feedback",
+        "startPrice": "₹1,299",
+        "image": "/themes/vinayaka/banner-11.png"
+      }
+    ],
+    "accessories": [
+      {
+        "id": "acc-printers",
+        "slug": "printers",
+        "name": "PRINTERS & INK",
+        "desc": "All-in-one wireless printing",
+        "startPrice": "₹6,999",
+        "image": "/themes/vinayaka/banner-10.png"
+      },
+      {
+        "id": "acc-laptop-coolers",
+        "slug": "accessories",
+        "name": "LAPTOP COOLERS",
+        "desc": "Multi-fan active cooling",
+        "startPrice": "₹850",
+        "image": "/themes/vinayaka/banner-9.png"
+      },
+      {
+        "id": "acc-pen-drives",
+        "slug": "ssd",
+        "name": "PEN DRIVES",
+        "desc": "High-speed portable USB",
+        "startPrice": "₹399",
+        "image": "/themes/vinayaka/banner-8.png"
+      },
+      {
+        "id": "acc-routers",
+        "slug": "networking",
+        "name": "WIFI ROUTERS",
+        "desc": "Dual-band WiFi 6 coverage",
+        "startPrice": "₹1,199",
+        "image": "/themes/vinayaka/banner-7.png"
+      },
+      {
+        "id": "acc-ups",
+        "slug": "power-supply",
+        "name": "UPS SYSTEMS",
+        "desc": "Uninterrupted power backup",
+        "startPrice": "₹2,899",
+        "image": "/themes/vinayaka/banner-6.png"
+      },
+      {
+        "id": "acc-webcams",
+        "slug": "cctv",
+        "name": "HD WEBCAMS",
+        "desc": "1080p stream & mic clarity",
+        "startPrice": "₹1,450",
+        "image": "/themes/vinayaka/banner-5.png"
+      },
+      {
+        "id": "acc-pen-tablets",
+        "slug": "accessories",
+        "name": "PEN TABLETS",
+        "desc": "Digital art & design stylus",
+        "startPrice": "₹3,200",
+        "image": "/themes/vinayaka/banner-4.png"
+      },
+      {
+        "id": "acc-speakers",
+        "slug": "accessories",
+        "name": "SPEAKER SYSTEMS",
+        "desc": "Immersive audio & bass",
+        "startPrice": "₹1,150",
+        "image": "/themes/vinayaka/banner-3.png"
+      },
+      {
+        "id": "acc-surge-protectors",
+        "slug": "accessories",
+        "name": "SURGE PROTECTORS",
+        "desc": "Multi-socket voltage defense",
+        "startPrice": "₹450",
+        "image": "/themes/vinayaka/banner-2.png"
+      },
+      {
+        "id": "acc-software",
+        "slug": "services",
+        "name": "SOFTWARE & OS",
+        "desc": "Genuine Windows & Antivirus",
+        "startPrice": "₹1,999",
+        "image": "/themes/vinayaka/banner-1.png"
+      }
+    ]
+  },
   "standardMedia": {
     "hero": {
       "main": {
