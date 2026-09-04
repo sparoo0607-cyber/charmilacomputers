@@ -111,6 +111,13 @@ export default async function RootLayout({
       suppressHydrationWarning
       className={`${plusJakarta.variable} ${montserrat.variable} ${cinzel.variable} ${inter.variable} ${outfit.variable} h-full antialiased`}
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('charmila_active_theme');if(t){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();`,
+          }}
+        />
+      </head>
       <body className="min-h-full flex flex-col bg-[#F7F3EA] text-[#1B1B1B]">
         <a href="#main-content" className="skip-link">
           Skip to content
