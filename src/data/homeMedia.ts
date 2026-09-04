@@ -149,7 +149,7 @@ export const VINAYAKA_THEME_MEDIA: HomePageMediaState = {
       desc: "Power your next build",
       festiveAccent: "Flagship Performance",
       startPrice: "₹9,150",
-      image: "/themes/vinayaka/banner-29.png",
+      image: "/themes/vinayaka/banner-17.png",
     },
     {
       id: "comp-motherboards",
@@ -230,7 +230,7 @@ export const VINAYAKA_THEME_MEDIA: HomePageMediaState = {
       desc: "Optimized airflow & RGB",
       festiveAccent: "Panoramic Dual-Chamber",
       startPrice: "₹2,650",
-      image: "/themes/vinayaka/banner-17.png",
+      image: "/themes/vinayaka/banner-18.png",
     },
   ],
   gaming: [
@@ -966,7 +966,7 @@ export function getDussaraThemeMedia(dayNum: number): HomePageMediaState {
   };
 }
 
-export const HOME_MEDIA_STORAGE_KEY = "charmila_home_media_v5";
+export const HOME_MEDIA_STORAGE_KEY = "charmila_home_media_v6";
 
 /**
  * Returns complete media state for a given theme
