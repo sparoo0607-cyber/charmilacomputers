@@ -328,72 +328,71 @@ html, body {
   }
 }
 
-/* Product card image container: stable height on all screens */
-.card-surface img {
-  object-fit: contain;
+.card-surface {
+  background: #fff;
+  border: 1px solid var(--brand-border);
+  border-radius: 1rem;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.card-surface:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--brand-maroon) 35%, var(--brand-border));
 }
 
-/* Hero carousel full-width on mobile */
-@media (max-width: 768px) {
-  .aspect-\[1774\/887\] {
-    aspect-ratio: 16 / 9;
-  }
-  .aspect-\[1536\/1024\] {
-    aspect-ratio: 3 / 2;
-  }
+/* Warm-tinted elevation scale used across card-surface, the hero banner
+   and the GPU spotlight instead of flat black Tailwind shadows. */
+.shadow-premium-sm {
+  box-shadow: 0 1px 2px rgba(27, 12, 8, 0.06), 0 1px 1px rgba(27, 12, 8, 0.04);
 }
 
-/* ─────────────────────────────────────────────────────
-   INDIAN FESTIVE EXPERIENCE (VINAYAKA CHAVITHI)
-   ───────────────────────────────────────────────────── */
-
-:root {
-  --festive-maroon: #6E0F12;
-  --festive-burgundy: #4A080B;
-  --festive-gold: #C89B3C;
-  --festive-gold-antique: #A77A24;
-  --festive-marigold: #D98A19;
-  --festive-ivory: #FFF6E3;
+.shadow-premium {
+  box-shadow:
+    0 1px 2px rgba(27, 12, 8, 0.04),
+    0 8px 24px -8px rgba(74, 10, 14, 0.18),
+    0 2px 6px -2px rgba(74, 10, 14, 0.08);
 }
 
-@keyframes festiveLeafSway {
-  0%, 100% {
-    transform: rotate(-1.2deg) translateY(0);
-  }
-  50% {
-    transform: rotate(1.2deg) translateY(1px);
-  }
+.shadow-premium-lg {
+  box-shadow:
+    0 4px 8px rgba(27, 12, 8, 0.04),
+    0 24px 48px -16px rgba(74, 10, 14, 0.28),
+    0 8px 16px -8px rgba(74, 10, 14, 0.12);
 }
 
-@keyframes festiveDiyaFlicker {
-  0%, 100% {
-    opacity: 0.95;
-    transform: scale(1);
-    filter: drop-shadow(0 0 8px rgba(217, 138, 25, 0.7));
-  }
-  25% {
-    opacity: 0.78;
-    transform: scale(0.97);
-    filter: drop-shadow(0 0 5px rgba(217, 138, 25, 0.5));
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.04);
-    filter: drop-shadow(0 0 11px rgba(217, 138, 25, 0.85));
-  }
-  75% {
-    opacity: 0.85;
-    transform: scale(0.98);
-    filter: drop-shadow(0 0 6px rgba(217, 138, 25, 0.6));
-  }
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--brand-red) transparent;
 }
 
-@keyframes festiveShimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--brand-red);
+  border-radius: 999px;
+}
+
+::selection {
+  background: var(--brand-red);
+  color: #fff;
+}
+
+/* Consistent, visible keyboard focus across the whole site — mouse users
+   never see it, keyboard users always do. */
+:focus-visible {
+  outline: 2px solid var(--brand-red);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+a,
+button {
   cursor: pointer;
 }
 
@@ -521,6 +520,56 @@ html, body {
     width: calc(100vw - 2rem) !important;
     max-width: calc(100vw - 2rem) !important;
   }
+}
+
+.card-surface {
+  background: #fff;
+  border: 1px solid var(--brand-border);
+  border-radius: 1rem;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.card-surface:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--brand-maroon) 35%, var(--brand-border));
+}
+
+/* Warm-tinted elevation scale used across card-surface, the hero banner
+   and the GPU spotlight instead of flat black Tailwind shadows. */
+.shadow-premium-sm {
+  box-shadow: 0 1px 2px rgba(27, 12, 8, 0.06), 0 1px 1px rgba(27, 12, 8, 0.04);
+}
+
+.shadow-premium {
+  box-shadow:
+    0 1px 2px rgba(27, 12, 8, 0.04),
+    0 8px 24px -8px rgba(74, 10, 14, 0.18),
+    0 2px 6px -2px rgba(74, 10, 14, 0.08);
+}
+
+.shadow-premium-lg {
+  box-shadow:
+    0 4px 8px rgba(27, 12, 8, 0.04),
+    0 24px 48px -16px rgba(74, 10, 14, 0.28),
+    0 8px 16px -8px rgba(74, 10, 14, 0.12);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--brand-red) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--brand-red);
+  border-radius: 999px;
 }
 
 /* Product card image container: stable height on all screens */
