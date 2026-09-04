@@ -7,7 +7,10 @@ export default function AdminLoginRedirectPage() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace("/login?redirect=/admin");
+    const timer = setTimeout(() => {
+      router.replace("/login?redirect=/admin");
+    }, 0);
+    return () => clearTimeout(timer);
   }, [router]);
 
   return (

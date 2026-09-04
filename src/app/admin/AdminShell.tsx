@@ -54,9 +54,11 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
     if (!hydrated) return;
     if (!isAuthed) {
       const redirectUrl = pathname ? `/login?redirect=${encodeURIComponent(pathname)}` : "/login?redirect=/admin";
-      router.replace(redirectUrl);
+      const timer = setTimeout(() => {
+        router.replace(redirectUrl);
+      }, 0);
+      return () => clearTimeout(timer);
     }
-
   }, [isAuthed, hydrated, pathname, router]);
 
   if (!hydrated || !isAuthed) {
