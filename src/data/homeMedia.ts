@@ -966,7 +966,7 @@ export function getDussaraThemeMedia(dayNum: number): HomePageMediaState {
   };
 }
 
-export const HOME_MEDIA_STORAGE_KEY = "charmila_home_media_v2";
+export const HOME_MEDIA_STORAGE_KEY = "charmila_home_media_v5";
 
 /**
  * Returns complete media state for a given theme
