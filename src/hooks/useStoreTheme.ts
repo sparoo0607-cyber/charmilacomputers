@@ -86,8 +86,8 @@ export function useStoreTheme() {
       return;
     }
     // 3. Last resort: use local hint
-    const hint = readLocalHint();
-    if (hint) setTheme(hint);
+    const localHint = readLocalHint();
+    if (localHint) setTheme(localHint);
   }, []);
 
   useEffect(() => {
