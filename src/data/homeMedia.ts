@@ -949,6 +949,11 @@ export function getDussaraThemeMedia(dayNum: number): HomePageMediaState {
         ...base.promos.buildDifferent,
         image: `${folder}/4.png`,
         alt: `Dussara Day ${dayNum} - Build Different Custom Rigs`,
+        badge: `NAVRATRI DAY ${dayNum} · SPECIAL PC BUILDER OFFER`,
+        titleLine1: "BUILD DIFFERENT.",
+        titleLine2: "POWER UNLEASHED.",
+        subtitle: `Engineered for extreme performance with RTX 50 Series GPUs & Custom Liquid Cooling this Dussara (${meta.goddess}).`,
+        buttonText: "Start Your Build",
       },
       templeNight: {
         ...base.promos.templeNight,
