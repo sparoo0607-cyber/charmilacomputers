@@ -61,15 +61,8 @@ export async function GET() {
   const localState = getLocalThemeState();
 
   // Supabase store_settings is the single source of truth for the active theme.
-  // Note: Database check constraint maps dussara themes to 'festive' in DB,
-  // so we check localState to preserve exact dussara day variant when DB holds 'festive'.
   const supabaseTheme = await readThemeFromSupabase();
-  let activeTheme: ThemeId = localState?.activeTheme ?? supabaseTheme ?? "standard";
-  if (supabaseTheme === "standard") {
-    activeTheme = "standard";
-  } else if (supabaseTheme && isThemeId(supabaseTheme) && supabaseTheme !== "festive") {
-    activeTheme = supabaseTheme;
-  }
+  const activeTheme: ThemeId = supabaseTheme ?? localState?.activeTheme ?? "standard";
 
   const defaultMedia = getThemeMedia(activeTheme);
   const customMedia = activeTheme === "standard" ? localState?.standardMedia : (activeTheme === "festive" ? localState?.festiveMedia : undefined);
@@ -86,7 +79,7 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const theme = normalizeTheme(body.theme, "festive");
+    const theme = normalizeTheme(body.theme, "standard");
     const customMedia = body.media as HomePageMediaState | undefined;
 
     const state: ThemeStateFile =
@@ -106,22 +99,79 @@ export async function POST(req: Request) {
     saveLocalThemeState(state);
 
     // 2. Persist the active theme to Supabase — the source of truth.
-    // DB check constraint on store_settings.active_theme permits 'festive' / 'standard'.
-    // Map dussara-d* to 'festive' for DB compatibility while keeping localState as dussara-d*.
-    const dbTheme = theme.startsWith("dussara-d") ? "festive" : theme;
     const writer = supabaseAdmin ?? supabase;
     const { error: upsertError } = await writer.from("store_settings").upsert({
       id: "default",
-      active_theme: dbTheme,
+      active_theme: theme,
       updated_at: new Date().toISOString(),
     });
     if (upsertError) {
       console.warn("Supabase store_settings upsert error:", upsertError.message);
     }
 
+    // 3. Sync hero & promo banners for the active theme to Supabase `banners` table via server writer
     const defaultMedia = getThemeMedia(theme);
     const savedCustomMedia = theme === "standard" ? state.standardMedia : (theme === "festive" ? state.festiveMedia : undefined);
     const media = savedCustomMedia ? { ...defaultMedia, ...savedCustomMedia } : defaultMedia;
+
+    try {
+      for (const [id, item] of Object.entries(media.hero)) {
+        await writer.from("banners").upsert({
+          id,
+          image_src: item.imageSrc,
+          badge_text: item.badgeText,
+          title_line1: item.titleLine1,
+          title_line2: item.titleLine2,
+          subtitle: item.subtitle,
+          button_text: item.buttonText,
+          button_link: item.buttonLink,
+          button2_text: item.button2Text || null,
+          button2_link: item.button2Link || null,
+          updated_at: new Date().toISOString(),
+        });
+      }
+      if (media.promos.buildDifferent) {
+        await writer.from("banners").upsert({
+          id: "buildDifferent",
+          image_src: media.promos.buildDifferent.image,
+          subtitle: media.promos.buildDifferent.alt || null,
+          button_link: media.promos.buildDifferent.link,
+          updated_at: new Date().toISOString(),
+        });
+      }
+      if (media.promos.templeNight) {
+        const tn = media.promos.templeNight;
+        await writer.from("banners").upsert({
+          id: "templeNight",
+          image_src: tn.image,
+          badge_text: tn.badge || null,
+          title_line1: tn.titleLine1 || null,
+          title_line2: tn.titleLine2 || null,
+          subtitle: tn.subtitle || null,
+          button_text: tn.buttonText || null,
+          button_link: tn.buttonLink || null,
+          button2_text: tn.button2Text || null,
+          button2_link: tn.button2Link || null,
+          updated_at: new Date().toISOString(),
+        });
+      }
+      if (media.flagship) {
+        const fl = media.flagship;
+        await writer.from("banners").upsert({
+          id: "flagshipGpu",
+          image_src: fl.image,
+          badge_text: fl.badge,
+          title_line1: fl.name,
+          title_line2: fl.series,
+          subtitle: fl.specs,
+          button_text: `₹${fl.price.toLocaleString()}`,
+          button_link: fl.link,
+          updated_at: new Date().toISOString(),
+        });
+      }
+    } catch (bannerErr) {
+      console.warn("Supabase banners upsert error:", bannerErr);
+    }
 
     return NextResponse.json({
       success: true,

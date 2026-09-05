@@ -675,12 +675,11 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
       setSettings((prev) => {
         const next = { ...prev, ...patch };
 
-        const dbTheme = next.activeTheme.startsWith("dussara-d") ? "festive" : next.activeTheme;
         supabase
           .from("store_settings")
           .upsert({
             id: "default",
-            active_theme: dbTheme,
+            active_theme: next.activeTheme,
             store_name: next.storeName,
             support_email: next.supportEmail,
             support_phone: next.supportPhone,
