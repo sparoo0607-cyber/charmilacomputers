@@ -14,14 +14,14 @@ export default function MangoLeafThoranam() {
   return (
     <div
       aria-hidden="true"
-      className="fixed top-0 left-0 right-0 z-[150] w-full pointer-events-none select-none overflow-hidden flex justify-center"
+      className="fixed top-0 left-0 right-0 z-[150] w-full pointer-events-none select-none overflow-visible flex justify-center"
     >
-      <div className="w-full max-w-[1920px] festive-sway">
+      <div className="w-full max-w-[1920px] festive-sway overflow-visible">
         <svg
-          viewBox="0 0 1200 44"
+          viewBox="0 0 1200 56"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className="w-full h-7 sm:h-9 md:h-10 min-w-[700px] filter drop-shadow-sm"
+          className="w-full h-8 sm:h-10 md:h-12 min-w-[700px] filter drop-shadow-sm overflow-visible"
           preserveAspectRatio="none"
         >
           <defs>
@@ -74,24 +74,24 @@ export default function MangoLeafThoranam() {
               <g key={`leaf-${x}`} transform={`translate(${x}, ${archY})`}>
                 {/* Left Leaf */}
                 <path
-                  d="M0 0 C-6 8, -5 20, 0 28 C3 20, 4 8, 0 0 Z"
+                  d="M0 0 C-5 7, -4 17, 0 24 C3 17, 4 7, 0 0 Z"
                   fill={isFresh ? "url(#mangoLeafFresh)" : "url(#mangoLeafDark)"}
                   transform={`rotate(${-14 + rotAngle})`}
                 />
                 {/* Center Main Leaf */}
                 <path
-                  d="M0 0 C-4 10, -3 22, 0 31 C3 22, 4 10, 0 0 Z"
+                  d="M0 0 C-4 9, -3 19, 0 27 C3 19, 4 9, 0 0 Z"
                   fill="url(#mangoLeafDark)"
                   transform={`rotate(${rotAngle})`}
                 />
                 {/* Right Leaf */}
                 <path
-                  d="M0 0 C-4 8, 6 20, 0 28 C5 20, 6 8, 0 0 Z"
+                  d="M0 0 C-4 7, 5 17, 0 24 C4 17, 5 7, 0 0 Z"
                   fill={isFresh ? "url(#mangoLeafFresh)" : "url(#mangoLeafDark)"}
                   transform={`rotate(${14 + rotAngle})`}
                 />
                 {/* Spine Vein */}
-                <path d="M0 0 L0 26" stroke="#99C250" strokeWidth="0.8" opacity="0.6" transform={`rotate(${rotAngle})`} />
+                <path d="M0 0 L0 23" stroke="#99C250" strokeWidth="0.8" opacity="0.6" transform={`rotate(${rotAngle})`} />
               </g>
             );
           })}
@@ -99,9 +99,9 @@ export default function MangoLeafThoranam() {
           {/* DELICATE MARIGOLD KNOT ACCENTS */}
           {flowerPeaks.map((x) => (
             <g key={`flower-${x}`} transform={`translate(${x}, 6)`}>
-              <circle cx="0" cy="0" r="5" fill="url(#marigoldSmall)" />
-              <circle cx="-1.5" cy="-1.5" r="2" fill="#FFE082" opacity="0.9" />
-              <circle cx="0" cy="0" r="1.2" fill="#FFFDE7" />
+              <circle cx="0" cy="0" r="4.5" fill="url(#marigoldSmall)" />
+              <circle cx="-1.2" cy="-1.2" r="1.8" fill="#FFE082" opacity="0.9" />
+              <circle cx="0" cy="0" r="1" fill="#FFFDE7" />
             </g>
           ))}
         </svg>
