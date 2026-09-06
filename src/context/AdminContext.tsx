@@ -4,7 +4,6 @@ import { createContext, useCallback, useContext, useEffect, useState } from "rea
 import { products as seedProducts } from "@/data/products";
 import { Product } from "@/data/types";
 import { supabase } from "@/lib/supabase/client";
-import type { Database } from "@/lib/supabase/types";
 import { normalizeTheme, ThemeId } from "@/lib/theme";
 
 /* ------------------------------------------------------------------ */
@@ -521,6 +520,8 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
     (product: Omit<Product, "id">) => {
       const id = `custom-${Date.now().toString(36)}`;
       const newProduct: Product = { ...product, id };
+
+      // Optimistic update — product appears immediately in the UI.
       setAdminProducts((prev) => {
         const next = [newProduct, ...prev];
         saveLocalProducts(next);
@@ -528,9 +529,11 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
       });
       showToast(`✓ ${newProduct.name} added to catalog`);
 
-      supabase
-        .from("products")
-        .insert({
+      // Persist to Supabase via service-role API (bypasses RLS — safe, server-only).
+      fetch("/api/admin/products", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
           id,
           category_slug: product.categorySlug,
           name: product.name,
@@ -546,12 +549,12 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
           specs: product.specs ?? null,
           features: product.features ?? null,
           image_url: product.imageUrl ?? null,
-        })
-        .then(({ error }) => {
-          if (error) {
-            console.warn("Supabase products insert error (saved to local catalog):", error.message);
-          }
-        });
+        }),
+      }).then((res) => {
+        if (!res.ok) {
+          res.json().then((j) => console.warn("[admin/products] insert failed:", j?.error ?? res.status));
+        }
+      }).catch((e) => console.warn("[admin/products] insert fetch error:", e));
     },
     [showToast]
   );
@@ -565,7 +568,7 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
       });
       showToast("✓ Product updated");
 
-      const dbPatch: Database["public"]["Tables"]["products"]["Update"] = {
+      const dbPatch = {
         ...(patch.categorySlug !== undefined && { category_slug: patch.categorySlug }),
         ...(patch.name !== undefined && { name: patch.name }),
         ...(patch.brand !== undefined && { brand: patch.brand }),
@@ -580,15 +583,15 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         ...(patch.features !== undefined && { features: patch.features ?? null }),
       };
 
-      supabase
-        .from("products")
-        .update(dbPatch)
-        .eq("id", id)
-        .then(({ error }) => {
-          if (error) {
-            console.warn("Supabase products update warning:", error.message);
-          }
-        });
+      fetch("/api/admin/products", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, ...dbPatch }),
+      }).then((res) => {
+        if (!res.ok) {
+          res.json().then((j) => console.warn("[admin/products] update failed:", j?.error ?? res.status));
+        }
+      }).catch((e) => console.warn("[admin/products] update fetch error:", e));
     },
     [showToast]
   );
@@ -602,15 +605,13 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
       });
       showToast("Product removed from catalog");
 
-      supabase
-        .from("products")
-        .delete()
-        .eq("id", id)
-        .then(({ error }) => {
-          if (error) {
-            console.warn("Supabase products delete warning:", error.message);
+      fetch(`/api/admin/products?id=${encodeURIComponent(id)}`, { method: "DELETE" })
+        .then((res) => {
+          if (!res.ok) {
+            res.json().then((j) => console.warn("[admin/products] delete failed:", j?.error ?? res.status));
           }
-        });
+        })
+        .catch((e) => console.warn("[admin/products] delete fetch error:", e));
     },
     [showToast]
   );
