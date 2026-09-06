@@ -2,8 +2,22 @@
 
 import { useEffect, useState } from "react";
 import { festivalConfig } from "@/config/festivalConfig";
+import { useStoreTheme } from "@/hooks/useStoreTheme";
+
+const DUSSARA_DAY_NAMES: Record<string, { title: string; subtitle: string }> = {
+  "dussara-d1": { title: "DUSSEHRA NAVRATRI · DAY 1", subtitle: "Sri Shailaputri Devi (Swarna Kavachalankruta Durga)" },
+  "dussara-d2": { title: "DUSSEHRA NAVRATRI · DAY 2", subtitle: "Sri Brahmacharini Devi (Sri Bala Tripura Sundari)" },
+  "dussara-d3": { title: "DUSSEHRA NAVRATRI · DAY 3", subtitle: "Sri Chandraghanta Devi (Sri Gayatri Devi)" },
+  "dussara-d4": { title: "DUSSEHRA NAVRATRI · DAY 4", subtitle: "Sri Kushmanda Devi (Sri Annapurna Devi)" },
+  "dussara-d5": { title: "DUSSEHRA NAVRATRI · DAY 5", subtitle: "Sri Skandamata Devi (Sri Lakshmi Devi)" },
+  "dussara-d6": { title: "DUSSEHRA NAVRATRI · DAY 6", subtitle: "Sri Katyayani Devi (Sri Saraswati Devi)" },
+  "dussara-d7": { title: "DUSSEHRA NAVRATRI · DAY 7", subtitle: "Sri Kalaratri Devi (Sri Lalitha Tripura Sundari)" },
+  "dussara-d8": { title: "DUSSEHRA NAVRATRI · DAY 8", subtitle: "Sri Mahagauri Devi (Sri Mahishasura Mardhini)" },
+  "dussara-d9": { title: "DUSSEHRA NAVRATRI · VIJAYA DASAMI", subtitle: "Sri Siddhidatri Devi (Sri Raja Rajeshwari Devi)" },
+};
 
 export default function FestiveSplashScreen() {
+  const activeTheme = useStoreTheme();
   const [visible, setVisible] = useState(false);
   const [fading, setFading] = useState(false);
 
@@ -40,6 +54,9 @@ export default function FestiveSplashScreen() {
 
   if (!visible) return null;
 
+  const isDussara = activeTheme.startsWith("dussara-d");
+  const dussaraInfo = isDussara ? (DUSSARA_DAY_NAMES[activeTheme] || { title: "CELEBRATING DUSSEHRA NAVRATRI", subtitle: "Sri Durga Devi Navratri Utsav" }) : null;
+
   return (
     <div
       aria-hidden="true"
@@ -71,21 +88,33 @@ export default function FestiveSplashScreen() {
 
       {/* Content Container */}
       <div className="relative z-10 flex flex-col items-center text-center px-6 max-w-lg">
-        {/* Subtle Ganesha Line-Art Silhouette (Vector SVG) */}
+        {/* Festive Vector Silhouette */}
         <div className="w-20 h-20 sm:w-24 sm:h-24 mb-4 text-[#C89B3C] animate-pulse">
-          <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="w-full h-full drop-shadow-[0_0_12px_rgba(200,155,60,0.6)]">
-            {/* Elegant Vector Ganesha Trunk & Crown Silhouette */}
-            <path d="M50 12 L50 22 M44 16 L56 16" strokeWidth="1.8" />
-            <path d="M50 22 C38 22 30 28 30 38 C30 52 46 54 50 62 C54 70 42 78 38 74" />
-            <path d="M50 22 C62 22 70 28 70 38 C70 46 64 50 58 52" />
-            {/* Tusk & Ears */}
-            <path d="M30 38 C20 34 14 42 22 50 C28 56 34 54 36 50" />
-            <path d="M70 38 C80 34 86 42 78 50 C72 56 66 54 64 50" />
-            {/* Tilak Ornament */}
-            <path d="M48 28 L52 28 M50 25 L50 33" strokeWidth="2" stroke="#FFF6E3" />
-            {/* Modaka Accent */}
-            <circle cx="62" cy="62" r="3" fill="#D98A19" stroke="none" />
-          </svg>
+          {isDussara ? (
+            <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="w-full h-full drop-shadow-[0_0_12px_rgba(200,155,60,0.6)]">
+              {/* Trishul / Divine Lotus Icon for Durga Navratri */}
+              <path d="M50 15 L50 85" strokeWidth="2.5" />
+              <path d="M35 30 C35 50 45 60 50 65 C55 60 65 50 65 30" />
+              <path d="M30 25 L35 30" />
+              <path d="M70 25 L65 30" />
+              <path d="M45 15 L50 10 L55 15" strokeWidth="2" fill="#D98A19" />
+              <circle cx="50" cy="45" r="4" fill="#D98A19" stroke="none" />
+            </svg>
+          ) : (
+            <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="w-full h-full drop-shadow-[0_0_12px_rgba(200,155,60,0.6)]">
+              {/* Elegant Vector Ganesha Trunk & Crown Silhouette */}
+              <path d="M50 12 L50 22 M44 16 L56 16" strokeWidth="1.8" />
+              <path d="M50 22 C38 22 30 28 30 38 C30 52 46 54 50 62 C54 70 42 78 38 74" />
+              <path d="M50 22 C62 22 70 28 70 38 C70 46 64 50 58 52" />
+              {/* Tusk & Ears */}
+              <path d="M30 38 C20 34 14 42 22 50 C28 56 34 54 36 50" />
+              <path d="M70 38 C80 34 86 42 78 50 C72 56 66 54 64 50" />
+              {/* Tilak Ornament */}
+              <path d="M48 28 L52 28 M50 25 L50 33" strokeWidth="2" stroke="#FFF6E3" />
+              {/* Modaka Accent */}
+              <circle cx="62" cy="62" r="3" fill="#D98A19" stroke="none" />
+            </svg>
+          )}
         </div>
 
         {/* Brand Heading */}
@@ -93,12 +122,12 @@ export default function FestiveSplashScreen() {
           Charmila Computers
         </div>
 
-        <h1 className="font-serif text-xl sm:text-2xl font-bold tracking-wide text-[#FFF6E3] mb-2 drop-shadow-md">
-          CELEBRATING VINAYAKA CHAVITHI
+        <h1 className="font-serif text-xl sm:text-2xl font-bold tracking-wide text-[#FFF6E3] mb-2 drop-shadow-md uppercase">
+          {isDussara && dussaraInfo ? dussaraInfo.title : "CELEBRATING VINAYAKA CHAVITHI"}
         </h1>
 
         <p className="text-xs sm:text-sm text-[#FFF6E3]/80 tracking-wider font-light uppercase">
-          A Festival of Prosperity &amp; High Performance
+          {isDussara && dussaraInfo ? dussaraInfo.subtitle : "A Festival of Prosperity & High Performance"}
         </p>
 
         {/* Decorative Gold Line */}

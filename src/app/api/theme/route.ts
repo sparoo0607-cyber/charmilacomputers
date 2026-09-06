@@ -146,22 +146,68 @@ export async function POST(req: Request) {
     saveLocalThemeState(state);
 
     // 2. Persist the active theme to Supabase via service-role key (bypasses RLS).
-    //    The CHECK constraint may still be the old one that blocks dussara themes —
-    //    we log the error but DO NOT fail the request, since the local file is now set.
+    //    If the CHECK constraint is old and rejects dussara themes, attempt to auto-fix
+    //    the constraint via the Supabase Management API and then retry.
     const writer = supabaseAdmin ?? supabase;
     let supabasePersisted = false;
     let supabaseError: string | null = null;
 
-    try {
-      const { error: upsertError } = await writer.from("store_settings").upsert({
+    const tryUpsert = async () => {
+      const { error } = await writer.from("store_settings").upsert({
         id: "default",
         active_theme: theme,
         updated_at: new Date().toISOString(),
       });
+      return error;
+    };
+
+    try {
+      let upsertError = await tryUpsert();
+
+      // If it failed and theme is dussara — try auto-fixing the constraint then retry once.
+      if (upsertError && theme.startsWith("dussara-d") && supabaseAdmin) {
+        console.warn("[theme] Constraint violation detected, attempting auto-fix...");
+        try {
+          // Use Supabase Management API (project-level) to run DDL
+          const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+          const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+          // Extract project ref from URL: https://<ref>.supabase.co
+          const projectRef = supabaseUrl.replace("https://", "").split(".")[0];
+          const mgmtRes = await fetch(
+            `https://api.supabase.com/v1/projects/${projectRef}/database/query`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${serviceKey}`,
+              },
+              body: JSON.stringify({
+                query: `
+                  ALTER TABLE public.store_settings
+                    DROP CONSTRAINT IF EXISTS store_settings_active_theme_check;
+                  ALTER TABLE public.store_settings
+                    ADD CONSTRAINT store_settings_active_theme_check
+                    CHECK (active_theme IN ('festive','standard') OR active_theme LIKE 'dussara-d%');
+                `,
+              }),
+            }
+          );
+          if (mgmtRes.ok) {
+            console.log("[theme] Constraint patched via Management API — retrying upsert");
+            upsertError = await tryUpsert();
+          } else {
+            const body = await mgmtRes.text();
+            console.warn("[theme] Management API fix failed:", mgmtRes.status, body.slice(0, 200));
+          }
+        } catch (fixErr) {
+          console.warn("[theme] Constraint fix attempt threw:", fixErr);
+        }
+      }
+
       if (upsertError) {
         supabaseError = upsertError.message;
         console.warn("[theme] Supabase store_settings upsert failed:", supabaseError);
-        console.warn("[theme] Theme is saved locally. Run supabase/update_theme_constraint.sql in Supabase Dashboard to fix permanently.");
+        console.warn("[theme] MANUAL FIX: Run supabase/fix_theme_constraint_run_this.sql in Supabase Dashboard → SQL Editor");
       } else {
         supabasePersisted = true;
       }
