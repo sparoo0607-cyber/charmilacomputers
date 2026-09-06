@@ -98,9 +98,9 @@ export default function Footer() {
             <div className="space-y-2.5 text-[11px] text-zinc-300">
               <p className="text-zinc-400 leading-relaxed">{STORE.address}</p>
               <div className="pt-1 space-y-1">
-                <a href={`tel:${STORE.phonePrimary}`} className="hover:text-white flex items-center gap-1.5 transition-colors font-bold text-white">
+                <a href={`tel:${STORE.helplinePhone}`} className="hover:text-white flex items-center gap-1.5 transition-colors font-bold text-white">
                   <PhoneIcon className={`w-3.5 h-3.5 ${isFestive ? "text-[#C89B3C]" : "text-[#D1121B]"}`} />
-                  <span>{STORE.phonePrimary}</span>
+                  <span>{STORE.helplineFormatted}</span>
                 </a>
                 <a href={`mailto:${STORE.email}`} className="hover:text-white block transition-colors text-zinc-400">
                   {STORE.email}

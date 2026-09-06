@@ -11,6 +11,8 @@ export const STORE = {
   tagline: "Sales & Service — Laptops, Desktops, CCTV, Printers & PC Spares",
   phonePrimary: "9010177427",
   phoneSecondary: "9391251826",
+  helplinePhone: "9581892600",
+  helplineFormatted: "+91 95818 92600",
   whatsapp: "919010177427",
   email: "info@charmilacomputers.in",
   address: "Andhra Pradesh, India",

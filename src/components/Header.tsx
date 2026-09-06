@@ -122,9 +122,9 @@ export default function Header() {
               </a>
             </div>
             <span className="text-[#E5E0D7]">|</span>
-            <a href={`tel:${STORE.phonePrimary}`} className="hidden md:flex items-center gap-1 text-[11px] text-[#4E0B10] font-bold hover:text-[#7A1118]">
+            <a href={`tel:${STORE.helplinePhone}`} className="hidden md:flex items-center gap-1 text-[11px] text-[#4E0B10] font-bold hover:text-[#7A1118]">
               <PhoneIcon className="w-3 h-3" />
-              <span>Helpline: {STORE.phonePrimary}</span>
+              <span>Helpline: {STORE.helplineFormatted}</span>
             </a>
           </div>
 
