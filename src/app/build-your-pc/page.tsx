@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: pageTitle,
     description: pageDescription,
-    url: "https://charmilacomputers.in/build-your-pc",
+    url: "https://www.charmilacomputers.in/build-your-pc",
     type: "website",
   },
   twitter: {
@@ -28,11 +28,11 @@ const pcBuilderJsonLd = {
   "@graph": [
     {
       "@type": "WebApplication",
-      "@id": "https://charmilacomputers.in/build-your-pc/#app",
+      "@id": "https://www.charmilacomputers.in/build-your-pc/#app",
       name: "Charmila Computers Custom PC Builder",
       applicationCategory: "UtilityApplication",
       operatingSystem: "Web Browser",
-      url: "https://charmilacomputers.in/build-your-pc",
+      url: "https://www.charmilacomputers.in/build-your-pc",
       description: pageDescription,
     },
     {
@@ -42,13 +42,13 @@ const pcBuilderJsonLd = {
           "@type": "ListItem",
           position: 1,
           name: "Home",
-          item: "https://charmilacomputers.in",
+          item: "https://www.charmilacomputers.in",
         },
         {
           "@type": "ListItem",
           position: 2,
           name: "Custom PC Builder",
-          item: "https://charmilacomputers.in/build-your-pc",
+          item: "https://www.charmilacomputers.in/build-your-pc",
         },
       ],
     },

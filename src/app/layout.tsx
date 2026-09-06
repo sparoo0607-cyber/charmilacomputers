@@ -42,7 +42,7 @@ const outfit = Outfit({
 });
 
 
-const siteUrl = "https://charmilacomputers.in";
+const siteUrl = "https://www.charmilacomputers.in";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -123,12 +123,12 @@ const structuredData = {
   "@graph": [
     {
       "@type": ["LocalBusiness", "ComputerStore"],
-      "@id": "https://charmilacomputers.in/#store",
+      "@id": "https://www.charmilacomputers.in/#store",
       name: "Charmila Computers",
       alternateName: "Charmila Computers Sales & Services",
-      url: "https://charmilacomputers.in",
-      logo: "https://charmilacomputers.in/icon.png",
-      image: "https://charmilacomputers.in/images/festive/hero-main.png",
+      url: "https://www.charmilacomputers.in",
+      logo: "https://www.charmilacomputers.in/icon.png",
+      image: "https://www.charmilacomputers.in/images/festive/hero-main.png",
       description:
         "Charmila Computers provides computer sales, repair, hardware upgrades, and custom PC builds in Andhra Pradesh, India. 100% genuine components with official manufacturer warranty.",
       telephone: "+919010177427",
@@ -159,17 +159,17 @@ const structuredData = {
     },
     {
       "@type": "WebSite",
-      "@id": "https://charmilacomputers.in/#website",
-      url: "https://charmilacomputers.in",
+      "@id": "https://www.charmilacomputers.in/#website",
+      url: "https://www.charmilacomputers.in",
       name: "Charmila Computers",
       publisher: {
-        "@id": "https://charmilacomputers.in/#store",
+        "@id": "https://www.charmilacomputers.in/#store",
       },
       potentialAction: {
         "@type": "SearchAction",
         target: {
           "@type": "EntryPoint",
-          urlTemplate: "https://charmilacomputers.in/search?q={search_term_string}",
+          urlTemplate: "https://www.charmilacomputers.in/search?q={search_term_string}",
         },
         "query-input": "required name=search_term_string",
       },

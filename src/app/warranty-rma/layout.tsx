@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: pageTitle,
     description: pageDescription,
-    url: "https://charmilacomputers.in/warranty-rma",
+    url: "https://www.charmilacomputers.in/warranty-rma",
     type: "website",
   },
   twitter: {
@@ -26,11 +26,11 @@ const warrantyJsonLd = {
   "@graph": [
     {
       "@type": "WebPage",
-      "@id": "https://charmilacomputers.in/warranty-rma/#webpage",
-      url: "https://charmilacomputers.in/warranty-rma",
+      "@id": "https://www.charmilacomputers.in/warranty-rma/#webpage",
+      url: "https://www.charmilacomputers.in/warranty-rma",
       name: pageTitle,
       description: pageDescription,
-      isPartOf: { "@id": "https://charmilacomputers.in/#website" },
+      isPartOf: { "@id": "https://www.charmilacomputers.in/#website" },
     },
     {
       "@type": "BreadcrumbList",
@@ -39,13 +39,13 @@ const warrantyJsonLd = {
           "@type": "ListItem",
           position: 1,
           name: "Home",
-          item: "https://charmilacomputers.in",
+          item: "https://www.charmilacomputers.in",
         },
         {
           "@type": "ListItem",
           position: 2,
           name: "Warranty & RMA Center",
-          item: "https://charmilacomputers.in/warranty-rma",
+          item: "https://www.charmilacomputers.in/warranty-rma",
         },
       ],
     },

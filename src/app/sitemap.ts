@@ -3,7 +3,7 @@ import { products } from "@/data/products";
 import { categories } from "@/data/categories";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = "https://charmilacomputers.in";
+  const base = "https://www.charmilacomputers.in";
   const now = new Date();
 
   const staticRoutes: MetadataRoute.Sitemap = [

@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: pageTitle,
     description: pageDescription,
-    url: "https://charmilacomputers.in/compare",
+    url: "https://www.charmilacomputers.in/compare",
     type: "website",
   },
   twitter: {
@@ -26,11 +26,11 @@ const compareJsonLd = {
   "@graph": [
     {
       "@type": "WebPage",
-      "@id": "https://charmilacomputers.in/compare/#webpage",
-      url: "https://charmilacomputers.in/compare",
+      "@id": "https://www.charmilacomputers.in/compare/#webpage",
+      url: "https://www.charmilacomputers.in/compare",
       name: pageTitle,
       description: pageDescription,
-      isPartOf: { "@id": "https://charmilacomputers.in/#website" },
+      isPartOf: { "@id": "https://www.charmilacomputers.in/#website" },
     },
     {
       "@type": "BreadcrumbList",
@@ -39,13 +39,13 @@ const compareJsonLd = {
           "@type": "ListItem",
           position: 1,
           name: "Home",
-          item: "https://charmilacomputers.in",
+          item: "https://www.charmilacomputers.in",
         },
         {
           "@type": "ListItem",
           position: 2,
           name: "Compare Products",
-          item: "https://charmilacomputers.in/compare",
+          item: "https://www.charmilacomputers.in/compare",
         },
       ],
     },

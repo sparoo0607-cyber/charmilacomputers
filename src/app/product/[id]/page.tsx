@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   } — 100% genuine, official brand warranty, fast pan-India delivery from Charmila Computers.`;
   const imageUrl = product.imageUrl?.startsWith("http")
     ? product.imageUrl
-    : `https://charmilacomputers.in${product.imageUrl || "/icon.png"}`;
+    : `https://www.charmilacomputers.in${product.imageUrl || "/icon.png"}`;
 
   return {
     title,
@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
       title: `${product.name} | Charmila Computers`,
       description,
       type: "website",
-      url: `https://charmilacomputers.in/product/${product.id}`,
+      url: `https://www.charmilacomputers.in/product/${product.id}`,
       images: [{ url: imageUrl, alt: product.name }],
     },
     twitter: {
@@ -88,14 +88,14 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
 
   const productImageUrl = product.imageUrl?.startsWith("http")
     ? product.imageUrl
-    : `https://charmilacomputers.in${product.imageUrl || "/icon.png"}`;
+    : `https://www.charmilacomputers.in${product.imageUrl || "/icon.png"}`;
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
       {
         "@type": "Product",
-        "@id": `https://charmilacomputers.in/product/${product.id}/#product`,
+        "@id": `https://www.charmilacomputers.in/product/${product.id}/#product`,
         name: product.name,
         image: productImageUrl,
         brand: { "@type": "Brand", name: product.brand },
@@ -111,11 +111,11 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
           availability: product.inStock
             ? "https://schema.org/InStock"
             : "https://schema.org/OutOfStock",
-          url: `https://charmilacomputers.in/product/${product.id}`,
+          url: `https://www.charmilacomputers.in/product/${product.id}`,
           seller: {
             "@type": "Organization",
             name: "Charmila Computers",
-            url: "https://charmilacomputers.in",
+            url: "https://www.charmilacomputers.in",
           },
         },
       },
@@ -126,19 +126,19 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://charmilacomputers.in",
+            item: "https://www.charmilacomputers.in",
           },
           {
             "@type": "ListItem",
             position: 2,
             name: category?.name || product.categorySlug,
-            item: `https://charmilacomputers.in/category/${product.categorySlug}`,
+            item: `https://www.charmilacomputers.in/category/${product.categorySlug}`,
           },
           {
             "@type": "ListItem",
             position: 3,
             name: product.name,
-            item: `https://charmilacomputers.in/product/${product.id}`,
+            item: `https://www.charmilacomputers.in/product/${product.id}`,
           },
         ],
       },

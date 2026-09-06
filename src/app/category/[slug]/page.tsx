@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     openGraph: {
       title: `${title} | Charmila Computers`,
       description,
-      url: `https://charmilacomputers.in/category/${category.slug}`,
+      url: `https://www.charmilacomputers.in/category/${category.slug}`,
       type: "website",
     },
     twitter: {
@@ -49,11 +49,11 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     "@graph": [
       {
         "@type": "CollectionPage",
-        "@id": `https://charmilacomputers.in/category/${category.slug}/#webpage`,
-        url: `https://charmilacomputers.in/category/${category.slug}`,
+        "@id": `https://www.charmilacomputers.in/category/${category.slug}/#webpage`,
+        url: `https://www.charmilacomputers.in/category/${category.slug}`,
         name: `Buy ${category.name} Online at Best Price | Charmila Computers`,
         description: category.blurb,
-        isPartOf: { "@id": "https://charmilacomputers.in/#website" },
+        isPartOf: { "@id": "https://www.charmilacomputers.in/#website" },
       },
       {
         "@type": "BreadcrumbList",
@@ -62,13 +62,13 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://charmilacomputers.in",
+            item: "https://www.charmilacomputers.in",
           },
           {
             "@type": "ListItem",
             position: 2,
             name: category.name,
-            item: `https://charmilacomputers.in/category/${category.slug}`,
+            item: `https://www.charmilacomputers.in/category/${category.slug}`,
           },
         ],
       },
@@ -80,7 +80,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
           "@type": "ListItem",
           position: idx + 1,
           name: p.name,
-          url: `https://charmilacomputers.in/product/${p.id}`,
+          url: `https://www.charmilacomputers.in/product/${p.id}`,
         })),
       },
     ],
