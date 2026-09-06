@@ -145,9 +145,14 @@ type ProductRow = {
   specs: Record<string, string> | null;
   features: string[] | null;
   image_url: string | null;
+  images: string[] | null;
 };
 
 function mapProductRow(row: ProductRow): Product {
+  const images = Array.isArray(row.images) && row.images.length > 0
+    ? row.images
+    : (row.image_url ? [row.image_url] : undefined);
+
   return {
     id: row.id,
     categorySlug: row.category_slug,
@@ -163,10 +168,8 @@ function mapProductRow(row: ProductRow): Product {
     reviewsCount: row.reviews_count ?? undefined,
     specs: row.specs ?? undefined,
     features: row.features ?? undefined,
-    imageUrl: row.image_url ?? undefined,
-    images: Array.isArray((row as unknown as { images?: string[] }).images)
-      ? (row as unknown as { images?: string[] }).images
-      : (row.image_url ? [row.image_url] : undefined),
+    imageUrl: row.image_url || (images ? images[0] : undefined),
+    images,
   };
 }
 
@@ -548,7 +551,8 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
           reviews_count: product.reviewsCount ?? null,
           specs: product.specs ?? null,
           features: product.features ?? null,
-          image_url: product.imageUrl ?? null,
+          image_url: product.imageUrl ?? (product.images && product.images[0]) ?? null,
+          images: product.images ?? (product.imageUrl ? [product.imageUrl] : null),
         }),
       }).then((res) => {
         if (!res.ok) {
@@ -579,6 +583,7 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         ...(patch.inStock !== undefined && { in_stock: patch.inStock }),
         ...(patch.stockQty !== undefined && { stock_qty: patch.stockQty }),
         ...(patch.imageUrl !== undefined && { image_url: patch.imageUrl ?? null }),
+        ...(patch.images !== undefined && { images: patch.images ?? null }),
         ...(patch.specs !== undefined && { specs: patch.specs ?? null }),
         ...(patch.features !== undefined && { features: patch.features ?? null }),
       };

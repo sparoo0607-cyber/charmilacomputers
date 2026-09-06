@@ -30,6 +30,7 @@ export async function POST(req: Request) {
       specs: body.specs ?? null,
       features: body.features ?? null,
       image_url: body.image_url ?? null,
+      images: body.images ?? (body.image_url ? [body.image_url] : null),
     }).select().single();
 
     if (error) {

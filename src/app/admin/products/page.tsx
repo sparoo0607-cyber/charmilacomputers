@@ -313,27 +313,42 @@ function ProductModal({
     setSpecRows((prev) => prev.filter((_, i) => i !== index));
   }
 
-  function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
-    Array.from(files).forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const result = event.target?.result as string;
-        if (result) {
-          setImages((prev) => [...prev, result]);
-        }
-      };
-      reader.readAsDataURL(file);
+    const fileList = Array.from(files);
+    const readPromises = fileList.map((file) => {
+      return new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const result = event.target?.result as string;
+          resolve(result || "");
+        };
+        reader.onerror = () => resolve("");
+        reader.readAsDataURL(file);
+      });
     });
+
+    const newImages = await Promise.all(readPromises);
+    const validImages = newImages.filter((img) => Boolean(img));
+    if (validImages.length > 0) {
+      setImages((prev) => [...prev, ...validImages]);
+    }
 
     e.target.value = "";
   }
 
   function handleAddUrl() {
     if (!urlInput.trim()) return;
-    setImages((prev) => [...prev, urlInput.trim()]);
+    // Support comma or newline separated multiple URLs
+    const urls = urlInput
+      .split(/[\n,]+/)
+      .map((u) => u.trim())
+      .filter((u) => u.length > 0);
+    if (urls.length > 0) {
+      setImages((prev) => [...prev, ...urls]);
+    }
     setUrlInput("");
   }
 
@@ -581,7 +596,7 @@ function ProductModal({
                 htmlFor="product-images-upload"
                 className="cursor-pointer bg-[#1B1B1B] hover:bg-[#D1121B] text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 shadow-xs"
               >
-                <span>📁 Upload Photos</span>
+                <span>📁 Select Multiple Photos</span>
                 <input
                   id="product-images-upload"
                   type="file"
@@ -593,21 +608,58 @@ function ProductModal({
               </label>
             </div>
 
+            {/* Drag & Drop Upload Zone */}
+            <div
+              onDragOver={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+              onDrop={async (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const files = e.dataTransfer.files;
+                if (!files || files.length === 0) return;
+                const fileList = Array.from(files);
+                const readPromises = fileList.map((file) => {
+                  return new Promise<string>((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = (event) => resolve((event.target?.result as string) || "");
+                    reader.onerror = () => resolve("");
+                    reader.readAsDataURL(file);
+                  });
+                });
+                const newImages = await Promise.all(readPromises);
+                const validImages = newImages.filter(Boolean);
+                if (validImages.length > 0) {
+                  setImages((prev) => [...prev, ...validImages]);
+                }
+              }}
+              className="border-2 border-dashed border-[#E5E0D7] hover:border-[#D1121B] bg-zinc-50/70 hover:bg-red-50/30 rounded-xl p-4 text-center transition-colors cursor-pointer group"
+              onClick={() => document.getElementById("product-images-upload")?.click()}
+            >
+              <p className="text-xs font-bold text-zinc-700 group-hover:text-[#D1121B] transition-colors">
+                Drag &amp; Drop multiple product images here or <span className="underline text-[#D1121B]">Browse Files</span>
+              </p>
+              <p className="text-[10px] text-zinc-400 mt-0.5">
+                Supports JPG, PNG, WEBP — you can upload multiple images at once (front, back, specs, box)
+              </p>
+            </div>
+
             {/* Optional URL Adder Input */}
             <div className="flex gap-2">
               <input
-                type="url"
+                type="text"
                 value={urlInput}
                 onChange={(e) => setUrlInput(e.target.value)}
-                placeholder="Or paste image URL here…"
+                placeholder="Or paste image URLs (separate multiple with commas or newlines)…"
                 className="flex-1 border border-[#E5E0D7] rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:border-[#D1121B]"
               />
               <button
                 type="button"
                 onClick={handleAddUrl}
-                className="bg-zinc-100 hover:bg-zinc-200 text-zinc-700 font-bold text-xs px-3 py-1.5 rounded-xl transition-colors"
+                className="bg-zinc-100 hover:bg-zinc-200 text-zinc-700 font-bold text-xs px-3 py-1.5 rounded-xl transition-colors shrink-0"
               >
-                + Add URL
+                + Add URL(s)
               </button>
             </div>
 

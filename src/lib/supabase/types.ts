@@ -44,6 +44,7 @@ export interface Database {
           specs: Record<string, string> | null;
           features: string[] | null;
           image_url: string | null;
+          images?: string[] | null;
           created_at: string;
         };
         Insert: {
@@ -62,6 +63,7 @@ export interface Database {
           specs?: Record<string, string> | null;
           features?: string[] | null;
           image_url?: string | null;
+          images?: string[] | null;
         };
         Update: Partial<Database["public"]["Tables"]["products"]["Insert"]>;
         Relationships: [];
