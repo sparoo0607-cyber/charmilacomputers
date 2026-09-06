@@ -80,24 +80,32 @@ export default function ProductImage({
   categorySlug,
   productId,
   imageUrl,
+  alt,
   className = "",
+  priority = false,
 }: {
   categorySlug: string;
   productId?: string;
   imageUrl?: string;
+  alt?: string;
   className?: string;
+  priority?: boolean;
 }) {
   const src =
     imageUrl ||
     (productId ? PRODUCT_IMAGE_MAP[productId] : undefined) ||
     `/images/${categorySlug}.png`;
 
+  const fallbackAlt = alt || `${categorySlug.replace(/-/g, " ")} hardware product`;
+
   return (
     <div className={`relative flex items-center justify-center rounded-lg overflow-hidden ${className}`}>
       <Image
         src={src}
-        alt={categorySlug}
+        alt={fallbackAlt}
         fill
+        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+        priority={priority}
         className="object-contain p-2"
       />
     </div>

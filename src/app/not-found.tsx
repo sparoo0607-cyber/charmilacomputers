@@ -1,5 +1,15 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ComputerIcon, SearchIcon, BoltIcon } from "@/components/icons";
+
+export const metadata: Metadata = {
+  title: "Page Not Found (404)",
+  description: "The page you are looking for might have been moved or removed.",
+  robots: {
+    index: false,
+    follow: true,
+  },
+};
 
 export default function NotFound() {
   return (

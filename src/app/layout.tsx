@@ -42,30 +42,46 @@ const outfit = Outfit({
 });
 
 
-const siteUrl = "https://www.charmilacomputers.com";
+const siteUrl = "https://charmilacomputers.in";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Charmila Computers | High-Performance PC Hardware & Custom Rigs",
+    default: "Charmila Computers | Computer Sales, Service & Custom PC Builds",
     template: "%s | Charmila Computers",
   },
   description:
-    "Charmila Computers — India's premier computer hardware destination. Sales & service for PC components, graphics cards, processors, laptops and custom builds.",
+    "Charmila Computers provides computer sales, repair, hardware upgrades, and custom PC builds in Andhra Pradesh, India. 100% genuine components with official manufacturer warranty.",
   keywords: [
+    "Charmila Computers",
+    "computer sales Andhra Pradesh",
+    "computer repair Andhra Pradesh",
+    "laptop repair",
+    "custom PC builder India",
     "PC components India",
     "graphics cards",
-    "custom PC builder",
-    "gaming PC",
     "processors",
     "motherboards",
-    "Charmila Computers",
+    "gaming PC India",
+    "computer shop",
+    "computer store",
   ],
+  authors: [{ name: "Charmila Computers", url: siteUrl }],
+  creator: "Charmila Computers",
+  publisher: "Charmila Computers",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     type: "website",
     locale: "en_IN",
     siteName: "Charmila Computers",
-    title: "Charmila Computers | High-Performance PC Hardware & Custom Rigs",
+    title: "Charmila Computers | Computer Sales, Service & Custom PC Builds",
     description:
       "India's premier computer hardware destination. Sales & service for PC components, graphics cards, processors, laptops and custom builds.",
     url: siteUrl,
@@ -73,14 +89,21 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Charmila Computers | High-Performance PC Hardware & Custom Rigs",
+    title: "Charmila Computers | Computer Sales, Service & Custom PC Builds",
     description:
-      "India's premier computer hardware destination for PC components, graphics cards, processors and custom builds.",
+      "India's premier computer hardware destination for PC components, graphics cards, processors, repair services and custom builds.",
     images: ["/images/festive/hero-main.png"],
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
   icons: {
     icon: "/favicon.png",
@@ -91,6 +114,67 @@ export const metadata: Metadata = {
 
 export const viewport = {
   themeColor: "#7A1118",
+  width: "device-width",
+  initialScale: 1,
+};
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": ["LocalBusiness", "ComputerStore"],
+      "@id": "https://charmilacomputers.in/#store",
+      name: "Charmila Computers",
+      alternateName: "Charmila Computers Sales & Services",
+      url: "https://charmilacomputers.in",
+      logo: "https://charmilacomputers.in/icon.png",
+      image: "https://charmilacomputers.in/images/festive/hero-main.png",
+      description:
+        "Charmila Computers provides computer sales, repair, hardware upgrades, and custom PC builds in Andhra Pradesh, India. 100% genuine components with official manufacturer warranty.",
+      telephone: "+919010177427",
+      email: "info@charmilacomputers.in",
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: "Andhra Pradesh, India",
+        addressLocality: "Andhra Pradesh",
+        addressRegion: "Andhra Pradesh",
+        addressCountry: "IN",
+      },
+      openingHoursSpecification: [
+        {
+          "@type": "OpeningHoursSpecification",
+          dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+          opens: "10:30",
+          closes: "19:30",
+        },
+      ],
+      priceRange: "₹₹",
+      paymentAccepted: "Cash, Credit Card, Debit Card, UPI, Net Banking",
+      currenciesAccepted: "INR",
+      sameAs: [
+        "https://www.facebook.com/charmilacomputers",
+        "https://twitter.com/charmilacomputr",
+        "https://www.instagram.com/charmilacomputers",
+      ],
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://charmilacomputers.in/#website",
+      url: "https://charmilacomputers.in",
+      name: "Charmila Computers",
+      publisher: {
+        "@id": "https://charmilacomputers.in/#store",
+      },
+      potentialAction: {
+        "@type": "SearchAction",
+        target: {
+          "@type": "EntryPoint",
+          urlTemplate: "https://charmilacomputers.in/search?q={search_term_string}",
+        },
+        "query-input": "required name=search_term_string",
+      },
+    },
+  ],
 };
 
 export default async function RootLayout({
@@ -112,6 +196,12 @@ export default async function RootLayout({
       className={`${plusJakarta.variable} ${montserrat.variable} ${cinzel.variable} ${inter.variable} ${outfit.variable} h-full antialiased`}
     >
       <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(structuredData),
+          }}
+        />
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var t=localStorage.getItem('charmila_active_theme');if(t){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();`,

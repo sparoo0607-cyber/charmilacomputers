@@ -92,7 +92,13 @@ export default function ProductCard({ product }: { product: Product }) {
             <FestiveBadge label={isDussara ? "DUSSARA SPECIAL" : "FESTIVE SPECIAL"} />
           )}
         </div>
-        <ProductImage categorySlug={product.categorySlug} productId={product.id} imageUrl={product.imageUrl} className="w-full aspect-square transition-transform duration-300 group-hover:scale-106" />
+        <ProductImage
+          categorySlug={product.categorySlug}
+          productId={product.id}
+          imageUrl={product.imageUrl}
+          alt={product.name}
+          className="w-full aspect-square transition-transform duration-300 group-hover:scale-106"
+        />
 
         {/* Hardware Data Hover Spec Overlay */}
         <HardwareDataHover product={product} />

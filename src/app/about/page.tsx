@@ -3,11 +3,56 @@ import type { Metadata } from "next";
 import { STORE } from "@/lib/format";
 import { ShieldCheckIcon, TruckIcon, BoltIcon, ComputerIcon, WhatsAppIcon } from "@/components/icons";
 
+const pageTitle = "About Charmila Computers | Genuine PC Hardware & Custom Builds";
+const pageDescription =
+  "Learn about Charmila Computers — India's authorized destination for genuine PC hardware, custom gaming rigs, computer sales, and expert repair services.";
+
 export const metadata: Metadata = {
-  title: "About Us",
-  description:
-    "Learn about Charmila Computers — India's authorized destination for genuine PC hardware, custom builds and expert service, backed by manufacturer warranty pan-India.",
+  title: pageTitle,
+  description: pageDescription,
   alternates: { canonical: "/about" },
+  openGraph: {
+    title: pageTitle,
+    description: pageDescription,
+    url: "https://charmilacomputers.in/about",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: pageTitle,
+    description: pageDescription,
+  },
+};
+
+const aboutJsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "AboutPage",
+      "@id": "https://charmilacomputers.in/about/#webpage",
+      url: "https://charmilacomputers.in/about",
+      name: pageTitle,
+      description: pageDescription,
+      isPartOf: { "@id": "https://charmilacomputers.in/#website" },
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Home",
+          item: "https://charmilacomputers.in",
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "About Us",
+          item: "https://charmilacomputers.in/about",
+        },
+      ],
+    },
+  ],
 };
 
 export default function AboutPage() {
@@ -43,6 +88,10 @@ export default function AboutPage() {
 
   return (
     <div className="mx-auto max-w-[1440px] px-4 sm:px-6 py-8 font-sans">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutJsonLd) }}
+      />
       {/* Breadcrumb */}
       <nav className="text-xs text-zinc-500 mb-4 flex items-center gap-1.5">
         <Link href="/" className="hover:text-[#D1121B]">Home</Link>

@@ -19,14 +19,28 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const title = `${product.name} — Buy Online at Best Price`;
   const description = `${product.name} by ${product.brand}. ${formatINR(product.price)}${
     product.mrp && product.mrp > product.price ? ` (MRP ${formatINR(product.mrp)})` : ""
-  } — 100% genuine, official warranty, fast pan-India delivery from Charmila Computers.`;
+  } — 100% genuine, official brand warranty, fast pan-India delivery from Charmila Computers.`;
+  const imageUrl = product.imageUrl?.startsWith("http")
+    ? product.imageUrl
+    : `https://charmilacomputers.in${product.imageUrl || "/icon.png"}`;
 
   return {
     title,
     description,
     alternates: { canonical: `/product/${product.id}` },
-    openGraph: { title, description, type: "website" },
-    twitter: { card: "summary", title, description },
+    openGraph: {
+      title: `${product.name} | Charmila Computers`,
+      description,
+      type: "website",
+      url: `https://charmilacomputers.in/product/${product.id}`,
+      images: [{ url: imageUrl, alt: product.name }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${product.name} | Charmila Computers`,
+      description,
+      images: [imageUrl],
+    },
   };
 }
 
@@ -72,30 +86,63 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
     },
   ];
 
+  const productImageUrl = product.imageUrl?.startsWith("http")
+    ? product.imageUrl
+    : `https://charmilacomputers.in${product.imageUrl || "/icon.png"}`;
+
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "Product",
-    name: product.name,
-    image: product.imageUrl || "/icon.png",
-    brand: { "@type": "Brand", name: product.brand },
-    sku: product.model,
-    description: product.features?.join(". ") || product.name,
-    aggregateRating: product.rating
-      ? {
-          "@type": "AggregateRating",
-          ratingValue: product.rating,
-          reviewCount: product.reviewsCount || 1,
-        }
-      : undefined,
-    offers: {
-      "@type": "Offer",
-      priceCurrency: "INR",
-      price: product.price,
-      availability: product.inStock
-        ? "https://schema.org/InStock"
-        : "https://schema.org/OutOfStock",
-      url: `/product/${product.id}`,
-    },
+    "@graph": [
+      {
+        "@type": "Product",
+        "@id": `https://charmilacomputers.in/product/${product.id}/#product`,
+        name: product.name,
+        image: productImageUrl,
+        brand: { "@type": "Brand", name: product.brand },
+        sku: product.model,
+        description: product.features?.join(". ") || product.name,
+        category: category?.name || product.categorySlug,
+        offers: {
+          "@type": "Offer",
+          priceCurrency: "INR",
+          price: product.price,
+          priceValidUntil: "2026-12-31",
+          itemCondition: "https://schema.org/NewCondition",
+          availability: product.inStock
+            ? "https://schema.org/InStock"
+            : "https://schema.org/OutOfStock",
+          url: `https://charmilacomputers.in/product/${product.id}`,
+          seller: {
+            "@type": "Organization",
+            name: "Charmila Computers",
+            url: "https://charmilacomputers.in",
+          },
+        },
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: "https://charmilacomputers.in",
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: category?.name || product.categorySlug,
+            item: `https://charmilacomputers.in/category/${product.categorySlug}`,
+          },
+          {
+            "@type": "ListItem",
+            position: 3,
+            name: product.name,
+            item: `https://charmilacomputers.in/product/${product.id}`,
+          },
+        ],
+      },
+    ],
   };
 
   return (

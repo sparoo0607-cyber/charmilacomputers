@@ -2,9 +2,17 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "My Account",
-  robots: { index: false, follow: false },
+  description: "View and manage your orders, saved addresses, and profile at Charmila Computers.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
-export default function AccountLayout(props: LayoutProps<"/account">) {
-  return <>{props.children}</>;
+export default function AccountLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return <>{children}</>;
 }

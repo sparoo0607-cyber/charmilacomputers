@@ -1,11 +1,18 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Create Account",
-  description: "Create a new Charmila Computers account.",
-  robots: { index: false, follow: true },
+  title: "Create Customer Account",
+  description: "Create a new Charmila Computers account to earn bonus coins and track orders.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
-export default function RegisterLayout(props: LayoutProps<"/register">) {
-  return <>{props.children}</>;
+export default function RegisterLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return <>{children}</>;
 }

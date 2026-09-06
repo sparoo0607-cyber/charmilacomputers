@@ -16,12 +16,24 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const category = getCategory(slug);
   if (!category) return { title: "Category Not Found" };
 
-  const title = `Buy ${category.name} Online — Best Prices`;
+  const title = `Buy ${category.name} Online at Best Price`;
+  const description = `${category.blurb} 100% genuine ${category.name.toLowerCase()} with official brand warranty & express pan-India delivery from Charmila Computers.`;
+
   return {
     title,
-    description: category.blurb,
+    description,
     alternates: { canonical: `/category/${category.slug}` },
-    openGraph: { title, description: category.blurb, type: "website" },
+    openGraph: {
+      title: `${title} | Charmila Computers`,
+      description,
+      url: `https://charmilacomputers.in/category/${category.slug}`,
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} | Charmila Computers`,
+      description,
+    },
   };
 }
 
@@ -32,9 +44,55 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
 
   const products = await getProductsByCategoryLive(slug);
 
+  const categoryJsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        "@id": `https://charmilacomputers.in/category/${category.slug}/#webpage`,
+        url: `https://charmilacomputers.in/category/${category.slug}`,
+        name: `Buy ${category.name} Online at Best Price | Charmila Computers`,
+        description: category.blurb,
+        isPartOf: { "@id": "https://charmilacomputers.in/#website" },
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: "https://charmilacomputers.in",
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: category.name,
+            item: `https://charmilacomputers.in/category/${category.slug}`,
+          },
+        ],
+      },
+      {
+        "@type": "ItemList",
+        name: category.name,
+        numberOfItems: products.length,
+        itemListElement: products.slice(0, 10).map((p, idx) => ({
+          "@type": "ListItem",
+          position: idx + 1,
+          name: p.name,
+          url: `https://charmilacomputers.in/product/${p.id}`,
+        })),
+      },
+    ],
+  };
+
   return (
     <div className="mx-auto max-w-[1440px] px-4 sm:px-6 py-6 font-sans">
       <PageViewTracker kind="category" slug={category.slug} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(categoryJsonLd) }}
+      />
       {/* Breadcrumb */}
       <nav className="text-xs text-zinc-500 mb-4 flex items-center gap-1.5">
         <Link href="/" className="hover:text-[#D1121B] transition-colors">Home</Link>
