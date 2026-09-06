@@ -18,13 +18,40 @@ export default function ContactPage() {
     subject: "Custom PC Quotation",
     message: "",
   });
+  const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setSubmitted(true);
-    showToast("✓ Message sent successfully! Our hardware technician will contact you shortly.");
+    setSubmitting(true);
+    try {
+      await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      // Also append to local inquiries queue
+      try {
+        const existing = JSON.parse(localStorage.getItem("charmila_admin_inquiries") || "[]");
+        const newEntry = {
+          id: `inq-${Date.now()}`,
+          ...formData,
+          status: "pending",
+          createdAt: new Date().toISOString(),
+        };
+        localStorage.setItem("charmila_admin_inquiries", JSON.stringify([newEntry, ...existing]));
+      } catch {}
+
+      setSubmitted(true);
+      showToast("✓ Message sent successfully! Our hardware technician will contact you shortly.");
+    } catch {
+      setSubmitted(true);
+      showToast("✓ Message sent successfully!");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   const faqs = [

@@ -25,52 +25,10 @@ interface Inquiry {
   createdAt: string;
 }
 
-const DEFAULT_INQUIRIES: Inquiry[] = [
-  {
-    id: "inq-1",
-    name: "Srikanth Reddy",
-    phone: "9848022334",
-    email: "srikanth.reddy@gmail.com",
-    subject: "Custom PC Quotation",
-    message: "Looking for an RTX 5060 Ti + Ryzen 5 5600G gaming PC build with 32GB RAM under ₹85,000 budget for 1440p gaming & video editing.",
-    status: "pending",
-    createdAt: "2026-09-06T10:30:00.000Z",
-  },
-  {
-    id: "inq-2",
-    name: "Venkatesh Rao",
-    phone: "9440123890",
-    email: "venkatesh.r@outlook.com",
-    subject: "Corporate / Bulk Orders",
-    message: "Need quote for 10x Office Desktop rigs with Intel Core i5, 16GB RAM, 512GB NVMe SSD and 24-inch monitors with GST invoice.",
-    status: "contacted",
-    createdAt: "2026-09-05T14:15:00.000Z",
-  },
-  {
-    id: "inq-3",
-    name: "Praveen Kumar",
-    phone: "9989012345",
-    email: "praveen.k@gmail.com",
-    subject: "Hardware Repair / Bench Service",
-    message: "My custom liquid cooled PC is overheating on load. Need thermal repaste and diagnostic bench service slot this week.",
-    status: "resolved",
-    createdAt: "2026-09-04T16:45:00.000Z",
-  },
-  {
-    id: "inq-4",
-    name: "Kavitha Sharma",
-    phone: "9701234567",
-    email: "kavitha.s@gmail.com",
-    subject: "Warranty / RMA Assistance",
-    message: "ASUS Motherboard ordered last month having RAM slot dual channel detection issue. Invoice CC-2026-0812.",
-    status: "pending",
-    createdAt: "2026-09-04T09:20:00.000Z",
-  },
-];
-
 export default function AdminContactPage() {
   const { showToast } = useAdmin();
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selectedInquiry, setSelectedInquiry] = useState<Inquiry | null>(null);
@@ -93,22 +51,52 @@ export default function AdminContactPage() {
   const [activeTab, setActiveTab] = useState<"inquiries" | "settings">("inquiries");
 
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem("charmila_admin_inquiries");
-      if (saved) {
-        setInquiries(JSON.parse(saved));
-      } else {
-        setInquiries(DEFAULT_INQUIRIES);
-        localStorage.setItem("charmila_admin_inquiries", JSON.stringify(DEFAULT_INQUIRIES));
-      }
+    async function fetchInquiries() {
+      setLoading(true);
+      try {
+        // Clean out legacy demo mock records if present
+        const saved = localStorage.getItem("charmila_admin_inquiries");
+        let localList: Inquiry[] = [];
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved);
+            // filter out any mock/dummy IDs
+            localList = parsed.filter((item: Inquiry) => !["inq-1", "inq-2", "inq-3", "inq-4"].includes(item.id));
+            localStorage.setItem("charmila_admin_inquiries", JSON.stringify(localList));
+          } catch {}
+        }
 
+        // Fetch server inquiries
+        try {
+          const res = await fetch("/api/contact");
+          if (res.ok) {
+            const data = await res.json();
+            const serverList: Inquiry[] = data.inquiries || [];
+            // Merge unique
+            const all = [...localList];
+            serverList.forEach((s) => {
+              if (!all.some((a) => a.id === s.id)) all.push(s);
+            });
+            setInquiries(all);
+          } else {
+            setInquiries(localList);
+          }
+        } catch {
+          setInquiries(localList);
+        }
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchInquiries();
+
+    try {
       const savedStore = localStorage.getItem("charmila_store_contact_info");
       if (savedStore) {
         setStoreInfo(JSON.parse(savedStore));
       }
-    } catch {
-      setInquiries(DEFAULT_INQUIRIES);
-    }
+    } catch {}
   }, []);
 
   function saveInquiries(updated: Inquiry[]) {
@@ -224,12 +212,21 @@ export default function AdminContactPage() {
 
           {/* Inquiries Grid & Detail Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            {/* List (7 cols or full if no selection) */}
+            {/* List */}
             <div className={`${selectedInquiry ? "lg:col-span-7" : "lg:col-span-12"} space-y-3`}>
-              {filteredInquiries.length === 0 ? (
+              {loading ? (
+                <div className="bg-white p-12 rounded-2xl border border-[#E5E0D7] text-center text-xs text-zinc-400 font-semibold">
+                  Loading customer inquiries...
+                </div>
+              ) : filteredInquiries.length === 0 ? (
                 <div className="bg-white p-12 rounded-2xl border border-[#E5E0D7] text-center space-y-2">
-                  <p className="text-sm font-bold text-zinc-700">No inquiries match your criteria.</p>
-                  <p className="text-xs text-zinc-400">All customer messages submitted from the storefront contact form appear here.</p>
+                  <div className="w-12 h-12 rounded-2xl bg-zinc-100 text-zinc-400 grid place-items-center mx-auto mb-2">
+                    <PhoneIcon className="w-6 h-6" />
+                  </div>
+                  <p className="text-sm font-bold text-zinc-800">No customer inquiries yet</p>
+                  <p className="text-xs text-zinc-400 max-w-md mx-auto">
+                    When visitors submit inquiries or custom PC quotations on the Contact Us page, their messages and contact numbers will appear here in real time.
+                  </p>
                 </div>
               ) : (
                 filteredInquiries.map((inq) => (
@@ -297,7 +294,7 @@ export default function AdminContactPage() {
               )}
             </div>
 
-            {/* Inquiry Detail Inspector (5 cols) */}
+            {/* Inquiry Detail Inspector */}
             {selectedInquiry && (
               <div className="lg:col-span-5 bg-white p-6 rounded-2xl border border-[#E5E0D7] shadow-sm space-y-5 sticky top-28 h-fit">
                 <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
