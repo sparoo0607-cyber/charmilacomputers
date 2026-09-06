@@ -1,6 +1,6 @@
 {
-  "activeTheme": "dussara-d1",
-  "updatedAt": "2026-09-06T08:11:41.371Z",
+  "activeTheme": "dussara-d3",
+  "updatedAt": "2026-09-06T08:29:15.811Z",
   "festiveMedia": {
     "hero": {
       "main": {
@@ -629,6 +629,590 @@
           "alt": "SHAILAPUTRI DEVI · DUSSARA DAY 1 - Dussara Navratri Special",
           "link": "/category/gaming",
           "badge": "SHAILAPUTRI DEVI · DUSSARA DAY 1",
+          "titleLine1": "NAVRATRI FESTIVAL",
+          "titleLine2": "GAMING RIGS",
+          "subtitle": "Unleash extreme gaming performance with custom liquid-cooled PC rigs and high-end components this Dussara.",
+          "buttonText": "Shop Gaming Deals",
+          "buttonLink": "/category/gaming",
+          "button2Text": "Build Custom PC",
+          "button2Link": "/build-your-pc"
+        }
+      },
+      "flagship": {
+        "id": "flagshipGpu",
+        "badge": "FLAGSHIP BEAST",
+        "brand": "MSI",
+        "series": "MSI SUPRIM X SERIES",
+        "name": "MSI GeForce RTX 4090 SUPRIM X 24G",
+        "specs": "24GB GDDR6X • TRI FROZR 3S Cooling • DLSS 3.5 • Dual BIOS",
+        "price": 199999,
+        "mrp": 220000,
+        "discount": 9,
+        "image": "/images/graphics-cards.png",
+        "link": "/product/gpu-suprim"
+      },
+      "components": [
+        {
+          "id": "comp-processors",
+          "slug": "processors",
+          "name": "PROCESSORS",
+          "desc": "Power your next build",
+          "festiveAccent": "Dussara Festival Offer",
+          "startPrice": "₹9,150",
+          "image": "/themes/dussara/Products/1.png"
+        },
+        {
+          "id": "comp-motherboards",
+          "slug": "motherboards",
+          "name": "MOTHERBOARDS",
+          "desc": "Solid foundation for performance",
+          "festiveAccent": "DDR5 & PCIe 5.0",
+          "startPrice": "₹6,600",
+          "image": "/themes/dussara/Products/2.png"
+        },
+        {
+          "id": "comp-custom-cooling",
+          "slug": "coolers",
+          "name": "CUSTOM COOLING",
+          "desc": "Peak thermal dissipation",
+          "festiveAccent": "ARGB & 360mm Radiators",
+          "startPrice": "₹6,499",
+          "image": "/themes/dussara/Products/3.png"
+        },
+        {
+          "id": "comp-cpu-coolers",
+          "slug": "coolers",
+          "name": "CPU COOLERS",
+          "desc": "Silent & efficient airflow",
+          "festiveAccent": "High Static Pressure",
+          "startPrice": "₹1,650",
+          "image": "/themes/dussara/Products/4.png"
+        },
+        {
+          "id": "comp-graphics-cards",
+          "slug": "graphics-cards",
+          "name": "GRAPHICS CARDS",
+          "desc": "Next-gen ray tracing & DLSS",
+          "festiveAccent": "RTX 50 & 40 Series",
+          "startPrice": "₹14,500",
+          "image": "/themes/dussara/Products/5.png"
+        },
+        {
+          "id": "comp-ram",
+          "slug": "memory",
+          "name": "RAM (MEMORY)",
+          "desc": "High-speed DDR4 & DDR5",
+          "festiveAccent": "Up to 6000MHz OC",
+          "startPrice": "₹1,950",
+          "image": "/themes/dussara/Products/6.png"
+        },
+        {
+          "id": "comp-ssd",
+          "slug": "ssd",
+          "name": "SSD STORAGE",
+          "desc": "Blazing fast NVMe speeds",
+          "festiveAccent": "Gen4 & Gen5 Speeds",
+          "startPrice": "₹1,650",
+          "image": "/themes/dussara/Products/7.png"
+        },
+        {
+          "id": "comp-monitors",
+          "slug": "monitors",
+          "name": "GAMING MONITORS",
+          "desc": "Ultra-fast refresh rates",
+          "festiveAccent": "180Hz+ Fast IPS",
+          "startPrice": "₹6,300",
+          "image": "/themes/dussara/Products/8.png"
+        },
+        {
+          "id": "comp-power-supply",
+          "slug": "power-supply",
+          "name": "POWER SUPPLIES",
+          "desc": "80 Plus Gold certified",
+          "festiveAccent": "ATX 3.0 Ready",
+          "startPrice": "₹2,450",
+          "image": "/themes/dussara/Products/9.png"
+        },
+        {
+          "id": "comp-cabinets",
+          "slug": "cabinets",
+          "name": "PC CABINETS",
+          "desc": "Optimized airflow & RGB",
+          "festiveAccent": "Panoramic Dual-Chamber",
+          "startPrice": "₹2,650",
+          "image": "/themes/dussara/Products/10.png"
+        }
+      ],
+      "gaming": [
+        {
+          "id": "game-keyboards",
+          "slug": "keyboards",
+          "name": "GAMING KEYBOARDS",
+          "desc": "Mechanical switches & RGB",
+          "startPrice": "₹550",
+          "image": "/themes/dussara/Products/11.png"
+        },
+        {
+          "id": "game-mice",
+          "slug": "mice",
+          "name": "GAMING MICE",
+          "desc": "High-DPI precision optical sensors",
+          "startPrice": "₹350",
+          "image": "/themes/dussara/Products/12.png"
+        },
+        {
+          "id": "game-headsets",
+          "slug": "headsets",
+          "name": "GAMING HEADSETS",
+          "desc": "7.1 Surround & noise isolation",
+          "startPrice": "₹899",
+          "image": "/themes/dussara/Products/13.png"
+        },
+        {
+          "id": "game-mousepads",
+          "slug": "accessories",
+          "name": "RGB MOUSEPADS",
+          "desc": "Micro-woven smooth glide",
+          "startPrice": "₹399",
+          "image": "/themes/dussara/Products/14.png"
+        },
+        {
+          "id": "game-gamepads",
+          "slug": "accessories",
+          "name": "GAMEPADS",
+          "desc": "Wireless & tactile feedback",
+          "startPrice": "₹1,299",
+          "image": "/themes/dussara/Products/15.png"
+        }
+      ],
+      "accessories": [
+        {
+          "id": "acc-printers",
+          "slug": "printers",
+          "name": "PRINTERS & INK",
+          "desc": "All-in-one wireless printing",
+          "startPrice": "₹6,999",
+          "image": "/themes/dussara/Products/16.png"
+        },
+        {
+          "id": "acc-laptop-coolers",
+          "slug": "accessories",
+          "name": "LAPTOP COOLERS",
+          "desc": "Multi-fan active cooling",
+          "startPrice": "₹850",
+          "image": "/themes/dussara/Products/17.png"
+        },
+        {
+          "id": "acc-pen-drives",
+          "slug": "ssd",
+          "name": "PEN DRIVES",
+          "desc": "High-speed portable USB",
+          "startPrice": "₹399",
+          "image": "/themes/dussara/Products/19.png"
+        },
+        {
+          "id": "acc-routers",
+          "slug": "networking",
+          "name": "WIFI ROUTERS",
+          "desc": "Dual-band WiFi 6 coverage",
+          "startPrice": "₹1,199",
+          "image": "/themes/dussara/Products/18.png"
+        },
+        {
+          "id": "acc-ups",
+          "slug": "power-supply",
+          "name": "UPS SYSTEMS",
+          "desc": "Uninterrupted power backup",
+          "startPrice": "₹2,899",
+          "image": "/themes/dussara/Products/20.png"
+        },
+        {
+          "id": "acc-webcams",
+          "slug": "cctv",
+          "name": "HD WEBCAMS",
+          "desc": "1080p stream & mic clarity",
+          "startPrice": "₹1,450",
+          "image": "/themes/dussara/Products/21.png"
+        },
+        {
+          "id": "acc-pen-tablets",
+          "slug": "accessories",
+          "name": "PEN TABLETS",
+          "desc": "Digital art & design stylus",
+          "startPrice": "₹3,200",
+          "image": "/themes/dussara/Products/22.png"
+        },
+        {
+          "id": "acc-speakers",
+          "slug": "accessories",
+          "name": "SPEAKER SYSTEMS",
+          "desc": "Immersive audio & bass",
+          "startPrice": "₹1,150",
+          "image": "/themes/dussara/Products/23.png"
+        },
+        {
+          "id": "acc-surge-protectors",
+          "slug": "accessories",
+          "name": "SURGE PROTECTORS",
+          "desc": "Multi-socket voltage defense",
+          "startPrice": "₹450",
+          "image": "/themes/dussara/Products/24.png"
+        },
+        {
+          "id": "acc-software",
+          "slug": "services",
+          "name": "SOFTWARE & OS",
+          "desc": "Genuine Windows & Antivirus",
+          "startPrice": "₹1,999",
+          "image": "/themes/dussara/Products/25.png"
+        }
+      ]
+    },
+    "dussara-d2": {
+      "hero": {
+        "main": {
+          "id": "main",
+          "imageSrc": "/themes/dussara/D2/1.png",
+          "badgeText": "DUSSARA NAVRATRI DAY 2 · UP TO 45% OFF",
+          "titleLine1": "DUSSEHRA FESTIVAL",
+          "titleLine2": "MEGA SALE",
+          "subtitle": "Navratri Day 2 (Sri Bala Tripura Sundari) — Special offers on RTX 50 series GPUs, liquid cooled rigs & high-speed SSDs.",
+          "buttonText": "Explore Offers",
+          "buttonLink": "/offers",
+          "button2Text": "Build Your PC",
+          "button2Link": "/build-your-pc"
+        },
+        "gaming": {
+          "id": "gaming",
+          "imageSrc": "/themes/dussara/D2/2.png",
+          "badgeText": "DUSSARA DAY 2 GAMING FEST",
+          "titleLine1": "PRO GAMING",
+          "titleLine2": "GEAR",
+          "subtitle": "Keyboards, mice & RGB headsets",
+          "buttonText": "Shop Gear",
+          "buttonLink": "/category/gaming"
+        },
+        "builder": {
+          "id": "builder",
+          "imageSrc": "/themes/dussara/D2/3.png",
+          "badgeText": "DAY 2 PC BUILDER SPECIAL",
+          "titleLine1": "SAVE MORE",
+          "titleLine2": "BUILD MORE",
+          "subtitle": "Motherboards, RAM & Fast SSDs",
+          "buttonText": "Start Building",
+          "buttonLink": "/build-your-pc"
+        }
+      },
+      "promos": {
+        "buildDifferent": {
+          "id": "buildDifferent",
+          "image": "/themes/dussara/D2/4.png",
+          "alt": "Dussara Day 2 - Build Different Custom Rigs",
+          "link": "/build-your-pc",
+          "badge": "NAVRATRI DAY 2 · SPECIAL PC BUILDER OFFER",
+          "titleLine1": "BUILD DIFFERENT.",
+          "titleLine2": "POWER UNLEASHED.",
+          "subtitle": "Engineered for extreme performance with RTX 50 Series GPUs & Custom Liquid Cooling this Dussara (Sri Bala Tripura Sundari).",
+          "buttonText": "Start Your Build"
+        },
+        "templeNight": {
+          "id": "templeNight",
+          "image": "/themes/dussara/D2/5.png",
+          "alt": "BRAHMACHARINI DEVI · DUSSARA DAY 2 - Dussara Navratri Special",
+          "link": "/category/gaming",
+          "badge": "BRAHMACHARINI DEVI · DUSSARA DAY 2",
+          "titleLine1": "NAVRATRI FESTIVAL",
+          "titleLine2": "GAMING RIGS",
+          "subtitle": "Unleash extreme gaming performance with custom liquid-cooled PC rigs and high-end components this Dussara.",
+          "buttonText": "Shop Gaming Deals",
+          "buttonLink": "/category/gaming",
+          "button2Text": "Build Custom PC",
+          "button2Link": "/build-your-pc"
+        }
+      },
+      "flagship": {
+        "id": "flagshipGpu",
+        "badge": "FLAGSHIP BEAST",
+        "brand": "MSI",
+        "series": "MSI SUPRIM X SERIES",
+        "name": "MSI GeForce RTX 4090 SUPRIM X 24G",
+        "specs": "24GB GDDR6X • TRI FROZR 3S Cooling • DLSS 3.5 • Dual BIOS",
+        "price": 199999,
+        "mrp": 220000,
+        "discount": 9,
+        "image": "/images/graphics-cards.png",
+        "link": "/product/gpu-suprim"
+      },
+      "components": [
+        {
+          "id": "comp-processors",
+          "slug": "processors",
+          "name": "PROCESSORS",
+          "desc": "Power your next build",
+          "festiveAccent": "Dussara Festival Offer",
+          "startPrice": "₹9,150",
+          "image": "/themes/dussara/Products/1.png"
+        },
+        {
+          "id": "comp-motherboards",
+          "slug": "motherboards",
+          "name": "MOTHERBOARDS",
+          "desc": "Solid foundation for performance",
+          "festiveAccent": "DDR5 & PCIe 5.0",
+          "startPrice": "₹6,600",
+          "image": "/themes/dussara/Products/2.png"
+        },
+        {
+          "id": "comp-custom-cooling",
+          "slug": "coolers",
+          "name": "CUSTOM COOLING",
+          "desc": "Peak thermal dissipation",
+          "festiveAccent": "ARGB & 360mm Radiators",
+          "startPrice": "₹6,499",
+          "image": "/themes/dussara/Products/3.png"
+        },
+        {
+          "id": "comp-cpu-coolers",
+          "slug": "coolers",
+          "name": "CPU COOLERS",
+          "desc": "Silent & efficient airflow",
+          "festiveAccent": "High Static Pressure",
+          "startPrice": "₹1,650",
+          "image": "/themes/dussara/Products/4.png"
+        },
+        {
+          "id": "comp-graphics-cards",
+          "slug": "graphics-cards",
+          "name": "GRAPHICS CARDS",
+          "desc": "Next-gen ray tracing & DLSS",
+          "festiveAccent": "RTX 50 & 40 Series",
+          "startPrice": "₹14,500",
+          "image": "/themes/dussara/Products/5.png"
+        },
+        {
+          "id": "comp-ram",
+          "slug": "memory",
+          "name": "RAM (MEMORY)",
+          "desc": "High-speed DDR4 & DDR5",
+          "festiveAccent": "Up to 6000MHz OC",
+          "startPrice": "₹1,950",
+          "image": "/themes/dussara/Products/6.png"
+        },
+        {
+          "id": "comp-ssd",
+          "slug": "ssd",
+          "name": "SSD STORAGE",
+          "desc": "Blazing fast NVMe speeds",
+          "festiveAccent": "Gen4 & Gen5 Speeds",
+          "startPrice": "₹1,650",
+          "image": "/themes/dussara/Products/7.png"
+        },
+        {
+          "id": "comp-monitors",
+          "slug": "monitors",
+          "name": "GAMING MONITORS",
+          "desc": "Ultra-fast refresh rates",
+          "festiveAccent": "180Hz+ Fast IPS",
+          "startPrice": "₹6,300",
+          "image": "/themes/dussara/Products/8.png"
+        },
+        {
+          "id": "comp-power-supply",
+          "slug": "power-supply",
+          "name": "POWER SUPPLIES",
+          "desc": "80 Plus Gold certified",
+          "festiveAccent": "ATX 3.0 Ready",
+          "startPrice": "₹2,450",
+          "image": "/themes/dussara/Products/9.png"
+        },
+        {
+          "id": "comp-cabinets",
+          "slug": "cabinets",
+          "name": "PC CABINETS",
+          "desc": "Optimized airflow & RGB",
+          "festiveAccent": "Panoramic Dual-Chamber",
+          "startPrice": "₹2,650",
+          "image": "/themes/dussara/Products/10.png"
+        }
+      ],
+      "gaming": [
+        {
+          "id": "game-keyboards",
+          "slug": "keyboards",
+          "name": "GAMING KEYBOARDS",
+          "desc": "Mechanical switches & RGB",
+          "startPrice": "₹550",
+          "image": "/themes/dussara/Products/11.png"
+        },
+        {
+          "id": "game-mice",
+          "slug": "mice",
+          "name": "GAMING MICE",
+          "desc": "High-DPI precision optical sensors",
+          "startPrice": "₹350",
+          "image": "/themes/dussara/Products/12.png"
+        },
+        {
+          "id": "game-headsets",
+          "slug": "headsets",
+          "name": "GAMING HEADSETS",
+          "desc": "7.1 Surround & noise isolation",
+          "startPrice": "₹899",
+          "image": "/themes/dussara/Products/13.png"
+        },
+        {
+          "id": "game-mousepads",
+          "slug": "accessories",
+          "name": "RGB MOUSEPADS",
+          "desc": "Micro-woven smooth glide",
+          "startPrice": "₹399",
+          "image": "/themes/dussara/Products/14.png"
+        },
+        {
+          "id": "game-gamepads",
+          "slug": "accessories",
+          "name": "GAMEPADS",
+          "desc": "Wireless & tactile feedback",
+          "startPrice": "₹1,299",
+          "image": "/themes/dussara/Products/15.png"
+        }
+      ],
+      "accessories": [
+        {
+          "id": "acc-printers",
+          "slug": "printers",
+          "name": "PRINTERS & INK",
+          "desc": "All-in-one wireless printing",
+          "startPrice": "₹6,999",
+          "image": "/themes/dussara/Products/16.png"
+        },
+        {
+          "id": "acc-laptop-coolers",
+          "slug": "accessories",
+          "name": "LAPTOP COOLERS",
+          "desc": "Multi-fan active cooling",
+          "startPrice": "₹850",
+          "image": "/themes/dussara/Products/17.png"
+        },
+        {
+          "id": "acc-pen-drives",
+          "slug": "ssd",
+          "name": "PEN DRIVES",
+          "desc": "High-speed portable USB",
+          "startPrice": "₹399",
+          "image": "/themes/dussara/Products/19.png"
+        },
+        {
+          "id": "acc-routers",
+          "slug": "networking",
+          "name": "WIFI ROUTERS",
+          "desc": "Dual-band WiFi 6 coverage",
+          "startPrice": "₹1,199",
+          "image": "/themes/dussara/Products/18.png"
+        },
+        {
+          "id": "acc-ups",
+          "slug": "power-supply",
+          "name": "UPS SYSTEMS",
+          "desc": "Uninterrupted power backup",
+          "startPrice": "₹2,899",
+          "image": "/themes/dussara/Products/20.png"
+        },
+        {
+          "id": "acc-webcams",
+          "slug": "cctv",
+          "name": "HD WEBCAMS",
+          "desc": "1080p stream & mic clarity",
+          "startPrice": "₹1,450",
+          "image": "/themes/dussara/Products/21.png"
+        },
+        {
+          "id": "acc-pen-tablets",
+          "slug": "accessories",
+          "name": "PEN TABLETS",
+          "desc": "Digital art & design stylus",
+          "startPrice": "₹3,200",
+          "image": "/themes/dussara/Products/22.png"
+        },
+        {
+          "id": "acc-speakers",
+          "slug": "accessories",
+          "name": "SPEAKER SYSTEMS",
+          "desc": "Immersive audio & bass",
+          "startPrice": "₹1,150",
+          "image": "/themes/dussara/Products/23.png"
+        },
+        {
+          "id": "acc-surge-protectors",
+          "slug": "accessories",
+          "name": "SURGE PROTECTORS",
+          "desc": "Multi-socket voltage defense",
+          "startPrice": "₹450",
+          "image": "/themes/dussara/Products/24.png"
+        },
+        {
+          "id": "acc-software",
+          "slug": "services",
+          "name": "SOFTWARE & OS",
+          "desc": "Genuine Windows & Antivirus",
+          "startPrice": "₹1,999",
+          "image": "/themes/dussara/Products/25.png"
+        }
+      ]
+    },
+    "dussara-d3": {
+      "hero": {
+        "main": {
+          "id": "main",
+          "imageSrc": "/themes/dussara/D3/1.png",
+          "badgeText": "DUSSARA NAVRATRI DAY 3 · UP TO 45% OFF",
+          "titleLine1": "DUSSEHRA FESTIVAL",
+          "titleLine2": "MEGA SALE",
+          "subtitle": "Navratri Day 3 (Sri Gayatri Devi) — Special offers on RTX 50 series GPUs, liquid cooled rigs & high-speed SSDs.",
+          "buttonText": "Explore Offers",
+          "buttonLink": "/offers",
+          "button2Text": "Build Your PC",
+          "button2Link": "/build-your-pc"
+        },
+        "gaming": {
+          "id": "gaming",
+          "imageSrc": "/themes/dussara/D3/2.png",
+          "badgeText": "DUSSARA DAY 3 GAMING FEST",
+          "titleLine1": "PRO GAMING",
+          "titleLine2": "GEAR",
+          "subtitle": "Keyboards, mice & RGB headsets",
+          "buttonText": "Shop Gear",
+          "buttonLink": "/category/gaming"
+        },
+        "builder": {
+          "id": "builder",
+          "imageSrc": "/themes/dussara/D3/3.png",
+          "badgeText": "DAY 3 PC BUILDER SPECIAL",
+          "titleLine1": "SAVE MORE",
+          "titleLine2": "BUILD MORE",
+          "subtitle": "Motherboards, RAM & Fast SSDs",
+          "buttonText": "Start Building",
+          "buttonLink": "/build-your-pc"
+        }
+      },
+      "promos": {
+        "buildDifferent": {
+          "id": "buildDifferent",
+          "image": "/themes/dussara/D3/4.png",
+          "alt": "Dussara Day 3 - Build Different Custom Rigs",
+          "link": "/build-your-pc",
+          "badge": "NAVRATRI DAY 3 · SPECIAL PC BUILDER OFFER",
+          "titleLine1": "BUILD DIFFERENT.",
+          "titleLine2": "POWER UNLEASHED.",
+          "subtitle": "Engineered for extreme performance with RTX 50 Series GPUs & Custom Liquid Cooling this Dussara (Sri Gayatri Devi).",
+          "buttonText": "Start Your Build"
+        },
+        "templeNight": {
+          "id": "templeNight",
+          "image": "/themes/dussara/D3/5.png",
+          "alt": "CHANDRAGHANTA DEVI · DUSSARA DAY 3 - Dussara Navratri Special",
+          "link": "/category/gaming",
+          "badge": "CHANDRAGHANTA DEVI · DUSSARA DAY 3",
           "titleLine1": "NAVRATRI FESTIVAL",
           "titleLine2": "GAMING RIGS",
           "subtitle": "Unleash extreme gaming performance with custom liquid-cooled PC rigs and high-end components this Dussara.",

@@ -66,9 +66,9 @@ export default function MangoLeafThoranam() {
           {/* SLEEK & LIGHTWEIGHT MANGO LEAF CLUSTERS */}
           {leafPositions.map((x, idx) => {
             const localX = (x % 120) / 120;
-            const archY = 6 + Math.sin(localX * Math.PI) * 10;
+            const archY = Math.round(6 + Math.sin(localX * Math.PI) * 10 * 1e4) / 1e4;
             const isFresh = idx % 2 === 0;
-            const rotAngle = (localX - 0.5) * 28;
+            const rotAngle = Math.round((localX - 0.5) * 28 * 1e4) / 1e4;
 
             return (
               <g key={`leaf-${x}`} transform={`translate(${x}, ${archY})`}>
