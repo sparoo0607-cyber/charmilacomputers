@@ -121,11 +121,6 @@ export default function Footer() {
           <div>
             Copyright © {new Date().getFullYear()} {STORE.name}. All Rights Reserved.
           </div>
-          <div className="flex items-center gap-3 text-[10px] uppercase font-bold tracking-wider text-zinc-300">
-            <span className="bg-white/10 px-2 py-1 rounded border border-white/15">UPI</span>
-            <span className="bg-white/10 px-2 py-1 rounded border border-white/15">Net Banking</span>
-            <span className="bg-white/10 px-2 py-1 rounded border border-white/15">Visa / MasterCard</span>
-          </div>
         </div>
       </div>
     </footer>
