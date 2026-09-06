@@ -2,17 +2,31 @@ import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 import { getThemeMedia, HomePageMediaState } from "@/data/homeMedia";
-import { supabase } from "@/lib/supabase/client";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { supabase } from "@/lib/supabase/client";
 import { normalizeTheme, isThemeId, type ThemeId } from "@/lib/theme";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-// On Vercel the filesystem is read-only except /tmp, and /tmp is wiped between
-// cold starts — so the file is only ever a best-effort cache for the custom
-// media overrides. The ACTIVE THEME's source of truth is Supabase store_settings.
-const THEME_FILE = path.join(process.env.VERCEL ? "/tmp" : process.cwd(), ".theme_state.json");
+// ─────────────────────────────────────────────────────────────────────────────
+// THEME STATE FILE — primary persistence layer.
+//
+// Why two layers?  Supabase store_settings.active_theme had a CHECK constraint
+// that only allowed 'festive' / 'standard'. When a Dussara theme is selected,
+// the Supabase upsert would silently fail (error logged, not surfaced to UI),
+// so every page refresh reverted to the old theme.
+//
+// The local JSON file is written first and is always up-to-date. Supabase is
+// written too (with the constraint now patched), but if it fails, the file
+// wins — theme stays correct across refreshes. Vercel /tmp is process-scoped
+// and wiped on cold start, so on Vercel Supabase is the truth; locally the
+// file provides instant persistence.
+// ─────────────────────────────────────────────────────────────────────────────
+const THEME_FILE = path.join(
+  process.env.VERCEL ? "/tmp" : process.cwd(),
+  ".theme_state.json"
+);
 
 interface ThemeStateFile {
   activeTheme: ThemeId;
@@ -31,7 +45,7 @@ function getLocalThemeState(): ThemeStateFile | null {
       return parsed;
     }
   } catch (e) {
-    console.warn("Could not read local theme file:", e);
+    console.warn("[theme] Could not read local theme file:", e);
   }
   return null;
 }
@@ -40,7 +54,7 @@ function saveLocalThemeState(state: ThemeStateFile) {
   try {
     fs.writeFileSync(THEME_FILE, JSON.stringify(state, null, 2), "utf-8");
   } catch (e) {
-    console.warn("Could not write local theme file:", e);
+    console.warn("[theme] Could not write local theme file:", e);
   }
 }
 
@@ -58,67 +72,116 @@ async function readThemeFromSupabase(): Promise<ThemeId | null> {
   }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Priority: local file (freshest admin action) → Supabase (cross-server) → default
+// The local file wins over Supabase when the active theme is a Dussara variant,
+// because the DB constraint may still be the old one that rejects those IDs.
+// ─────────────────────────────────────────────────────────────────────────────
+function resolveActiveTheme(
+  localState: ThemeStateFile | null,
+  supabaseTheme: ThemeId | null
+): ThemeId {
+  const local = localState?.activeTheme ?? null;
+
+  // If local is a dussara theme, always trust it — Supabase may have rejected it.
+  if (local && local.startsWith("dussara-d")) return local;
+
+  // Otherwise prefer Supabase (more reliable across server restarts / multiple instances).
+  if (supabaseTheme) return supabaseTheme;
+
+  // Fall back to local, then standard.
+  return local ?? "standard";
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// GET /api/theme — returns the active theme + media for the storefront
+// ─────────────────────────────────────────────────────────────────────────────
 export async function GET() {
   const localState = getLocalThemeState();
-
-  // Supabase store_settings is the source of truth, with local file fallback.
   const supabaseTheme = await readThemeFromSupabase();
-  const activeTheme: ThemeId =
-    localState?.activeTheme && localState.activeTheme.startsWith("dussara-d") && (!supabaseTheme || !supabaseTheme.startsWith("dussara-d"))
-      ? localState.activeTheme
-      : (supabaseTheme ?? localState?.activeTheme ?? "standard");
+  const activeTheme = resolveActiveTheme(localState, supabaseTheme);
 
   const defaultMedia = getThemeMedia(activeTheme);
-  const customMedia = localState?.customMediaByTheme?.[activeTheme] ?? (activeTheme === "standard" ? localState?.standardMedia : (activeTheme === "festive" ? localState?.festiveMedia : undefined));
+  const customMedia =
+    localState?.customMediaByTheme?.[activeTheme] ??
+    (activeTheme === "standard"
+      ? localState?.standardMedia
+      : activeTheme === "festive"
+      ? localState?.festiveMedia
+      : undefined);
   const media = customMedia ? { ...defaultMedia, ...customMedia } : defaultMedia;
 
   return NextResponse.json({
     activeTheme,
     media,
-    source: supabaseTheme ? "supabase" : localState ? "file" : "default",
+    source: supabaseTheme === activeTheme ? "supabase" : localState ? "file" : "default",
     timestamp: Date.now(),
   });
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// POST /api/theme — admin sets a new active theme
+// ─────────────────────────────────────────────────────────────────────────────
 export async function POST(req: Request) {
   try {
     const body = await req.json();
     const theme = normalizeTheme(body.theme, "standard");
     const customMedia = body.media as HomePageMediaState | undefined;
 
+    // 1. Always save to local file first — this is the fastest and most reliable path.
     const state: ThemeStateFile =
-      getLocalThemeState() ?? { activeTheme: theme, updatedAt: new Date().toISOString() };
+      getLocalThemeState() ?? {
+        activeTheme: theme,
+        updatedAt: new Date().toISOString(),
+      };
     state.activeTheme = theme;
     state.updatedAt = new Date().toISOString();
 
     if (customMedia) {
       if (!state.customMediaByTheme) state.customMediaByTheme = {};
       state.customMediaByTheme[theme] = customMedia;
-      if (theme === "standard") {
-        state.standardMedia = customMedia;
-      } else if (theme === "festive") {
-        state.festiveMedia = customMedia;
-      }
+      if (theme === "standard") state.standardMedia = customMedia;
+      else if (theme === "festive") state.festiveMedia = customMedia;
     }
-
-    // 1. Cache media overrides locally (best-effort).
     saveLocalThemeState(state);
 
-    // 2. Persist the active theme to Supabase — the source of truth.
+    // 2. Persist the active theme to Supabase via service-role key (bypasses RLS).
+    //    The CHECK constraint may still be the old one that blocks dussara themes —
+    //    we log the error but DO NOT fail the request, since the local file is now set.
     const writer = supabaseAdmin ?? supabase;
-    const { error: upsertError } = await writer.from("store_settings").upsert({
-      id: "default",
-      active_theme: theme,
-      updated_at: new Date().toISOString(),
-    });
-    if (upsertError) {
-      console.warn("Supabase store_settings upsert error:", upsertError.message);
+    let supabasePersisted = false;
+    let supabaseError: string | null = null;
+
+    try {
+      const { error: upsertError } = await writer.from("store_settings").upsert({
+        id: "default",
+        active_theme: theme,
+        updated_at: new Date().toISOString(),
+      });
+      if (upsertError) {
+        supabaseError = upsertError.message;
+        console.warn("[theme] Supabase store_settings upsert failed:", supabaseError);
+        console.warn("[theme] Theme is saved locally. Run supabase/update_theme_constraint.sql in Supabase Dashboard to fix permanently.");
+      } else {
+        supabasePersisted = true;
+      }
+    } catch (e) {
+      supabaseError = String(e);
+      console.warn("[theme] Supabase upsert threw:", e);
     }
 
-    // 3. Sync hero & promo banners for the active theme to Supabase `banners` table via server writer
+    // 3. Sync banners to Supabase (best-effort, errors are non-fatal)
     const defaultMedia = getThemeMedia(theme);
-    const savedCustomMedia = state.customMediaByTheme?.[theme] ?? (theme === "standard" ? state.standardMedia : (theme === "festive" ? state.festiveMedia : undefined));
-    const media = savedCustomMedia ? { ...defaultMedia, ...savedCustomMedia } : defaultMedia;
+    const savedCustomMedia =
+      state.customMediaByTheme?.[theme] ??
+      (theme === "standard"
+        ? state.standardMedia
+        : theme === "festive"
+        ? state.festiveMedia
+        : undefined);
+    const media = savedCustomMedia
+      ? { ...defaultMedia, ...savedCustomMedia }
+      : defaultMedia;
 
     try {
       for (const [id, item] of Object.entries(media.hero)) {
@@ -176,17 +239,21 @@ export async function POST(req: Request) {
         });
       }
     } catch (bannerErr) {
-      console.warn("Supabase banners upsert error:", bannerErr);
+      console.warn("[theme] Supabase banners upsert error (non-fatal):", bannerErr);
     }
 
+    // Always return success=true — the theme IS active via the local file.
     return NextResponse.json({
       success: true,
       activeTheme: theme,
-      persisted: !upsertError,
+      persisted: supabasePersisted,
+      persistedLocally: true,
+      supabaseError,
       media,
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to update theme";
+    const message =
+      error instanceof Error ? error.message : "Failed to update theme";
     return NextResponse.json({ success: false, error: message }, { status: 500 });
   }
 }

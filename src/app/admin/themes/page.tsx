@@ -116,8 +116,7 @@ export default function ThemesPage() {
 
     setBusy(true);
 
-    // Immediately write to localStorage & dispatch so the page and all other
-    // hooks update before the async Supabase write completes.
+    // Step 1: Optimistic local update — instant visual feedback before any network call.
     if (typeof window !== "undefined") {
       localStorage.setItem("charmila_active_theme", themeId);
       try {
@@ -131,12 +130,33 @@ export default function ThemesPage() {
 
     updateSettings({ activeTheme: themeId });
 
+    // Step 2: If this is a dussara theme, attempt to fix the Supabase constraint first.
+    // This is a one-time background fix; failures are non-fatal.
+    if (themeId.startsWith("dussara-d")) {
+      try {
+        await fetch("/api/admin/fix-theme-constraint", { method: "POST" });
+      } catch {
+        // Non-fatal — the theme route handles constraint failures gracefully
+      }
+    }
+
+    // Step 3: Apply theme media and sync to server.
     try {
-      await applyThemeMedia(themeId);
-      showToast(`✓ Activated "${selected.name}" — all 33+ homepage images and banners updated!`);
+      const result = await applyThemeMedia(themeId);
+      // applyThemeMedia returns HomePageMediaState; check /api/theme response for persist status
+      // by calling it fresh after the POST is done
+      const checkRes = await fetch("/api/theme", { cache: "no-store" });
+      const checkJson = checkRes.ok ? await checkRes.json() : null;
+
+      if (checkJson?.activeTheme === themeId) {
+        showToast(`✓ "${selected.name}" activated — all 33+ homepage images updated!`);
+      } else {
+        // Theme is active locally (localStorage + local file) even if Supabase blocked it
+        showToast(`✓ "${selected.name}" activated locally. Running in local mode.`);
+      }
     } catch (e) {
-      console.error(e);
-      showToast(`✓ Activated "${selected.name}" locally`);
+      console.error("[theme] applyThemeMedia error:", e);
+      showToast(`✓ "${selected.name}" activated (local mode)`);
     } finally {
       setBusy(false);
     }
