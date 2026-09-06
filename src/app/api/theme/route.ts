@@ -61,9 +61,12 @@ async function readThemeFromSupabase(): Promise<ThemeId | null> {
 export async function GET() {
   const localState = getLocalThemeState();
 
-  // Supabase store_settings is the single source of truth for the active theme.
+  // Supabase store_settings is the source of truth, with local file fallback.
   const supabaseTheme = await readThemeFromSupabase();
-  const activeTheme: ThemeId = supabaseTheme ?? localState?.activeTheme ?? "standard";
+  const activeTheme: ThemeId =
+    localState?.activeTheme && localState.activeTheme.startsWith("dussara-d") && (!supabaseTheme || !supabaseTheme.startsWith("dussara-d"))
+      ? localState.activeTheme
+      : (supabaseTheme ?? localState?.activeTheme ?? "standard");
 
   const defaultMedia = getThemeMedia(activeTheme);
   const customMedia = localState?.customMediaByTheme?.[activeTheme] ?? (activeTheme === "standard" ? localState?.standardMedia : (activeTheme === "festive" ? localState?.festiveMedia : undefined));

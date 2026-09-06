@@ -130,7 +130,7 @@ create policy "banners: admins write" on public.banners
 create table if not exists public.store_settings (
   id text primary key default 'default',
   active_theme text not null default 'standard'
-    check (active_theme in ('festive', 'standard')),
+    check (active_theme in ('festive', 'standard') or active_theme like 'dussara-d%'),
   store_name text not null default 'Charmila Computers',
   support_email text not null default 'info@charmilacomputers.in',
   support_phone text not null default '9010177427',
