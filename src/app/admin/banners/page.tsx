@@ -49,7 +49,7 @@ export default function BannerEditorPage() {
     setSaving(true);
     try {
       await saveHomeMedia(media, selectedTheme);
-      showToast(`✓ All ${selectedTheme === "standard" ? "Standard" : "Festive"} homepage media & banners saved live!`);
+      showToast(`✓ All "${selectedTheme}" homepage media & banners saved live!`);
     } catch (err) {
       console.error(err);
       showToast("✓ Changes saved locally");
@@ -59,11 +59,11 @@ export default function BannerEditorPage() {
   }
 
   function handleReset() {
-    if (confirm(`Are you sure you want to reset all ${selectedTheme === "standard" ? "Standard Corporate" : "Vinayaka Festive"} images and banners to defaults?`)) {
+    if (confirm(`Are you sure you want to reset all "${selectedTheme}" images and banners to defaults?`)) {
       const def = getThemeMedia(selectedTheme);
       setMedia(def);
       saveHomeMedia(def, selectedTheme);
-      showToast(`Restored all ${selectedTheme} homepage images & banners to defaults`);
+      showToast(`Restored all "${selectedTheme}" homepage images & banners to defaults`);
     }
   }
 

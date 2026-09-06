@@ -490,6 +490,28 @@ export default function Header() {
         </div>
       </div>
 
+      {/* Mobile Search Bar (<768px) */}
+      <div className="md:hidden px-4 pb-2.5">
+        <form onSubmit={handleSearch} role="search" className="w-full">
+          <div className="flex w-full border border-[#D1121B]/60 rounded-lg overflow-hidden bg-white shadow-2xs">
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              type="text"
+              placeholder="Search products, brands (e.g. RTX 5060)..."
+              className="w-full px-3 py-1.5 text-xs text-[#1B1B1B] placeholder:text-[#929292] focus:outline-none font-medium"
+            />
+            <button
+              type="submit"
+              className="bg-[#D1121B] text-white px-3.5 flex items-center justify-center font-bold text-xs shrink-0"
+              aria-label="Search"
+            >
+              <SearchIcon className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </form>
+      </div>
+
       {/* LEVEL 3 — CATEGORY NAVIGATION */}
       <nav className="hidden md:block bg-[#7A1118] text-white border-t border-[#4E0B10] shadow-inner">
         <div className="mx-auto max-w-[1440px] px-4 sm:px-6 flex items-center h-10">

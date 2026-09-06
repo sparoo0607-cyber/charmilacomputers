@@ -269,7 +269,7 @@ export default function Home() {
         
         {/* 01. HERO SECTION (70% Left + 30% Stacked Right) */}
         <section aria-label="Festive Hero Showcase" className="relative">
-          {activeTheme === "festive" && (
+          {isFestive && (
             <>
               <div className="hidden sm:block absolute -top-3 -left-3 z-20">
                 <DiyaDecoration size="md" />
@@ -282,15 +282,18 @@ export default function Home() {
           <HeroCarousel />
         </section>
 
-        {activeTheme === "festive" && (
-          <FestiveDivider title="Vinayaka Festive Hardware Edition" subtitle="Curated PC Components & Rigs" />
+        {isFestive && (
+          <FestiveDivider
+            title={activeTheme.startsWith("dussara-d") ? "Dussehra Navratri Hardware Edition" : "Vinayaka Festive Hardware Edition"}
+            subtitle="Curated PC Components & Rigs"
+          />
         )}
 
         {/* 02. BUILD DIFFERENT PC & CABINET BANNER (Dynamic Home Media) */}
         <section aria-label="Build Different Custom PC Banner" className="w-full">
           <Link
             href={homeMedia.promos.buildDifferent?.link || "/build-your-pc"}
-            className="relative w-full aspect-[1756/896] rounded-2xl overflow-hidden shadow-sm group border border-[#E5E0D7] block bg-[#120B05]"
+            className="relative w-full aspect-[16/10] sm:aspect-[1756/896] min-h-[200px] sm:min-h-0 rounded-2xl overflow-hidden shadow-sm group border border-[#E5E0D7] block bg-[#120B05]"
           >
             <Image
               src={homeMedia.promos.buildDifferent?.image || (isFestive ? "/themes/vinayaka/banner-30.png" : "/themes/standard/promo-build-different.png")}
@@ -777,10 +780,10 @@ export default function Home() {
 
         {/* 07. FESTIVE TEMPLE NIGHT CELEBRATION PANORAMIC BANNER (Dynamic Home Media) */}
         <section aria-label="Festive Tech Mega Deals Banner" className="w-full">
-          <div className="relative w-full aspect-[1983/793] rounded-2xl overflow-hidden shadow-md group border border-[#E5E0D7] bg-[#080d19]">
+          <div className="relative w-full aspect-[16/10] sm:aspect-[1983/793] min-h-[220px] sm:min-h-0 rounded-2xl overflow-hidden shadow-md group border border-[#E5E0D7] bg-[#080d19]">
             <Image
-              src={homeMedia.promos.templeNight?.image || (activeTheme === "standard" ? "/themes/standard/promo-workstations.png" : "/themes/vinayaka/banner-16.png")}
-              alt={homeMedia.promos.templeNight?.alt || (activeTheme === "standard" ? "Ultra Performance Workstations - Enterprise Hardware Special" : "Vinayaka Chavithi Mega Fest - Ignite Your Gaming Dreams")}
+              src={homeMedia.promos.templeNight?.image || (activeTheme === "standard" ? "/themes/standard/promo-workstations.png" : (activeTheme.startsWith("dussara-d") ? `/themes/dussara/${activeTheme.replace("dussara-d", "D")}/5.png` : "/themes/vinayaka/banner-16.png"))}
+              alt={homeMedia.promos.templeNight?.alt || (activeTheme === "standard" ? "Ultra Performance Workstations - Enterprise Hardware Special" : "Festive Hardware Special")}
               fill
               sizes="(max-width: 1440px) 100vw, 1440px"
               className="object-cover object-center transition-transform duration-700 group-hover:scale-[1.01]"

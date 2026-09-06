@@ -44,7 +44,7 @@ export default function Footer() {
             </p>
             <div className={`pt-1 text-[11px] font-semibold flex items-center gap-2 ${isFestive ? "text-amber-300" : "text-red-400"}`}>
               <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${isFestive ? "bg-[#C89B3C]" : "bg-[#D1121B]"}`} />
-              <span>{isFestive ? "Vinayaka Chavithi Festive Deals Active" : "Official Brand Warranty & Express Shipping"}</span>
+              <span>{activeTheme.startsWith("dussara-d") ? "Dussehra Navratri Festive Deals Active" : (isFestive ? "Vinayaka Chavithi Festive Deals Active" : "Official Brand Warranty & Express Shipping")}</span>
             </div>
 
             {/* Social Icons */}

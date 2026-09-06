@@ -16,6 +16,7 @@ const THEME_FILE = path.join(process.env.VERCEL ? "/tmp" : process.cwd(), ".them
 
 interface ThemeStateFile {
   activeTheme: ThemeId;
+  customMediaByTheme?: Partial<Record<ThemeId, HomePageMediaState>>;
   festiveMedia?: HomePageMediaState;
   standardMedia?: HomePageMediaState;
   updatedAt: string;
@@ -65,7 +66,7 @@ export async function GET() {
   const activeTheme: ThemeId = supabaseTheme ?? localState?.activeTheme ?? "standard";
 
   const defaultMedia = getThemeMedia(activeTheme);
-  const customMedia = activeTheme === "standard" ? localState?.standardMedia : (activeTheme === "festive" ? localState?.festiveMedia : undefined);
+  const customMedia = localState?.customMediaByTheme?.[activeTheme] ?? (activeTheme === "standard" ? localState?.standardMedia : (activeTheme === "festive" ? localState?.festiveMedia : undefined));
   const media = customMedia ? { ...defaultMedia, ...customMedia } : defaultMedia;
 
   return NextResponse.json({
@@ -88,6 +89,8 @@ export async function POST(req: Request) {
     state.updatedAt = new Date().toISOString();
 
     if (customMedia) {
+      if (!state.customMediaByTheme) state.customMediaByTheme = {};
+      state.customMediaByTheme[theme] = customMedia;
       if (theme === "standard") {
         state.standardMedia = customMedia;
       } else if (theme === "festive") {
@@ -111,7 +114,7 @@ export async function POST(req: Request) {
 
     // 3. Sync hero & promo banners for the active theme to Supabase `banners` table via server writer
     const defaultMedia = getThemeMedia(theme);
-    const savedCustomMedia = theme === "standard" ? state.standardMedia : (theme === "festive" ? state.festiveMedia : undefined);
+    const savedCustomMedia = state.customMediaByTheme?.[theme] ?? (theme === "standard" ? state.standardMedia : (theme === "festive" ? state.festiveMedia : undefined));
     const media = savedCustomMedia ? { ...defaultMedia, ...savedCustomMedia } : defaultMedia;
 
     try {

@@ -141,7 +141,7 @@ export default function HeroCarousel() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 sm:gap-4 items-stretch">
         
         {/* Large Left Main Hero (8 cols / ~67%) */}
-        <div className="lg:col-span-8 relative w-full aspect-[1774/887] rounded-2xl overflow-hidden shadow-lg group border border-[#E5E0D7] bg-[#2A0609]">
+        <div className="lg:col-span-8 relative w-full aspect-[16/10] sm:aspect-[1774/887] min-h-[250px] sm:min-h-0 rounded-2xl overflow-hidden shadow-lg group border border-[#E5E0D7] bg-[#2A0609]">
           <Image
             src={main.imageSrc || themeFallback.main.imageSrc}
             alt={`${main.titleLine1} ${main.titleLine2}`}
@@ -152,11 +152,11 @@ export default function HeroCarousel() {
           />
 
           {/* Left Dark Gradient Overlay for Maximum Readability */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-transparent flex items-center">
-            <div className="p-5 sm:p-8 md:p-10 lg:p-12 max-w-[70%] sm:max-w-[60%] text-white space-y-2.5 sm:space-y-4">
+          <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/65 to-transparent flex items-center">
+            <div className="p-4 sm:p-8 md:p-10 lg:p-12 max-w-[85%] sm:max-w-[65%] lg:max-w-[60%] text-white space-y-2 sm:space-y-4">
               
               {/* Badge */}
-              <div className={`inline-flex items-center gap-1.5 text-[9px] sm:text-xs font-black uppercase px-3 py-1 rounded-full shadow-md tracking-wider backdrop-blur-xs ${
+              <div className={`inline-flex items-center gap-1.5 text-[8px] sm:text-xs font-black uppercase px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full shadow-md tracking-wider backdrop-blur-xs ${
                 isFestive
                   ? "bg-[#D1121B]/90 text-[#FFE58F] border border-[#C89B3C]/60"
                   : "bg-[#D1121B]/90 text-white border border-[#D1121B]/60"
@@ -166,7 +166,7 @@ export default function HeroCarousel() {
               </div>
 
               {/* High-Contrast Bold Headline */}
-              <h1 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-black tracking-tight text-white uppercase leading-[1.08] font-serif drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
+              <h1 className="text-base sm:text-3xl md:text-4xl lg:text-5xl font-black tracking-tight text-white uppercase leading-snug sm:leading-[1.08] font-serif drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
                 {main.titleLine1} <br className="hidden sm:inline" />
                 <span className={
                   isFestive
@@ -178,15 +178,15 @@ export default function HeroCarousel() {
               </h1>
 
               {/* Subtitle */}
-              <p className="text-zinc-100 text-xs sm:text-sm md:text-base font-medium line-clamp-2 max-w-md drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">
+              <p className="text-zinc-100 text-[11px] sm:text-sm md:text-base font-medium line-clamp-2 max-w-md drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">
                 {main.subtitle}
               </p>
 
               {/* Dual Action CTA Buttons */}
-              <div className="pt-2 flex flex-wrap items-center gap-3">
+              <div className="pt-1 sm:pt-2 flex flex-wrap items-center gap-2 sm:gap-3">
                 <Link
                   href={main.buttonLink || "/offers"}
-                  className="bg-gradient-to-r from-[#D1121B] to-[#7A1118] hover:from-[#B81017] hover:to-[#4E0B10] text-white font-extrabold text-xs sm:text-sm px-5 py-2.5 sm:py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 uppercase tracking-wider flex items-center gap-1.5"
+                  className="bg-gradient-to-r from-[#D1121B] to-[#7A1118] hover:from-[#B81017] hover:to-[#4E0B10] text-white font-extrabold text-[11px] sm:text-sm px-4 sm:px-5 py-2 sm:py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 uppercase tracking-wider flex items-center gap-1.5"
                 >
                   <span>{main.buttonText}</span>
                   <span>›</span>
@@ -196,8 +196,8 @@ export default function HeroCarousel() {
                     href={main.button2Link || "/build-your-pc"}
                     className={
                       isFestive
-                        ? "bg-black/60 hover:bg-black/80 backdrop-blur-md text-[#FFE58F] hover:text-white border border-[#C89B3C]/70 font-extrabold text-xs sm:text-sm px-5 py-2.5 sm:py-3 rounded-lg transition-all duration-200 hover:scale-105 uppercase tracking-wider hidden sm:inline-flex items-center gap-1.5 shadow-md"
-                        : "bg-transparent hover:bg-white/10 text-white border border-white/70 hover:border-white font-extrabold text-xs sm:text-sm px-5 py-2.5 sm:py-3 rounded-lg transition-all duration-200 hover:scale-105 uppercase tracking-wider hidden sm:inline-flex items-center gap-1.5 shadow-md"
+                        ? "bg-black/60 hover:bg-black/80 backdrop-blur-md text-[#FFE58F] hover:text-white border border-[#C89B3C]/70 font-extrabold text-[11px] sm:text-sm px-4 sm:px-5 py-2 sm:py-3 rounded-lg transition-all duration-200 hover:scale-105 uppercase tracking-wider hidden sm:inline-flex items-center gap-1.5 shadow-md"
+                        : "bg-transparent hover:bg-white/10 text-white border border-white/70 hover:border-white font-extrabold text-[11px] sm:text-sm px-4 sm:px-5 py-2 sm:py-3 rounded-lg transition-all duration-200 hover:scale-105 uppercase tracking-wider hidden sm:inline-flex items-center gap-1.5 shadow-md"
                     }
                   >
                     <span>{main.button2Text}</span>
@@ -210,25 +210,25 @@ export default function HeroCarousel() {
         </div>
 
         {/* Right Stacked Promotional Banners (4 cols / ~33%) */}
-        <div className="lg:col-span-4 flex flex-row lg:flex-col gap-3.5 sm:gap-4 justify-between">
+        <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-3.5 sm:gap-4 justify-between">
           
           {/* Top Right: Gaming Fest */}
           <Link 
             href={gaming.buttonLink || "/category/gaming"} 
-            className="flex-1 relative w-full aspect-[1536/1024] lg:aspect-[1774/887] rounded-2xl overflow-hidden shadow-md group border border-[#E5E0D7] block bg-[#180406]"
+            className="flex-1 relative w-full aspect-[16/9] sm:aspect-[1536/1024] lg:aspect-[1774/887] min-h-[140px] sm:min-h-0 rounded-2xl overflow-hidden shadow-md group border border-[#E5E0D7] block bg-[#180406]"
           >
             <Image
               src={gaming.imageSrc || themeFallback.gaming.imageSrc}
               alt={`${gaming.titleLine1} ${gaming.titleLine2}`}
               fill
-              sizes="(max-width: 1024px) 50vw, 33vw"
+              sizes="(max-width: 1024px) 100vw, 33vw"
               className="object-cover object-center transition-transform duration-700 group-hover:scale-[1.03]"
               priority
             />
             {/* Gaming Fest Overlay with High Contrast (No emoji) */}
             <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/55 to-transparent flex items-center">
-              <div className="p-3.5 sm:p-5 text-white max-w-[75%] space-y-1 sm:space-y-2">
-                <div className={`inline-flex items-center gap-1.5 text-[8px] sm:text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full backdrop-blur-xs ${
+              <div className="p-3 sm:p-5 text-white max-w-[80%] space-y-1 sm:space-y-2">
+                <div className={`inline-flex items-center gap-1.5 text-[8px] sm:text-[10px] font-bold uppercase px-2 py-0.5 rounded-full backdrop-blur-xs ${
                   isFestive
                     ? "bg-amber-500/20 text-amber-300 border border-amber-400/50"
                     : "bg-red-500/20 text-red-200 border border-red-500/40"
@@ -236,7 +236,7 @@ export default function HeroCarousel() {
                   <span className={`w-1 h-1 rounded-full ${isFestive ? "bg-amber-300" : "bg-red-400"}`} />
                   <span>{gaming.badgeText}</span>
                 </div>
-                <h3 className="text-sm sm:text-base md:text-lg lg:text-xl font-extrabold text-white uppercase leading-tight font-serif drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+                <h3 className="text-xs sm:text-base md:text-lg lg:text-xl font-extrabold text-white uppercase leading-tight font-serif drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
                   {gaming.titleLine1} <br />
                   <span className={
                     isFestive
@@ -244,10 +244,10 @@ export default function HeroCarousel() {
                       : "bg-gradient-to-r from-[#FF4D4D] via-[#D1121B] to-[#FF8080] bg-clip-text text-transparent"
                   }>{gaming.titleLine2}</span>
                 </h3>
-                <p className="text-[10px] sm:text-xs text-zinc-200 line-clamp-1 font-medium drop-shadow-xs">
+                <p className="text-[9px] sm:text-xs text-zinc-200 line-clamp-1 font-medium drop-shadow-xs">
                   {gaming.subtitle}
                 </p>
-                <div className="pt-1">
+                <div className="pt-0.5">
                   <span className={`inline-flex items-center gap-1 text-[9px] sm:text-[11px] font-bold group-hover:text-white group-hover:translate-x-1 transition-all uppercase tracking-wider ${
                     isFestive ? "text-amber-300" : "text-red-300"
                   }`}>
@@ -262,20 +262,20 @@ export default function HeroCarousel() {
           {/* Bottom Right: Save More Build More */}
           <Link 
             href={builder.buttonLink || "/build-your-pc"} 
-            className="flex-1 relative w-full aspect-[1774/887] rounded-2xl overflow-hidden shadow-md group border border-[#E5E0D7] block bg-[#180406]"
+            className="flex-1 relative w-full aspect-[16/9] sm:aspect-[1774/887] min-h-[140px] sm:min-h-0 rounded-2xl overflow-hidden shadow-md group border border-[#E5E0D7] block bg-[#180406]"
           >
             <Image
               src={builder.imageSrc || themeFallback.builder.imageSrc}
               alt={`${builder.titleLine1} ${builder.titleLine2}`}
               fill
-              sizes="(max-width: 1024px) 50vw, 33vw"
+              sizes="(max-width: 1024px) 100vw, 33vw"
               className="object-cover object-center transition-transform duration-700 group-hover:scale-[1.03]"
               priority
             />
             {/* Save More Overlay (No emoji) */}
             <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/55 to-transparent flex items-center">
-              <div className="p-3.5 sm:p-5 text-white max-w-[75%] space-y-1 sm:space-y-2">
-                <div className={`inline-flex items-center gap-1.5 text-[8px] sm:text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full backdrop-blur-xs ${
+              <div className="p-3 sm:p-5 text-white max-w-[80%] space-y-1 sm:space-y-2">
+                <div className={`inline-flex items-center gap-1.5 text-[8px] sm:text-[10px] font-bold uppercase px-2 py-0.5 rounded-full backdrop-blur-xs ${
                   isFestive
                     ? "bg-amber-500/20 text-amber-300 border border-amber-400/50"
                     : "bg-red-500/20 text-red-200 border border-red-500/40"
@@ -283,7 +283,7 @@ export default function HeroCarousel() {
                   <span className={`w-1 h-1 rounded-full ${isFestive ? "bg-amber-300" : "bg-red-400"}`} />
                   <span>{builder.badgeText}</span>
                 </div>
-                <h3 className="text-sm sm:text-base md:text-lg lg:text-xl font-extrabold uppercase leading-tight font-serif drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+                <h3 className="text-xs sm:text-base md:text-lg lg:text-xl font-extrabold uppercase leading-tight font-serif drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
                   <span className="text-white">{builder.titleLine1} </span>
                   <br />
                   <span className={
@@ -292,11 +292,11 @@ export default function HeroCarousel() {
                       : "bg-gradient-to-r from-[#FF4D4D] via-[#D1121B] to-[#FF8080] bg-clip-text text-transparent"
                   }>{builder.titleLine2}</span>
                 </h3>
-                <p className="text-[10px] sm:text-xs text-zinc-200 line-clamp-1 font-medium drop-shadow-xs">
+                <p className="text-[9px] sm:text-xs text-zinc-200 line-clamp-1 font-medium drop-shadow-xs">
                   {builder.subtitle}
                 </p>
-                <div className="pt-1">
-                  <span className={`inline-flex items-center gap-1 text-[9px] sm:text-[11px] font-extrabold bg-[#D1121B] hover:bg-[#B81017] px-3 py-1 rounded-md transition-all shadow-md uppercase tracking-wider ${
+                <div className="pt-0.5">
+                  <span className={`inline-flex items-center gap-1 text-[9px] sm:text-[11px] font-extrabold bg-[#D1121B] hover:bg-[#B81017] px-2.5 py-0.5 rounded-md transition-all shadow-md uppercase tracking-wider ${
                     isFestive ? "text-[#FFE58F]" : "text-white"
                   }`}>
                     <span>{builder.buttonText}</span>

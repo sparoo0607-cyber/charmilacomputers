@@ -560,13 +560,27 @@ html, body {
   object-fit: contain;
 }
 
-/* Hero carousel full-width on mobile */
+/* Hero carousel & promo banners full-width & responsive min-height on mobile */
 @media (max-width: 768px) {
   .aspect-\[1774\/887\] {
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 16 / 10;
+    min-height: 250px;
   }
   .aspect-\[1536\/1024\] {
-    aspect-ratio: 3 / 2;
+    aspect-ratio: 16 / 9;
+    min-height: 140px;
+  }
+  .aspect-\[1756\/896\] {
+    aspect-ratio: 16 / 10;
+    min-height: 220px;
+  }
+  .aspect-\[1983\/793\] {
+    aspect-ratio: 16 / 10;
+    min-height: 230px;
+  }
+  /* Mobile padding & text wrapping adjustments */
+  .line-clamp-2 {
+    -webkit-line-clamp: 3;
   }
 }
 
