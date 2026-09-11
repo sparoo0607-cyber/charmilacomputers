@@ -90,6 +90,8 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
     ? product.imageUrl
     : `https://www.charmilacomputers.in${product.imageUrl || "/icon.png"}`;
 
+  const shippingCost = product.price >= 3000 ? 0 : 150;
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -99,9 +101,20 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
         name: product.name,
         image: productImageUrl,
         brand: { "@type": "Brand", name: product.brand },
-        sku: product.model,
+        sku: product.model || product.id,
         description: product.features?.join(". ") || product.name,
         category: category?.name || product.categorySlug,
+        ...(product.rating && product.reviewsCount && product.reviewsCount > 0
+          ? {
+              aggregateRating: {
+                "@type": "AggregateRating",
+                ratingValue: product.rating,
+                reviewCount: product.reviewsCount,
+                bestRating: 5,
+                worstRating: 1,
+              },
+            }
+          : {}),
         offers: {
           "@type": "Offer",
           priceCurrency: "INR",
@@ -116,6 +129,43 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
             "@type": "Organization",
             name: "Charmila Computers",
             url: "https://www.charmilacomputers.in",
+          },
+          shippingDetails: {
+            "@type": "OfferShippingDetails",
+            shippingRate: {
+              "@type": "MonetaryAmount",
+              value: shippingCost,
+              currency: "INR",
+            },
+            shippingDestination: {
+              "@type": "DefinedRegion",
+              addressCountry: "IN",
+            },
+            deliveryTime: {
+              "@type": "ShippingDeliveryTime",
+              handlingTime: {
+                "@type": "QuantitativeValue",
+                minValue: 1,
+                maxValue: 2,
+                unitCode: "DAY",
+              },
+              transitTime: {
+                "@type": "QuantitativeValue",
+                minValue: 2,
+                maxValue: 5,
+                unitCode: "DAY",
+              },
+            },
+          },
+          hasMerchantReturnPolicy: {
+            "@type": "MerchantReturnPolicy",
+            applicableCountry: "IN",
+            returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+            merchantReturnDays: 7,
+            returnMethod: "https://schema.org/ReturnByMail",
+            returnFees: "https://schema.org/FreeReturn",
+            merchantReturnLink: "https://www.charmilacomputers.in/warranty-rma",
+            description: "7 Days Replacement guarantee for Dead-on-Arrival (DOA) or shipping damage.",
           },
         },
       },

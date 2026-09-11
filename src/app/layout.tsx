@@ -122,7 +122,7 @@ const structuredData = {
   "@context": "https://schema.org",
   "@graph": [
     {
-      "@type": ["LocalBusiness", "ComputerStore"],
+      "@type": ["LocalBusiness", "ComputerStore", "OnlineStore"],
       "@id": "https://www.charmilacomputers.in/#store",
       name: "Charmila Computers",
       alternateName: "Charmila Computers Sales & Services",
@@ -156,6 +156,17 @@ const structuredData = {
         "https://twitter.com/charmilacomputr",
         "https://www.instagram.com/charmilacomputers",
       ],
+      hasMerchantReturnPolicy: {
+        "@type": "MerchantReturnPolicy",
+        "@id": "https://www.charmilacomputers.in/#return-policy",
+        applicableCountry: "IN",
+        returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+        merchantReturnDays: 7,
+        returnMethod: "https://schema.org/ReturnByMail",
+        returnFees: "https://schema.org/FreeReturn",
+        merchantReturnLink: "https://www.charmilacomputers.in/warranty-rma",
+        description: "7 Days Replacement guarantee for Dead-on-Arrival (DOA) or shipping damage.",
+      },
     },
     {
       "@type": "WebSite",
