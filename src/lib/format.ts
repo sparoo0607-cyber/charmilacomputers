@@ -15,7 +15,7 @@ export const STORE = {
   helplineFormatted: "+91 95818 92600",
   whatsapp: "919010177427",
   email: "info@charmilacomputers.in",
-  address: "Andhra Pradesh, India",
+  address: "46-19-14, Mandavari St, Mandavaripeta, Dondaparthy, Railway New Colony, Visakhapatnam, Andhra Pradesh 530016",
   gstin: "37DDUPG5482C1Z7",
   social: {
     facebook: "https://www.facebook.com/charmilacomputers",

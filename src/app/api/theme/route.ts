@@ -74,23 +74,23 @@ async function readThemeFromSupabase(): Promise<ThemeId | null> {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Priority: local file (freshest admin action) → Supabase (cross-server) → default
-// The local file wins over Supabase when the active theme is a Dussara variant,
-// because the DB constraint may still be the old one that rejects those IDs.
+// The local file always wins when present — it's written unconditionally on every
+// admin theme switch, whereas the Supabase write is best-effort and can fail
+// silently (missing SUPABASE_SERVICE_ROLE_KEY, stale/blocked constraint, RLS).
+// Trusting Supabase over a just-written local file — as this used to do for any
+// non-Dussara theme — is what let a switch to "standard"/"festive" appear to
+// apply and then revert a moment later once the reconciliation fetch ran.
+// Supabase is only the fallback for a cold serverless instance with no local
+// file yet (e.g. right after a Vercel cold start, since /tmp is process-scoped).
 // ─────────────────────────────────────────────────────────────────────────────
 function resolveActiveTheme(
   localState: ThemeStateFile | null,
   supabaseTheme: ThemeId | null
 ): ThemeId {
   const local = localState?.activeTheme ?? null;
-
-  // If local is a dussara theme, always trust it — Supabase may have rejected it.
-  if (local && local.startsWith("dussara-d")) return local;
-
-  // Otherwise prefer Supabase (more reliable across server restarts / multiple instances).
+  if (local) return local;
   if (supabaseTheme) return supabaseTheme;
-
-  // Fall back to local, then standard.
-  return local ?? "standard";
+  return "standard";
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

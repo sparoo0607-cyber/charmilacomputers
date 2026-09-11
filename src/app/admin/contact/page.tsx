@@ -414,8 +414,9 @@ export default function AdminContactPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block font-bold text-zinc-700 mb-1">Primary Phone</label>
+                <label htmlFor="store-phone-primary" className="block font-bold text-zinc-700 mb-1">Primary Phone</label>
                 <input
+                  id="store-phone-primary"
                   type="text"
                   value={storeInfo.phonePrimary}
                   onChange={(e) => setStoreInfo({ ...storeInfo, phonePrimary: e.target.value })}
@@ -423,8 +424,9 @@ export default function AdminContactPage() {
                 />
               </div>
               <div>
-                <label className="block font-bold text-zinc-700 mb-1">Secondary Phone</label>
+                <label htmlFor="store-phone-secondary" className="block font-bold text-zinc-700 mb-1">Secondary Phone</label>
                 <input
+                  id="store-phone-secondary"
                   type="text"
                   value={storeInfo.phoneSecondary}
                   onChange={(e) => setStoreInfo({ ...storeInfo, phoneSecondary: e.target.value })}
@@ -435,8 +437,9 @@ export default function AdminContactPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block font-bold text-zinc-700 mb-1">Helpline Phone (Formatted)</label>
+                <label htmlFor="store-helpline" className="block font-bold text-zinc-700 mb-1">Helpline Phone (Formatted)</label>
                 <input
+                  id="store-helpline"
                   type="text"
                   value={storeInfo.helplinePhone}
                   onChange={(e) => setStoreInfo({ ...storeInfo, helplinePhone: e.target.value })}
@@ -444,8 +447,9 @@ export default function AdminContactPage() {
                 />
               </div>
               <div>
-                <label className="block font-bold text-zinc-700 mb-1">WhatsApp Business Number</label>
+                <label htmlFor="store-whatsapp" className="block font-bold text-zinc-700 mb-1">WhatsApp Business Number</label>
                 <input
+                  id="store-whatsapp"
                   type="text"
                   value={storeInfo.whatsapp}
                   onChange={(e) => setStoreInfo({ ...storeInfo, whatsapp: e.target.value })}
@@ -456,8 +460,9 @@ export default function AdminContactPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block font-bold text-zinc-700 mb-1">Support Email</label>
+                <label htmlFor="store-email" className="block font-bold text-zinc-700 mb-1">Support Email</label>
                 <input
+                  id="store-email"
                   type="email"
                   value={storeInfo.email}
                   onChange={(e) => setStoreInfo({ ...storeInfo, email: e.target.value })}
@@ -465,8 +470,9 @@ export default function AdminContactPage() {
                 />
               </div>
               <div>
-                <label className="block font-bold text-zinc-700 mb-1">GSTIN</label>
+                <label htmlFor="store-gstin" className="block font-bold text-zinc-700 mb-1">GSTIN</label>
                 <input
+                  id="store-gstin"
                   type="text"
                   value={storeInfo.gstin}
                   onChange={(e) => setStoreInfo({ ...storeInfo, gstin: e.target.value })}
@@ -476,8 +482,9 @@ export default function AdminContactPage() {
             </div>
 
             <div>
-              <label className="block font-bold text-zinc-700 mb-1">Physical Store Address</label>
+              <label htmlFor="store-address" className="block font-bold text-zinc-700 mb-1">Physical Store Address</label>
               <input
+                id="store-address"
                 type="text"
                 value={storeInfo.address}
                 onChange={(e) => setStoreInfo({ ...storeInfo, address: e.target.value })}
@@ -489,8 +496,9 @@ export default function AdminContactPage() {
               <h3 className="font-bold text-zinc-900 mb-3">Official Social Media Profiles</h3>
               <div className="space-y-3">
                 <div>
-                  <label className="block font-semibold text-zinc-500 mb-1">Facebook URL</label>
+                  <label htmlFor="store-facebook" className="block font-semibold text-zinc-500 mb-1">Facebook URL</label>
                   <input
+                    id="store-facebook"
                     type="url"
                     value={storeInfo.facebook}
                     onChange={(e) => setStoreInfo({ ...storeInfo, facebook: e.target.value })}
@@ -498,8 +506,9 @@ export default function AdminContactPage() {
                   />
                 </div>
                 <div>
-                  <label className="block font-semibold text-zinc-500 mb-1">Instagram URL</label>
+                  <label htmlFor="store-instagram" className="block font-semibold text-zinc-500 mb-1">Instagram URL</label>
                   <input
+                    id="store-instagram"
                     type="url"
                     value={storeInfo.instagram}
                     onChange={(e) => setStoreInfo({ ...storeInfo, instagram: e.target.value })}
@@ -507,8 +516,9 @@ export default function AdminContactPage() {
                   />
                 </div>
                 <div>
-                  <label className="block font-semibold text-zinc-500 mb-1">Twitter / X URL</label>
+                  <label htmlFor="store-twitter" className="block font-semibold text-zinc-500 mb-1">Twitter / X URL</label>
                   <input
+                    id="store-twitter"
                     type="url"
                     value={storeInfo.twitter}
                     onChange={(e) => setStoreInfo({ ...storeInfo, twitter: e.target.value })}

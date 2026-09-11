@@ -157,6 +157,7 @@ export default function WarrantyRmaPage() {
           <div className="relative sm:w-72">
             <input
               type="text"
+              aria-label="Filter brand"
               value={filterBrand}
               onChange={(e) => setFilterBrand(e.target.value)}
               placeholder="Filter brand (e.g. ASUS, MSI)..."
@@ -220,8 +221,9 @@ export default function WarrantyRmaPage() {
           <form onSubmit={handleRmaSubmit} className="space-y-4 text-xs">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className="block font-bold text-zinc-700 mb-1">Your Name *</label>
+                <label htmlFor="rma-name" className="block font-bold text-zinc-700 mb-1">Your Name *</label>
                 <input
+                  id="rma-name"
                   type="text"
                   required
                   value={rmaForm.name}
@@ -231,8 +233,9 @@ export default function WarrantyRmaPage() {
                 />
               </div>
               <div>
-                <label className="block font-bold text-zinc-700 mb-1">Phone Number *</label>
+                <label htmlFor="rma-phone" className="block font-bold text-zinc-700 mb-1">Phone Number *</label>
                 <input
+                  id="rma-phone"
                   type="tel"
                   required
                   value={rmaForm.phone}
@@ -242,8 +245,9 @@ export default function WarrantyRmaPage() {
                 />
               </div>
               <div>
-                <label className="block font-bold text-zinc-700 mb-1">Order ID / Invoice No. *</label>
+                <label htmlFor="rma-order-id" className="block font-bold text-zinc-700 mb-1">Order ID / Invoice No. *</label>
                 <input
+                  id="rma-order-id"
                   type="text"
                   required
                   value={rmaForm.orderId}
@@ -256,8 +260,9 @@ export default function WarrantyRmaPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block font-bold text-zinc-700 mb-1">Component Brand *</label>
+                <label htmlFor="rma-brand" className="block font-bold text-zinc-700 mb-1">Component Brand *</label>
                 <select
+                  id="rma-brand"
                   value={rmaForm.brand}
                   onChange={(e) => setRmaForm({ ...rmaForm, brand: e.target.value })}
                   className="w-full px-3.5 py-2.5 border border-zinc-300 rounded-xl font-bold bg-white focus:border-[#7A1118] focus:outline-none"
@@ -268,8 +273,9 @@ export default function WarrantyRmaPage() {
                 </select>
               </div>
               <div>
-                <label className="block font-bold text-zinc-700 mb-1">Product Serial Number (from box/sticker) *</label>
+                <label htmlFor="rma-serial" className="block font-bold text-zinc-700 mb-1">Product Serial Number (from box/sticker) *</label>
                 <input
+                  id="rma-serial"
                   type="text"
                   required
                   value={rmaForm.serialNumber}
@@ -281,8 +287,9 @@ export default function WarrantyRmaPage() {
             </div>
 
             <div>
-              <label className="block font-bold text-zinc-700 mb-1">Fault / Issue Description *</label>
+              <label htmlFor="rma-issue" className="block font-bold text-zinc-700 mb-1">Fault / Issue Description *</label>
               <textarea
+                id="rma-issue"
                 rows={3}
                 required
                 value={rmaForm.issueDescription}

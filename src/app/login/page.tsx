@@ -67,8 +67,9 @@ function LoginContent() {
         {/* Email & Password Form (Customer or Admin) */}
         <form onSubmit={handlePasswordLogin} className="space-y-3.5 text-xs">
           <div>
-            <label className="block font-bold text-zinc-700 mb-1.5">Email Address</label>
+            <label htmlFor="login-email" className="block font-bold text-zinc-700 mb-1.5">Email Address</label>
             <input
+              id="login-email"
               type="email"
               required
               value={email}
@@ -79,8 +80,9 @@ function LoginContent() {
           </div>
 
           <div>
-            <label className="block font-bold text-zinc-700 mb-1.5">Password</label>
+            <label htmlFor="login-password" className="block font-bold text-zinc-700 mb-1.5">Password</label>
             <input
+              id="login-password"
               type="password"
               required
               value={password}

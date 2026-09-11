@@ -49,8 +49,9 @@ export default function RegisterPage() {
 
         <form onSubmit={handleRegister} className="space-y-4 text-xs">
           <div>
-            <label className="block font-bold text-zinc-700 mb-1">Full Name *</label>
+            <label htmlFor="register-name" className="block font-bold text-zinc-700 mb-1">Full Name *</label>
             <input
+              id="register-name"
               type="text"
               required
               value={formData.fullName}
@@ -61,8 +62,9 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="block font-bold text-zinc-700 mb-1">Mobile Phone Number *</label>
+            <label htmlFor="register-phone" className="block font-bold text-zinc-700 mb-1">Mobile Phone Number *</label>
             <input
+              id="register-phone"
               type="tel"
               required
               value={formData.phone}
@@ -73,8 +75,9 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="block font-bold text-zinc-700 mb-1">Email Address *</label>
+            <label htmlFor="register-email" className="block font-bold text-zinc-700 mb-1">Email Address *</label>
             <input
+              id="register-email"
               type="email"
               required
               value={formData.email}
@@ -85,8 +88,9 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="block font-bold text-zinc-700 mb-1">Create Password *</label>
+            <label htmlFor="register-password" className="block font-bold text-zinc-700 mb-1">Create Password *</label>
             <input
+              id="register-password"
               type="password"
               required
               value={formData.password}

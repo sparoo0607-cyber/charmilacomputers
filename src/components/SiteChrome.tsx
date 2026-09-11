@@ -80,7 +80,7 @@ function PhoneCollectModal() {
 
           <form onSubmit={handleSave} className="space-y-4">
             <div>
-              <label className="block text-xs font-bold text-zinc-700 mb-1.5">
+              <label htmlFor="site-phone" className="block text-xs font-bold text-zinc-700 mb-1.5">
                 Your WhatsApp / Mobile Number
               </label>
               <div className="flex gap-2 items-center">
@@ -89,6 +89,7 @@ function PhoneCollectModal() {
                   IN +91
                 </span>
                 <input
+                  id="site-phone"
                   type="tel"
                   required
                   autoFocus

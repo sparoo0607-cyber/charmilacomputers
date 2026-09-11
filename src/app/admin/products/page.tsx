@@ -574,10 +574,11 @@ function ProductModal({
 
           {/* Key Product Features / Highlights */}
           <div className="pt-3 border-t border-zinc-100 space-y-2">
-            <label className="block text-xs font-bold text-zinc-700 uppercase tracking-wide">
+            <label htmlFor="product-features" className="block text-xs font-bold text-zinc-700 uppercase tracking-wide">
               Key Features &amp; Highlights (1 per line)
             </label>
             <textarea
+              id="product-features"
               rows={3}
               value={featuresText}
               onChange={(e) => setFeaturesText(e.target.value)}

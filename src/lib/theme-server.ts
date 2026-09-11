@@ -21,12 +21,14 @@ export async function getServerTheme(): Promise<ThemeId> {
       .select("active_theme")
       .eq("id", "default")
       .maybeSingle();
+    // The local file (written unconditionally by every admin theme switch, see
+    // /api/theme POST) is always the freshest source when present — the Supabase
+    // write is best-effort and can fail silently, so trusting it over a
+    // just-written local file let a switch to any non-Dussara theme appear to
+    // apply and then revert once this resolver ran again on the next request.
+    if (localTheme) return localTheme;
     if (!error && data?.active_theme) {
-      const sbTheme = normalizeTheme(data.active_theme);
-      if (localTheme && localTheme.startsWith("dussara-d") && !sbTheme.startsWith("dussara-d")) {
-        return localTheme;
-      }
-      return sbTheme;
+      return normalizeTheme(data.active_theme);
     }
   } catch {
     // network/DB unreachable — fall through

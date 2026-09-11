@@ -911,10 +911,10 @@ function TabButton({ active, onClick, label }: { active: boolean; onClick: () =>
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="space-y-1">
-      <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-700">{label}</label>
+    <label className="block space-y-1">
+      <span className="block text-[11px] font-bold uppercase tracking-wider text-zinc-700">{label}</span>
       {children}
-    </div>
+    </label>
   );
 }
 
@@ -946,6 +946,7 @@ function ImagePickerField({
 
       {/* Preset selector */}
       <select
+        aria-label={`${label} — preset`}
         onChange={(e) => {
           if (e.target.value) onChange(e.target.value);
         }}
@@ -963,6 +964,7 @@ function ImagePickerField({
       {/* URL input and upload button */}
       <div className="flex gap-2">
         <input
+          aria-label={`${label} — image URL`}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder="/images/..."

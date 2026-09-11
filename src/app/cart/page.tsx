@@ -270,7 +270,7 @@ export default function CartPage() {
 
             {/* Coupon Code Section */}
             <div className="pt-3 border-t border-zinc-100 space-y-2">
-              <label className="block text-xs font-bold text-zinc-700 uppercase tracking-wider">
+              <label htmlFor="coupon-code" className="block text-xs font-bold text-zinc-700 uppercase tracking-wider">
                 Apply Promo Code
               </label>
               {appliedCoupon ? (
@@ -286,6 +286,7 @@ export default function CartPage() {
               ) : (
                 <div className="flex gap-2">
                   <input
+                    id="coupon-code"
                     type="text"
                     value={couponInput}
                     onChange={(e) => setCouponInput(e.target.value.toUpperCase())}

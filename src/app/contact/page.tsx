@@ -120,8 +120,9 @@ export default function ContactPage() {
             <form onSubmit={handleSubmit} className="space-y-4 text-xs">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-bold text-zinc-700 mb-1">Your Name *</label>
+                  <label htmlFor="contact-name" className="block font-bold text-zinc-700 mb-1">Your Name *</label>
                   <input
+                    id="contact-name"
                     type="text"
                     required
                     value={formData.name}
@@ -131,8 +132,9 @@ export default function ContactPage() {
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-zinc-700 mb-1">Phone / WhatsApp Number *</label>
+                  <label htmlFor="contact-phone" className="block font-bold text-zinc-700 mb-1">Phone / WhatsApp Number *</label>
                   <input
+                    id="contact-phone"
                     type="tel"
                     required
                     value={formData.phone}
@@ -145,8 +147,9 @@ export default function ContactPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-bold text-zinc-700 mb-1">Email Address *</label>
+                  <label htmlFor="contact-email" className="block font-bold text-zinc-700 mb-1">Email Address *</label>
                   <input
+                    id="contact-email"
                     type="email"
                     required
                     value={formData.email}
@@ -156,8 +159,9 @@ export default function ContactPage() {
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-zinc-700 mb-1">Inquiry Purpose *</label>
+                  <label htmlFor="contact-subject" className="block font-bold text-zinc-700 mb-1">Inquiry Purpose *</label>
                   <select
+                    id="contact-subject"
                     value={formData.subject}
                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                     className="w-full px-3.5 py-2.5 border border-zinc-300 rounded-xl font-bold bg-white focus:border-[#7A1118] focus:outline-none"
@@ -172,8 +176,9 @@ export default function ContactPage() {
               </div>
 
               <div>
-                <label className="block font-bold text-zinc-700 mb-1">Your Message or Build Requirements *</label>
+                <label htmlFor="contact-message" className="block font-bold text-zinc-700 mb-1">Your Message or Build Requirements *</label>
                 <textarea
+                  id="contact-message"
                   rows={4}
                   required
                   value={formData.message}

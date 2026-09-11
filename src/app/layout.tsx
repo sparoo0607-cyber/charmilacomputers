@@ -139,9 +139,10 @@ const structuredData = {
       email: "info@charmilacomputers.in",
       address: {
         "@type": "PostalAddress",
-        streetAddress: "Andhra Pradesh, India",
-        addressLocality: "Andhra Pradesh",
+        streetAddress: "46-19-14, Mandavari St, Mandavaripeta, Dondaparthy, Railway New Colony",
+        addressLocality: "Visakhapatnam",
         addressRegion: "Andhra Pradesh",
+        postalCode: "530016",
         addressCountry: "IN",
       },
       openingHoursSpecification: [
