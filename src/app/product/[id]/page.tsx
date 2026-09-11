@@ -104,17 +104,6 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
         sku: product.model || product.id,
         description: product.features?.join(". ") || product.name,
         category: category?.name || product.categorySlug,
-        ...(product.rating && product.reviewsCount && product.reviewsCount > 0
-          ? {
-              aggregateRating: {
-                "@type": "AggregateRating",
-                ratingValue: product.rating,
-                reviewCount: product.reviewsCount,
-                bestRating: 5,
-                worstRating: 1,
-              },
-            }
-          : {}),
         offers: {
           "@type": "Offer",
           priceCurrency: "INR",
