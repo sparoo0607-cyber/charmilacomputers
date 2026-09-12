@@ -347,16 +347,17 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
   }, [toast]);
 
   // Admin access is granted solely by `profiles.is_admin` in the database —
-  // never by email string, and never by a client-side flag. Promote an
+  // never by email string, and never by a client-side flag. This must be a
+  // REAL Supabase auth session: every admin write (delete a product, save
+  // settings, toggle maintenance mode) goes straight to Supabase with RLS
+  // policies that check auth.uid() against profiles.is_admin. A client-side
+  // "you're an admin" flag with no real session behind it (the old
+  // charmila_demo_admin localStorage flag did exactly this) makes the admin
+  // UI look logged in while every single write silently fails RLS — which
+  // is exactly the "changes I make don't reach the backend" bug. Promote an
   // account to admin from the Supabase dashboard / SQL editor:
   //   update public.profiles set is_admin = true where id = '<user-uuid>';
   const checkAdminSession = useCallback(async (sessionUser: { id: string; email?: string | null } | null) => {
-    if (typeof window !== "undefined" && localStorage.getItem("charmila_demo_admin") === "true") {
-      setIsAuthed(true);
-      setAdminName("Charmila Admin");
-      return;
-    }
-
     if (!sessionUser) {
       setIsAuthed(false);
       return;

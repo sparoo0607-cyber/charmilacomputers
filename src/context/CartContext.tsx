@@ -292,23 +292,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const login = useCallback(
     async (email: string, password: string): Promise<AuthResult & { isAdmin?: boolean }> => {
-      const isDemoAdmin = email.trim().toLowerCase() === "admin@charmilacomputers.in";
+      // IMPORTANT: this must always go through a real Supabase auth session.
+      // A previous version of this function faked an admin login (a
+      // "charmila_demo_admin" localStorage flag, no real session) whenever
+      // sign-in failed for admin@charmilacomputers.in — that let the admin
+      // UI look logged in while auth.uid() was actually null, so every RLS
+      // admin-write policy (delete product, save settings, maintenance
+      // toggle, banners) silently rejected the change. If sign-in fails now,
+      // the real error is returned so the admin knows to reset their
+      // password in the Supabase dashboard instead of unknowingly working
+      // in a broken, writes-never-save session.
       try {
         const { data, error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
-        
-        if (error && isDemoAdmin) {
-          localStorage.setItem("charmila_demo_admin", "true");
-          setUser({
-            name: "Charmila Admin",
-            email: "admin@charmilacomputers.in",
-            phone: "+91 9010177427",
-            joinedDate: "August 2026",
-            charmilaCoins: 5000,
-            isAdmin: true,
-          });
-          showToast("Welcome back Admin!");
-          return { success: true, message: "Signed in as Admin", isAdmin: true };
-        }
 
         if (error) return { success: false, message: error.message };
 
@@ -319,29 +314,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             .select("is_admin")
             .eq("id", data.user.id)
             .maybeSingle();
-          isAdmin = !!profile?.is_admin || isDemoAdmin;
-        }
-
-        if (isAdmin) {
-          localStorage.setItem("charmila_demo_admin", "true");
+          isAdmin = !!profile?.is_admin;
         }
 
         showToast(`Welcome back!`);
         return { success: true, message: "Signed in", isAdmin };
       } catch {
-        if (isDemoAdmin) {
-          localStorage.setItem("charmila_demo_admin", "true");
-          setUser({
-            name: "Charmila Admin",
-            email: "admin@charmilacomputers.in",
-            phone: "+91 9010177427",
-            joinedDate: "August 2026",
-            charmilaCoins: 5000,
-            isAdmin: true,
-          });
-          showToast("Welcome back Admin!");
-          return { success: true, message: "Signed in as Admin", isAdmin: true };
-        }
         return { success: false, message: "Login failed — check credentials" };
       }
     },
