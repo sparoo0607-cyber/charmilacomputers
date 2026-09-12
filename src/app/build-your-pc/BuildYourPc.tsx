@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { buildableCategories } from "@/data/categories";
-import { getProduct, getProductsByCategory } from "@/data/products";
+import { useCatalog } from "@/context/CatalogContext";
 import { formatINR, whatsappOrderLink, STORE } from "@/lib/format";
 import { useCart } from "@/context/CartContext";
 import { Category, Product } from "@/data/types";
@@ -126,58 +126,18 @@ export default function BuildYourPc() {
     }
   });
 
-  // Live catalog per buildable category, pulled from Supabase `products` so the
-  // picker only ever suggests parts that actually exist in the store. Falls back
-  // to the bundled catalog per-category (getProductsByCategoryLive already does
-  // that on error/empty). Keyed by category slug.
-  const [liveCatalog, setLiveCatalog] = useState<Record<string, Product[]>>({});
-  const [catalogLoading, setCatalogLoading] = useState(true);
-
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      const slugs = buildableCategories.map((c) => c.slug);
-      const grouped: Record<string, Product[]> = {};
-      try {
-        const { supabase } = await import("@/lib/supabase/client");
-        const { data, error } = await supabase
-          .from("products")
-          .select("*")
-          .in("category_slug", slugs);
-        if (error || !data) throw error ?? new Error("no data");
-        const { mapProductRow } = await import("@/data/products");
-        for (const slug of slugs) grouped[slug] = [];
-        for (const row of data) {
-          const p = mapProductRow(row as Parameters<typeof mapProductRow>[0]);
-          (grouped[p.categorySlug] ??= []).push(p);
-        }
-        // Any category Supabase returned nothing for → fall back to bundled data
-        // so the picker is never emptier than the offline catalog.
-        for (const slug of slugs) {
-          if (grouped[slug].length === 0) grouped[slug] = getProductsByCategory(slug);
-        }
-      } catch {
-        for (const slug of slugs) grouped[slug] = getProductsByCategory(slug);
-      }
-      if (cancelled) return;
-      setLiveCatalog(grouped);
-      setCatalogLoading(false);
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  // Every id in the live catalog, for O(1) lookups when resolving a selection.
-  const liveById = useMemo(() => {
-    const m = new Map<string, Product>();
-    for (const list of Object.values(liveCatalog)) for (const p of list) m.set(p.id, p);
-    return m;
-  }, [liveCatalog]);
-
-  // Resolve a product id against the live catalog first, then the bundled one.
-  const resolveProduct = (id: string): Product | undefined => liveById.get(id) ?? getProduct(id);
-  const catalogFor = (slug: string): Product[] => liveCatalog[slug] ?? getProductsByCategory(slug);
+  // The live catalog, shared with the rest of the storefront (one fetch, see
+  // src/context/CatalogContext.tsx). This screen used to run its own Supabase
+  // query and fall back to the bundled catalog whenever a category came back
+  // empty — which meant the picker offered, and the presets silently resolved,
+  // products that had been deleted from the store and could not be sold.
+  // Aliased rather than wrapped: the context memoizes these, so they stay
+  // referentially stable and are safe to use in the useMemo deps below.
+  const {
+    getProduct: resolveProduct,
+    getProductsByCategory: catalogFor,
+    catalogLoading,
+  } = useCatalog();
 
   useEffect(() => {
     try {
@@ -204,7 +164,7 @@ export default function BuildYourPc() {
     let price = 0;
     let watts = 0;
     for (const [categorySlug, sel] of Object.entries(selections)) {
-      const p = liveById.get(sel.productId) ?? getProduct(sel.productId);
+      const p = resolveProduct(sel.productId);
       if (!p) continue;
       price += p.price * sel.qty;
       // The PSU's `wattage` is its rated *capacity*, not something it draws —
@@ -215,7 +175,7 @@ export default function BuildYourPc() {
     }
     if (watts > 0) watts += 35;
     return { price, watts };
-  }, [selections, liveById]);
+  }, [selections, resolveProduct]);
 
   // ~20% headroom over draw, rounded up to the nearest 50W — matches how PSUs are actually sized.
   const recommendedPsu = useMemo(() => {
@@ -226,7 +186,7 @@ export default function BuildYourPc() {
   const compatibility = useMemo(() => {
     const issues: string[] = [];
     const pick = (slug: string) =>
-      selections[slug] ? liveById.get(selections[slug].productId) ?? getProduct(selections[slug].productId) : undefined;
+      selections[slug] ? resolveProduct(selections[slug].productId) : undefined;
     const cpu = pick("processors");
     const mb = pick("motherboards");
     const ram = pick("memory");
@@ -256,7 +216,7 @@ export default function BuildYourPc() {
       issues.push(`${cpu.name} has no iGPU — add a GPU!`);
     }
     return { ok: issues.length === 0, issues };
-  }, [selections, totals.watts, liveById]);
+  }, [selections, totals.watts, resolveProduct]);
 
   function chooseProduct(categorySlug: string, productId: string) {
     setSelections((prev) => ({ ...prev, [categorySlug]: { productId, qty: 1 } }));
@@ -276,10 +236,24 @@ export default function BuildYourPc() {
   function loadPreset(id: string) {
     const preset = PRESET_BUILDS.find((p) => p.id === id);
     if (!preset) return;
+    // A preset names specific product ids. Only load the ones the store
+    // actually stocks — loading a missing id put an unbuyable part in the build
+    // that priced as ₹0 and failed silently in "Add all to cart".
+    const entries = Object.entries(preset.parts);
     const newSel: Record<string, Selection> = {};
-    for (const [cat, pid] of Object.entries(preset.parts)) newSel[cat] = { productId: pid, qty: 1 };
+    for (const [cat, pid] of entries) {
+      if (resolveProduct(pid)) newSel[cat] = { productId: pid, qty: 1 };
+    }
     setSelections(newSel);
-    showToast(`✓ Loaded "${preset.title}"`);
+
+    const loaded = Object.keys(newSel).length;
+    if (loaded === 0) {
+      showToast(`"${preset.title}" parts aren't in the catalog right now`);
+    } else if (loaded < entries.length) {
+      showToast(`Loaded "${preset.title}" — ${entries.length - loaded} part(s) are out of catalog`);
+    } else {
+      showToast(`✓ Loaded "${preset.title}"`);
+    }
   }
 
   function addAllToCart() {
@@ -535,7 +509,7 @@ export default function BuildYourPc() {
         <ComponentPickerModal
           categorySlug={activePickerCategory}
           products={catalogFor(activePickerCategory)}
-          loading={catalogLoading && !liveCatalog[activePickerCategory]}
+          loading={catalogLoading}
           onClose={() => setActivePickerCategory(null)}
           onSelect={(pid) => chooseProduct(activePickerCategory, pid)}
           currentSelectionId={selections[activePickerCategory]?.productId}
@@ -586,7 +560,7 @@ function CategoryRow({
       {prod ? (
         <div className="flex-1 flex items-center gap-3 min-w-0">
           <div className="w-10 h-10 bg-[#FAF7F2] rounded-lg border border-zinc-100 p-1 shrink-0 flex items-center justify-center">
-            <ProductImage categorySlug={cat.slug} productId={prod.id} imageUrl={prod.imageUrl} className="w-full h-full object-contain" />
+            <ProductImage categorySlug={cat.slug} imageUrl={prod.imageUrl} className="w-full h-full object-contain" />
           </div>
           <div className="flex-1 min-w-0">
             <div className="text-xs font-bold text-zinc-900 truncate">{prod.name}</div>
@@ -756,7 +730,7 @@ function ComponentPickerModal({
                 >
                   {/* Thumbnail */}
                   <div className="w-12 h-12 bg-[#FAF7F2] rounded-lg border border-zinc-100 p-1 shrink-0 flex items-center justify-center">
-                    <ProductImage categorySlug={categorySlug} productId={prod.id} imageUrl={prod.imageUrl} className="w-full h-full object-contain" />
+                    <ProductImage categorySlug={categorySlug} imageUrl={prod.imageUrl} className="w-full h-full object-contain" />
                   </div>
 
                   {/* Info */}

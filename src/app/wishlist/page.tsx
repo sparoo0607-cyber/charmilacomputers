@@ -92,7 +92,7 @@ export default function WishlistPage() {
             </button>
 
             <Link href={`/product/${prod!.id}`} className="bg-[#FAF7F2] p-4 rounded-xl mb-3 flex items-center justify-center">
-              <ProductImage categorySlug={prod!.categorySlug} className="w-36 h-36 object-contain" />
+              <ProductImage categorySlug={prod!.categorySlug} imageUrl={prod!.imageUrl} className="w-36 h-36 object-contain" />
             </Link>
 
             <div className="flex-1 flex flex-col justify-between">

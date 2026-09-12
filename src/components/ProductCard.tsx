@@ -94,7 +94,7 @@ export default function ProductCard({ product }: { product: Product }) {
         </div>
         <ProductImage
           categorySlug={product.categorySlug}
-          productId={product.id}
+         
           imageUrl={product.imageUrl}
           alt={product.name}
           className="w-full aspect-square transition-transform duration-300 group-hover:scale-106"

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { getAllProductsLive, getFeaturedProducts } from "@/data/products";
+import { getAllProductsLive } from "@/data/products";
 import ProductCard from "@/components/ProductCard";
 import { SearchIcon, BoltIcon } from "@/components/icons";
 
@@ -30,7 +30,12 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
       )
     : [];
 
-  const trendingItems = getFeaturedProducts(4);
+  // Trending picks come from the same live catalog, so search never suggests
+  // a product the store no longer stocks.
+  const trendingItems = [...catalog]
+    .filter((p) => p.categorySlug !== "services")
+    .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
+    .slice(0, 4);
 
   return (
     <div className="mx-auto max-w-[1440px] px-4 sm:px-6 py-8 font-sans">

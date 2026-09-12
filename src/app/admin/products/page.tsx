@@ -119,7 +119,7 @@ export default function AdminProductsPage() {
                 <tr key={p.id} className="border-b border-zinc-50 last:border-0 hover:bg-[#FAF7F2]">
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-3">
-                      <ProductImage categorySlug={p.categorySlug} className="w-11 h-11 rounded-lg bg-[#FAF7F2] border border-zinc-100 shrink-0" />
+                      <ProductImage categorySlug={p.categorySlug} imageUrl={p.imageUrl} className="w-11 h-11 rounded-lg bg-[#FAF7F2] border border-zinc-100 shrink-0" />
                       <div className="min-w-0">
                         <p className="font-semibold text-zinc-800 line-clamp-1 max-w-xs">{p.name}</p>
                         <p className="text-[11px] text-zinc-400">{p.brand} · {p.model}</p>

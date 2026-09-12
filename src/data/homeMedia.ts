@@ -139,7 +139,7 @@ export const VINAYAKA_THEME_MEDIA: HomePageMediaState = {
     mrp: 220000,
     discount: 9,
     image: "/images/graphics-cards.png",
-    link: "/product/gpu-suprim",
+    link: "/category/graphics-cards",
   },
   components: [
     {
@@ -427,7 +427,7 @@ export const STANDARD_THEME_MEDIA: HomePageMediaState = {
     mrp: 220000,
     discount: 9,
     image: "/themes/standard/GRAPHICS CARDS.png",
-    link: "/product/gpu-suprim",
+    link: "/category/graphics-cards",
   },
   components: [
     {

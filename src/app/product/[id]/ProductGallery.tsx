@@ -24,7 +24,7 @@ export default function ProductGallery({ product }: { product: Product }) {
         )}
         <ProductImage
           categorySlug={product.categorySlug}
-          productId={product.id}
+         
           imageUrl={activeImage}
           className="w-full max-w-[340px] aspect-square object-contain transition-transform duration-300 group-hover:scale-105"
         />
@@ -45,7 +45,7 @@ export default function ProductGallery({ product }: { product: Product }) {
             >
               <ProductImage
                 categorySlug={product.categorySlug}
-                productId={product.id}
+               
                 imageUrl={imgUrl}
                 className="w-full aspect-square object-contain"
               />

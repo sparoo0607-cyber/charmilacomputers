@@ -114,7 +114,7 @@ export default function ComparePage() {
                         <CloseIcon className="w-4 h-4" />
                       </button>
                       <div className="w-24 h-24 mx-auto bg-white p-2 rounded-xl border border-zinc-200">
-                        <ProductImage categorySlug={p!.categorySlug} className="w-full h-full object-contain" />
+                        <ProductImage categorySlug={p!.categorySlug} imageUrl={p!.imageUrl} className="w-full h-full object-contain" />
                       </div>
                       <span className="text-[10px] font-bold text-[#7A1118] uppercase bg-red-50 px-2 py-0.5 rounded border border-red-200 inline-block">
                         {p!.brand}

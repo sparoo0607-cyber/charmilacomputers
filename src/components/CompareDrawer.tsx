@@ -30,7 +30,7 @@ export default function CompareDrawer() {
         {items.map((prod) => (
           <div key={prod!.id} className="relative group shrink-0">
             <div className="w-10 h-10 rounded-lg bg-white p-1 border border-white/20 overflow-hidden">
-              <ProductImage categorySlug={prod!.categorySlug} className="w-full h-full object-contain" />
+              <ProductImage categorySlug={prod!.categorySlug} imageUrl={prod!.imageUrl} className="w-full h-full object-contain" />
             </div>
             <button
               onClick={() => removeFromCompare(prod!.id)}

@@ -4,6 +4,7 @@ import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
+import { useCatalog } from "@/context/CatalogContext";
 import { formatINR, STORE } from "@/lib/format";
 import ProductImage from "@/components/ProductImage";
 import {
@@ -18,6 +19,10 @@ function isAccountTab(value: string): value is AccountTab {
 }
 
 function AccountContent() {
+  // Order items are historical snapshots and carry no image of their own, so
+  // resolve it from the live catalog; a product that has since been deleted
+  // falls through to the placeholder.
+  const { getProduct } = useCatalog();
   const searchParams = useSearchParams();
   const initialTab = searchParams.get("tab") || "overview";
   const { user, authLoading, logout, orders, addToCart, showToast } = useCart();
@@ -288,7 +293,7 @@ function AccountContent() {
                         <div key={idx} className="py-3 flex items-center justify-between gap-3 text-xs">
                           <div className="flex items-center gap-3">
                             <div className="w-12 h-12 bg-[#FAF7F2] p-1 rounded-lg border border-zinc-200 shrink-0">
-                              <ProductImage categorySlug={item.categorySlug} className="w-full h-full object-contain" />
+                              <ProductImage categorySlug={item.categorySlug} imageUrl={getProduct(item.productId)?.imageUrl} className="w-full h-full object-contain" />
                             </div>
                             <div>
                               <p className="font-bold text-zinc-900 line-clamp-1">{item.name}</p>

@@ -8,6 +8,7 @@ import PageViewTracker from "@/components/PageViewTracker";
 import { useCart } from "@/context/CartContext";
 import { useCatalog } from "@/context/CatalogContext";
 import { Product } from "@/data/types";
+import { PRODUCT_PLACEHOLDER } from "@/data/products";
 import { CheckIcon, HeartIcon, StarIcon, BoltIcon, ChevronRightIcon, TruckIcon, ShieldIcon, HeadsetSupportIcon, CloseIcon } from "@/components/icons";
 import { useStoreTheme } from "@/hooks/useStoreTheme";
 import { isFestiveTheme } from "@/lib/theme";
@@ -60,12 +61,12 @@ function toQuickView(p: Product): QuickViewProduct {
     price: p.price,
     mrp,
     discount: mrp ? Math.round(((mrp - p.price) / mrp) * 100) : undefined,
-    image: p.imageUrl || `/images/${p.categorySlug}.png`,
+    image: p.imageUrl || PRODUCT_PLACEHOLDER,
   };
 }
 
 export default function Home() {
-  const { getFeaturedProducts, getProductsByCategory, catalogLoading } = useCatalog();
+  const { getFeaturedProducts, getProductsByCategory, getProduct, catalogLoading } = useCatalog();
   const { addToCart, toast } = useCart();
   // Seeded from the server-resolved theme, so SSR and first client render agree.
   const activeTheme = useStoreTheme();
@@ -146,6 +147,21 @@ export default function Home() {
     () => getProductsByCategory("graphics-cards").slice(0, 6).map(toQuickView),
     [getProductsByCategory]
   );
+
+  // The flagship hero is curated content (/admin/banners), but its link can
+  // point at a real product. Resolve it so "Add to Cart" only appears when
+  // that product actually exists — it used to be hardcoded to "gpu-suprim",
+  // which added a product id that is not in the catalog and linked to a page
+  // that 404s.
+  const flagshipId = (homeMedia.flagship?.link || "").startsWith("/product/")
+    ? (homeMedia.flagship?.link || "").slice("/product/".length)
+    : "";
+  const flagshipProduct = flagshipId ? getProduct(flagshipId) : undefined;
+  const flagshipHref = flagshipProduct
+    ? `/product/${flagshipProduct.id}`
+    : homeMedia.flagship?.link && !flagshipId
+      ? homeMedia.flagship.link
+      : "/category/graphics-cards";
 
   const filteredGPUs = beastGPUs.filter((g) => {
     if (gpuFilter === "50series") return g.name.includes("5060");
@@ -297,9 +313,13 @@ export default function Home() {
                 >
                   {/* Top: Discount Tag & Wishlist Button */}
                   <div className="w-full flex items-center justify-between mb-2 z-10">
-                    <span className="bg-[#D1121B] text-white text-[10px] font-black px-2 py-0.5 rounded-sm shadow-xs tracking-wider">
-                      SALE -{p.discount}%
-                    </span>
+                    {p.discount ? (
+                      <span className="bg-[#D1121B] text-white text-[10px] font-black px-2 py-0.5 rounded-sm shadow-xs tracking-wider">
+                        SALE -{p.discount}%
+                      </span>
+                    ) : (
+                      <span />
+                    )}
                     <button
                       onClick={(e) => toggleWishlist(p.id, e)}
                       aria-label="Add to wishlist"
@@ -528,7 +548,7 @@ export default function Home() {
 
                 {/* Large Product Image with Quick View trigger */}
                 <div className="relative w-full h-56 sm:h-64 my-4 flex items-center justify-center group/flag block">
-                  <Link href={homeMedia.flagship?.link || "/product/gpu-suprim"} className="w-full h-full relative flex items-center justify-center">
+                  <Link href={flagshipHref} className="w-full h-full relative flex items-center justify-center">
                     <Image
                       src={homeMedia.flagship?.image || "/images/graphics-cards.png"}
                       alt={homeMedia.flagship?.name || "MSI GeForce RTX 4090 SUPRIM X 24G"}
@@ -540,7 +560,7 @@ export default function Home() {
                   <button
                     onClick={() =>
                       setQuickViewProduct({
-                        id: "gpu-suprim",
+                        id: flagshipProduct?.id || "flagship",
                         brand: homeMedia.flagship?.brand || "MSI",
                         name: homeMedia.flagship?.name || "MSI GeForce RTX 4090 SUPRIM X 24G",
                         specs: homeMedia.flagship?.specs || "24GB GDDR6X • TRI FROZR 3S • Ray Tracing • DLSS 3.5",
@@ -586,16 +606,25 @@ export default function Home() {
                   <span className="text-[10px] text-zinc-400 uppercase block">Sale Price</span>
                   <span className="text-xl sm:text-2xl font-black text-[#FFE58F]">₹{(homeMedia.flagship?.price || 199999).toLocaleString()}</span>
                 </div>
-                <button
-                  onClick={() => handleAdd("gpu-suprim")}
-                  className={`py-2.5 px-6 rounded-lg text-xs font-bold uppercase tracking-wider transition-all duration-200 shadow-md ${
-                    addedItems["gpu-suprim"]
-                      ? "bg-green-600 text-white"
-                      : "bg-gradient-to-r from-[#D1121B] to-[#7A1118] hover:from-[#B81D15] hover:to-[#4E0B10] text-white hover:scale-105"
-                  }`}
-                >
-                  {addedItems["gpu-suprim"] ? "✓ Added" : "ADD TO CART"}
-                </button>
+                {flagshipProduct ? (
+                  <button
+                    onClick={() => handleAdd(flagshipProduct.id)}
+                    className={`py-2.5 px-6 rounded-lg text-xs font-bold uppercase tracking-wider transition-all duration-200 shadow-md ${
+                      addedItems[flagshipProduct.id]
+                        ? "bg-green-600 text-white"
+                        : "bg-gradient-to-r from-[#D1121B] to-[#7A1118] hover:from-[#B81D15] hover:to-[#4E0B10] text-white hover:scale-105"
+                    }`}
+                  >
+                    {addedItems[flagshipProduct.id] ? "✓ Added" : "ADD TO CART"}
+                  </button>
+                ) : (
+                  <Link
+                    href={flagshipHref}
+                    className="py-2.5 px-6 rounded-lg text-xs font-bold uppercase tracking-wider transition-all duration-200 shadow-md bg-gradient-to-r from-[#D1121B] to-[#7A1118] hover:from-[#B81D15] hover:to-[#4E0B10] text-white hover:scale-105"
+                  >
+                    VIEW RANGE
+                  </Link>
+                )}
               </div>
             </div>
 
@@ -617,9 +646,13 @@ export default function Home() {
                     <div>
                       {/* Top Discount Tag */}
                       <div className="flex items-center justify-between mb-1.5">
-                        <span className="bg-[#D1121B] text-white text-[9px] font-black px-1.5 py-0.5 rounded-sm">
-                          -{g.discount}%
-                        </span>
+                        {g.discount ? (
+                          <span className="bg-[#D1121B] text-white text-[9px] font-black px-1.5 py-0.5 rounded-sm">
+                            -{g.discount}%
+                          </span>
+                        ) : (
+                          <span />
+                        )}
                         <span className="text-[8px] text-zinc-500 font-bold uppercase">{g.brand}</span>
                       </div>
 

@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { getProductLive, getProductsByCategoryLive, products } from "@/data/products";
+import { getProductLive, getProductsByCategoryLive, getAllProductsLive } from "@/data/products";
 import { getCategory } from "@/data/categories";
 import ProductImage from "@/components/ProductImage";
 import ProductCard from "@/components/ProductCard";
@@ -54,7 +54,13 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
     .slice(0, 4);
 
   // Recommended pair item
-  const pairItem = products.find((p) => p.categorySlug !== product.categorySlug && p.price > 1000) || products[0];
+  // Pair suggestion from the live catalog — this used to come from the bundled
+  // seed array, so it could suggest (and add to cart) a product the store had
+  // deleted. Undefined when nothing else is stocked; the block below is skipped.
+  const catalog = await getAllProductsLive();
+  const pairItem =
+    catalog.find((p) => p.categorySlug !== product.categorySlug && p.price > 1000) ||
+    catalog.find((p) => p.id !== product.id);
 
   const sampleReviews = [
     {
@@ -237,7 +243,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
           <div className="flex flex-col md:flex-row items-center gap-6 justify-between">
             <div className="flex items-center gap-4 flex-wrap">
               <div className="flex items-center gap-3 bg-white p-3 rounded-xl border border-zinc-200 shadow-2xs">
-                <ProductImage categorySlug={product.categorySlug} className="w-14 h-14 object-contain" />
+                <ProductImage categorySlug={product.categorySlug} imageUrl={product.imageUrl} className="w-14 h-14 object-contain" />
                 <div className="text-xs">
                   <p className="font-bold text-zinc-800 line-clamp-1">{product.name}</p>
                   <p className="font-extrabold text-[#D1121B]">{formatINR(product.price)}</p>
@@ -247,7 +253,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
               <span className="text-xl font-black text-zinc-400">+</span>
 
               <div className="flex items-center gap-3 bg-white p-3 rounded-xl border border-zinc-200 shadow-2xs">
-                <ProductImage categorySlug={pairItem.categorySlug} className="w-14 h-14 object-contain" />
+                <ProductImage categorySlug={pairItem.categorySlug} imageUrl={pairItem.imageUrl} className="w-14 h-14 object-contain" />
                 <div className="text-xs">
                   <p className="font-bold text-zinc-800 line-clamp-1">{pairItem.name}</p>
                   <p className="font-extrabold text-[#D1121B]">{formatINR(pairItem.price)}</p>

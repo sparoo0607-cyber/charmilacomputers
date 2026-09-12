@@ -148,7 +148,7 @@ export default function CartPage() {
                 href={`/product/${product!.id}`}
                 className="shrink-0 bg-[#FAF7F2] p-2 rounded-xl border border-zinc-200 self-center sm:self-start"
               >
-                <ProductImage categorySlug={product!.categorySlug} className="w-20 h-20 sm:w-24 sm:h-24 object-contain" />
+                <ProductImage categorySlug={product!.categorySlug} imageUrl={product!.imageUrl} className="w-20 h-20 sm:w-24 sm:h-24 object-contain" />
               </Link>
 
               <div className="flex-1 min-w-0 flex flex-col justify-between">
