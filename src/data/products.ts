@@ -1796,10 +1796,9 @@ export async function getAllProductsLive(): Promise<Product[]> {
   try {
     const { supabase } = await import("@/lib/supabase/client");
     const { data, error } = await supabase.from("products").select("*").order("name");
-    if (error || !data || data.length === 0) return products;
-    // Same rule as getProductsByCategoryLive: once the table has rows it is the
-    // source of truth, so a product deleted in the admin panel really is gone
-    // and one added there really does show up.
+    // Only a genuine failure falls back to the bundled catalog. An empty
+    // result is a real answer — see the note in getProductsByCategoryLive.
+    if (error || !data) return products;
     return (data as ProductRow[]).map(mapProductRow);
   } catch {
     return products;
@@ -1811,14 +1810,19 @@ export async function getProductsByCategoryLive(categorySlug: string): Promise<P
   try {
     const { supabase } = await import("@/lib/supabase/client");
     const { data, error } = await supabase.from("products").select("*").eq("category_slug", categorySlug);
-    if (error || !data || data.length === 0) return seedList;
-    // Once Supabase has rows for this category, it is the source of truth —
-    // do NOT merge the bundled seed list back in. Merging it unconditionally
-    // (as this used to) meant deleting any seed-origin product in the admin
-    // panel never actually removed it from the storefront: it kept
-    // reappearing here because every product in the seed catalog was also
-    // seeded into Supabase, so this function re-added it right back on
-    // every page load regardless of the DB delete having worked.
+
+    // A failed query falls back to the bundled catalog so a Supabase hiccup
+    // never blanks the page. Zero rows is NOT a failure — it is Supabase
+    // telling us this category is empty, and it must render as empty.
+    // Treating the two the same (as this used to) meant an admin who deleted
+    // every product still saw the full seed catalog on the storefront, with
+    // no way to tell a working delete from a broken one.
+    if (error || !data) return seedList;
+
+    // Supabase is the source of truth — do NOT merge the bundled seed list
+    // back in. Merging it unconditionally meant deleting any seed-origin
+    // product in the admin panel never removed it from the storefront: every
+    // seed product was also in Supabase, so this re-added it on every load.
     return (data as ProductRow[]).map(mapProductRow);
   } catch {
     return seedList;

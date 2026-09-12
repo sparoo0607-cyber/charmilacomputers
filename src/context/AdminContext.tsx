@@ -408,12 +408,11 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    if (!data || data.length === 0) {
-      // The table is genuinely empty — show the bundled seed catalog so the
-      // admin screen isn't blank (and "Restore defaults" can push it to the DB).
-      setAdminProducts(seedProducts);
-      return;
-    }
+    // No rows is a real answer, not a failure: the catalog is empty and the
+    // admin screen must say so. Filling it with the bundled seed catalog here
+    // would show 70-odd products that do not exist in Supabase — exactly the
+    // admin/storefront mismatch this screen is meant to reflect. Use
+    // "Restore defaults" to push the seed catalog into the table.
 
     // Supabase is the single source of truth. There used to be a
     // "charmila_custom_products_v1" localStorage snapshot layered on top of
