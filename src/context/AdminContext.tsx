@@ -709,6 +709,8 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         reviews_count: p.reviewsCount ?? null,
         specs: p.specs ?? null,
         features: p.features ?? null,
+        image_url: p.imageUrl ?? (p.images && p.images[0]) ?? null,
+        images: p.images ?? (p.imageUrl ? [p.imageUrl] : null),
       }));
 
       // Restore the seed catalog FIRST via upsert. This used to delete
