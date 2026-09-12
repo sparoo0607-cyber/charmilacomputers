@@ -213,6 +213,7 @@ export interface Database {
           gstin: string;
           free_shipping_threshold: number;
           active_theme: string;
+          maintenance_mode: boolean;
           created_at: string;
           updated_at: string;
         };
@@ -224,6 +225,7 @@ export interface Database {
           gstin?: string;
           free_shipping_threshold?: number;
           active_theme?: string;
+          maintenance_mode?: boolean;
           created_at?: string;
           updated_at?: string;
         };
