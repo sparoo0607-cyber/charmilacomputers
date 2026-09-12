@@ -65,6 +65,28 @@ begin
   end if;
 end $$;
 
+-- SECURITY DEFINER helper so admin checks never recurse into RLS.
+--
+-- IMPORTANT: every policy below (on profiles AND every other table) calls
+-- this function instead of writing its own
+-- "exists (select 1 from public.profiles where id = auth.uid() and is_admin)"
+-- inline. A policy ON public.profiles that queries public.profiles directly
+-- in its own USING clause causes Postgres to re-evaluate that same RLS
+-- policy while checking it — infinite recursion ("infinite recursion
+-- detected in policy for relation profiles"), which breaks every table
+-- whose policy depends on that check, i.e. the entire backend. This
+-- function is SECURITY DEFINER, so it runs as its owner (bypassing RLS)
+-- and reads profiles directly with no recursion.
+create or replace function public.is_admin()
+returns boolean
+language sql
+security definer
+stable
+set search_path = public
+as $$
+  select coalesce((select p.is_admin from public.profiles p where p.id = auth.uid()), false);
+$$;
+
 alter table public.profiles enable row level security;
 
 -- Drop every previous policy on this table (from any older script) so this
@@ -82,7 +104,7 @@ end $$;
 create policy "profiles: read own or admin" on public.profiles
   for select using (
     auth.uid() = id
-    or exists (select 1 from public.profiles p where p.id = auth.uid() and p.is_admin)
+    or public.is_admin()
   );
 
 -- Update: only your own row (e.g. saving your phone number after login).
@@ -93,9 +115,9 @@ create policy "profiles: update own" on public.profiles
 -- Admins can do anything (grant/revoke admin, fix a record from the dashboard).
 create policy "profiles: admins full access" on public.profiles
   for all using (
-    exists (select 1 from public.profiles p where p.id = auth.uid() and p.is_admin)
+    public.is_admin()
   ) with check (
-    exists (select 1 from public.profiles p where p.id = auth.uid() and p.is_admin)
+    public.is_admin()
   );
 
 -- Auto-create a profile row whenever someone signs up.
@@ -128,7 +150,7 @@ create or replace function public.prevent_self_admin_escalation()
 returns trigger as $$
 begin
   if new.is_admin is distinct from old.is_admin then
-    if not exists (select 1 from public.profiles p where p.id = auth.uid() and p.is_admin) then
+    if not public.is_admin() then
       new.is_admin := old.is_admin;
     end if;
   end if;
@@ -200,9 +222,9 @@ end $$;
 create policy "products: public read" on public.products for select using (true);
 create policy "products: admins write" on public.products
   for all using (
-    exists (select 1 from public.profiles p where p.id = auth.uid() and p.is_admin)
+    public.is_admin()
   ) with check (
-    exists (select 1 from public.profiles p where p.id = auth.uid() and p.is_admin)
+    public.is_admin()
   );
 
 
@@ -260,9 +282,9 @@ end $$;
 create policy "store_settings: public read" on public.store_settings for select using (true);
 create policy "store_settings: admins write" on public.store_settings
   for all using (
-    exists (select 1 from public.profiles p where p.id = auth.uid() and p.is_admin)
+    public.is_admin()
   ) with check (
-    exists (select 1 from public.profiles p where p.id = auth.uid() and p.is_admin)
+    public.is_admin()
   );
 
 insert into public.store_settings (id, active_theme, store_name)
@@ -302,9 +324,9 @@ end $$;
 create policy "banners: public read" on public.banners for select using (true);
 create policy "banners: admins write" on public.banners
   for all using (
-    exists (select 1 from public.profiles p where p.id = auth.uid() and p.is_admin)
+    public.is_admin()
   ) with check (
-    exists (select 1 from public.profiles p where p.id = auth.uid() and p.is_admin)
+    public.is_admin()
   );
 
 insert into public.banners (id, image_src, badge_text, title_line1, title_line2, subtitle, button_text, button_link, button2_text, button2_link)
@@ -371,27 +393,27 @@ end $$;
 create policy "orders: read own or admin" on public.orders
   for select using (
     auth.uid() = user_id
-    or exists (select 1 from public.profiles p where p.id = auth.uid() and p.is_admin)
+    or public.is_admin()
   );
 create policy "orders: admins write" on public.orders
-  for insert with check (exists (select 1 from public.profiles p where p.id = auth.uid() and p.is_admin));
+  for insert with check (public.is_admin());
 create policy "orders: admins update" on public.orders
-  for update using (exists (select 1 from public.profiles p where p.id = auth.uid() and p.is_admin))
-  with check (exists (select 1 from public.profiles p where p.id = auth.uid() and p.is_admin));
+  for update using (public.is_admin())
+  with check (public.is_admin());
 create policy "orders: admins delete" on public.orders
-  for delete using (exists (select 1 from public.profiles p where p.id = auth.uid() and p.is_admin));
+  for delete using (public.is_admin());
 
 create policy "order_items: read via parent order" on public.order_items
   for select using (
     exists (
       select 1 from public.orders o
       where o.id = order_items.order_id
-        and (o.user_id = auth.uid() or exists (select 1 from public.profiles p where p.id = auth.uid() and p.is_admin))
+        and (o.user_id = auth.uid() or public.is_admin())
     )
   );
 create policy "order_items: admins write" on public.order_items
-  for all using (exists (select 1 from public.profiles p where p.id = auth.uid() and p.is_admin))
-  with check (exists (select 1 from public.profiles p where p.id = auth.uid() and p.is_admin));
+  for all using (public.is_admin())
+  with check (public.is_admin());
 
 
 -- ================================================================================
@@ -437,7 +459,7 @@ create policy "page_views: public insert" on public.page_views
 -- Only admins may read the raw log back (dashboard analytics).
 create policy "page_views: admins read" on public.page_views
   for select using (
-    exists (select 1 from public.profiles p where p.id = auth.uid() and p.is_admin)
+    public.is_admin()
   );
 
 
@@ -456,7 +478,7 @@ with (security_invoker = false) as
   from public.profiles p
   join auth.users u on u.id = p.id
   where (
-    exists (select 1 from public.profiles ap where ap.id = auth.uid() and ap.is_admin)
+    public.is_admin()
   )
   order by p.created_at desc;
 
@@ -477,17 +499,17 @@ create policy "product-images: public read" on storage.objects
 create policy "product-images: admins write" on storage.objects
   for insert with check (
     bucket_id = 'product-images'
-    and exists (select 1 from public.profiles p where p.id = auth.uid() and p.is_admin)
+    and public.is_admin()
   );
 create policy "product-images: admins update" on storage.objects
   for update using (
     bucket_id = 'product-images'
-    and exists (select 1 from public.profiles p where p.id = auth.uid() and p.is_admin)
+    and public.is_admin()
   );
 create policy "product-images: admins delete" on storage.objects
   for delete using (
     bucket_id = 'product-images'
-    and exists (select 1 from public.profiles p where p.id = auth.uid() and p.is_admin)
+    and public.is_admin()
   );
 
 
