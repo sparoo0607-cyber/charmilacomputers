@@ -1798,11 +1798,14 @@ export async function getProductsByCategoryLive(categorySlug: string): Promise<P
     const { supabase } = await import("@/lib/supabase/client");
     const { data, error } = await supabase.from("products").select("*").eq("category_slug", categorySlug);
     if (error || !data || data.length === 0) return seedList;
-    const dbProducts = (data as ProductRow[]).map(mapProductRow);
-    const map = new Map<string, Product>();
-    seedList.forEach((p) => map.set(p.id, p));
-    dbProducts.forEach((p) => map.set(p.id, p));
-    return Array.from(map.values());
+    // Once Supabase has rows for this category, it is the source of truth —
+    // do NOT merge the bundled seed list back in. Merging it unconditionally
+    // (as this used to) meant deleting any seed-origin product in the admin
+    // panel never actually removed it from the storefront: it kept
+    // reappearing here because every product in the seed catalog was also
+    // seeded into Supabase, so this function re-added it right back on
+    // every page load regardless of the DB delete having worked.
+    return (data as ProductRow[]).map(mapProductRow);
   } catch {
     return seedList;
   }
