@@ -163,10 +163,19 @@ create trigger prevent_self_admin_escalation
   before update on public.profiles
   for each row execute function public.prevent_self_admin_escalation();
 
--- Make sure the known admin account is actually flagged as admin.
-update public.profiles
-set is_admin = true
-where lower(coalesce(email, '')) = 'admin@charmilacomputers.in';
+-- Make sure the known admin account has a profiles row with is_admin = true.
+-- The on_auth_user_created trigger above only fires for NEW signups — the
+-- admin@charmilacomputers.in auth.users row predates it, so it never got a
+-- profiles row at all. Every admin-write RLS policy in this whole script
+-- checks profiles.is_admin, so without this row the admin account can log
+-- into /admin (the app has an email-based fallback for that) but every
+-- write (delete a product, save settings, toggle maintenance mode, edit a
+-- banner) silently fails RLS. This backfills it from auth.users directly.
+insert into public.profiles (id, email, full_name, is_admin)
+select u.id, u.email, 'Charmila Admin', true
+from auth.users u
+where lower(coalesce(u.email, '')) = 'admin@charmilacomputers.in'
+on conflict (id) do update set is_admin = true;
 
 
 -- ================================================================================
