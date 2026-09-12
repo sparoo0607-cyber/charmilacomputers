@@ -500,7 +500,6 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
   // this context only tracks the resulting admin session (see checkAdminSession above).
   // ---------------------------------------------------------------
   const logout = useCallback(() => {
-    localStorage.removeItem("charmila_demo_admin");
     supabase.auth.signOut();
     setIsAuthed(false);
   }, []);

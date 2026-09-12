@@ -185,6 +185,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [toast, setToast] = useState<string | null>(null);
   const [hydrated, setHydrated] = useState(false);
 
+  // One-time cleanup of the retired "charmila_demo_admin" flag. It was the
+  // old client-side admin bypass: it made the admin UI look signed in with no
+  // Supabase session behind it, so every RLS-guarded write silently failed.
+  // Nothing reads or writes it any more, but a stale copy is still sitting in
+  // the localStorage of anyone who used the app back then, so clear it.
+  useEffect(() => {
+    try {
+      localStorage.removeItem("charmila_demo_admin");
+    } catch {}
+  }, []);
+
   // Load cart/wishlist/compare from local storage (unrelated to Supabase — no backend need for these)
   useEffect(() => {
     const loadLocalStorage = () => {
@@ -352,7 +363,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   );
 
   const logout = useCallback(() => {
-    localStorage.removeItem("charmila_demo_admin");
     supabase.auth.signOut();
     setUser(null);
     showToast("Signed out successfully");
