@@ -636,7 +636,6 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
       localStorage.removeItem("charmila_custom_products_v1");
     }
     (async () => {
-      await supabase.from("products").delete().neq("id", "");
       const rows = seedProducts.map((p) => ({
         id: p.id,
         category_slug: p.categorySlug,
@@ -653,10 +652,33 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         specs: p.specs ?? null,
         features: p.features ?? null,
       }));
-      const { error } = await supabase.from("products").insert(rows);
-      if (error) {
-        console.warn("Supabase reset warning:", error.message);
+
+      // Restore the seed catalog FIRST via upsert. This used to delete
+      // every product before re-inserting the seed rows in a separate
+      // statement — if the insert then failed for any reason, the delete
+      // had already committed and the whole catalog was left empty with no
+      // error shown to the admin (the toast below fired unconditionally).
+      // Upserting first means the seed catalog is always present regardless
+      // of what happens next, and a real failure is now surfaced.
+      const { error: upsertError } = await supabase.from("products").upsert(rows, { onConflict: "id" });
+      if (upsertError) {
+        showToast(`Reset failed: ${upsertError.message}`);
+        console.warn("Supabase reset (restore seed) error:", upsertError.message);
+        fetchProducts();
+        return;
       }
+
+      // Then remove anything that isn't part of the seed catalog (products
+      // an admin added beyond the defaults).
+      const seedIds = seedProducts.map((p) => p.id);
+      const { error: cleanupError } = await supabase
+        .from("products")
+        .delete()
+        .not("id", "in", `(${seedIds.join(",")})`);
+      if (cleanupError) {
+        console.warn("Supabase reset (remove customs) warning:", cleanupError.message);
+      }
+
       showToast("Catalog reset to defaults");
       fetchProducts();
     })();
