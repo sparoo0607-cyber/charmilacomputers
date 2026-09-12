@@ -494,6 +494,9 @@ on conflict (id) do update set public = true;
 
 drop policy if exists "product-images: public read" on storage.objects;
 drop policy if exists "product-images: allow all" on storage.objects;
+drop policy if exists "product-images: admins write" on storage.objects;
+drop policy if exists "product-images: admins update" on storage.objects;
+drop policy if exists "product-images: admins delete" on storage.objects;
 create policy "product-images: public read" on storage.objects
   for select using (bucket_id = 'product-images');
 create policy "product-images: admins write" on storage.objects
