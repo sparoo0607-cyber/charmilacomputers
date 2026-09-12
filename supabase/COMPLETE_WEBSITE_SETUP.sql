@@ -150,7 +150,14 @@ create or replace function public.prevent_self_admin_escalation()
 returns trigger as $$
 begin
   if new.is_admin is distinct from old.is_admin then
-    if not public.is_admin() then
+    -- auth.uid() is only non-null for a request carrying a real end-user
+    -- JWT (the app's anon/authenticated key). The Supabase SQL Editor and
+    -- the service-role key both run with auth.uid() = null — that's a
+    -- trusted, dashboard/server-only context, so never touch the value
+    -- there. Only block a change made through a plain end-user session
+    -- that isn't already an admin (i.e. someone hitting the "update own
+    -- row" policy trying to flip their own is_admin flag).
+    if auth.uid() is not null and not public.is_admin() then
       new.is_admin := old.is_admin;
     end if;
   end if;
