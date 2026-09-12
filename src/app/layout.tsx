@@ -4,6 +4,7 @@ import "./globals.css";
 import SiteChrome from "@/components/SiteChrome";
 import Toast from "@/components/Toast";
 import { CartProvider } from "@/context/CartContext";
+import { CatalogProvider } from "@/context/CatalogContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { getServerTheme } from "@/lib/theme-server";
 
@@ -229,10 +230,13 @@ export default async function RootLayout({
           Skip to content
         </a>
         <ThemeProvider initialTheme={initialTheme}>
-          <CartProvider>
-            <SiteChrome>{children}</SiteChrome>
-            <Toast />
-          </CartProvider>
+          {/* Outside CartProvider: the cart reads live product prices from it. */}
+          <CatalogProvider>
+            <CartProvider>
+              <SiteChrome>{children}</SiteChrome>
+              <Toast />
+            </CartProvider>
+          </CatalogProvider>
         </ThemeProvider>
       </body>
     </html>

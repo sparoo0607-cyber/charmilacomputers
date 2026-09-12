@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import HeroCarousel from "@/components/HeroCarousel";
 import PageViewTracker from "@/components/PageViewTracker";
 import { useCart } from "@/context/CartContext";
+import { useCatalog } from "@/context/CatalogContext";
+import { Product } from "@/data/types";
 import { CheckIcon, HeartIcon, StarIcon, BoltIcon, ChevronRightIcon, TruckIcon, ShieldIcon, HeadsetSupportIcon, CloseIcon } from "@/components/icons";
 import { useStoreTheme } from "@/hooks/useStoreTheme";
 import { isFestiveTheme } from "@/lib/theme";
@@ -22,151 +24,15 @@ import CharmilaSectionHeader from "@/components/brand/CharmilaSectionHeader";
 import CharmilaTechLine from "@/components/brand/CharmilaTechLine";
 import CharmilaPcbPattern from "@/components/brand/CharmilaPcbPattern";
 
-// Vinayaka Festive Picks (6 Featured Products)
-const festivePicks = [
-  {
-    id: "ssd-1",
-    brand: "Western Digital",
-    name: "WD Green 250GB M.2 NVMe PCIe SSD",
-    specs: "250GB • 2,400 MB/s Read • 3-Yr Warranty",
-    rating: 4.8,
-    reviews: 142,
-    price: 1650,
-    mrp: 2100,
-    discount: 21,
-    image: "/images/products/ssd.png",
-  },
-  {
-    id: "cpu-5",
-    brand: "AMD",
-    name: "AMD Ryzen 5 5600G Desktop Processor",
-    specs: "6 Cores / 12 Threads • Vega 7 Graphics • AM4",
-    rating: 4.9,
-    reviews: 320,
-    price: 13800,
-    mrp: 14500,
-    discount: 5,
-    image: "/images/products/ryzen-5-5600g.png",
-  },
-  {
-    id: "ram-2",
-    brand: "Corsair",
-    name: "Corsair Vengeance LPX 16GB (2x8GB) DDR4 3200MHz",
-    specs: "16GB Dual Kit • 3200MHz CL16 • Anodized Black",
-    rating: 4.8,
-    reviews: 210,
-    price: 3600,
-    mrp: 4200,
-    discount: 14,
-    image: "/images/products/corsair-lpx-16gb.png",
-  },
-  {
-    id: "ram-5",
-    brand: "Kingston",
-    name: "Kingston Fury Beast 32GB (2x16GB) DDR5 5200MHz RGB",
-    specs: "32GB Dual Kit • DDR5 5200MHz • Vibrant RGB",
-    rating: 4.9,
-    reviews: 98,
-    price: 9800,
-    mrp: 11500,
-    discount: 15,
-    image: "/images/products/kingston-fury-32gb.png",
-  },
-  {
-    id: "ssd-2",
-    brand: "Samsung",
-    name: "Samsung 980 500GB PCIe 3.0 M.2 NVMe SSD",
-    specs: "500GB • 3,100 MB/s Read • V-NAND Technology",
-    rating: 4.9,
-    reviews: 412,
-    price: 3350,
-    mrp: 4100,
-    discount: 18,
-    image: "/images/products/samsung-980-500gb.png",
-  },
-  {
-    id: "gpu-3",
-    brand: "Galax",
-    name: "Galax GeForce RTX 5060 Ti 1-Click OC 8GB",
-    specs: "8GB GDDR7 • 1-Click OC • Dual Fan Extreme Cooling",
-    rating: 4.8,
-    reviews: 74,
-    price: 43500,
-    mrp: 48000,
-    discount: 9,
-    image: "/images/products/galax-rtx-5060ti.png",
-  },
-];
-
-// Future Ready Beast GPU Showcase
-const beastGPUs = [
-  {
-    id: "gpu-4",
-    brand: "INNO3D",
-    name: "INNO3D RTX 5060 Twin X2 8GB Graphics Card",
-    specs: "8GB GDDR7 • Dual Fan • DLSS 3.5",
-    rating: 4.7,
-    price: 39600,
-    mrp: 45000,
-    discount: 12,
-    image: "/images/products/gpu-4-rtx-4070-super.png",
-  },
-  {
-    id: "gpu-3",
-    brand: "Galax",
-    name: "Galax RTX 5060 Ti 1-Click OC 8GB Graphics Card",
-    specs: "8GB GDDR7 • 1-Click OC • Ray Tracing",
-    rating: 4.8,
-    price: 43500,
-    mrp: 48000,
-    discount: 9,
-    image: "/images/products/galax-rtx-5060ti.png",
-  },
-  {
-    id: "gpu-5",
-    brand: "MSI",
-    name: "MSI RTX 5060 Ti Shadow 2X OC 8GB Graphics Card",
-    specs: "8GB GDDR7 • TORX Fan 4.0 • Overclocked",
-    rating: 4.8,
-    price: 48249,
-    mrp: 54000,
-    discount: 11,
-    image: "/images/products/gpu-5-rx-7800-xt.png",
-  },
-  {
-    id: "gpu-6",
-    brand: "PNY",
-    name: "PNY GeForce RTX 5060 Ti 8GB Graphics Card",
-    specs: "8GB GDDR7 • Dual Fan • High Airflow",
-    rating: 4.7,
-    price: 45900,
-    mrp: 51000,
-    discount: 10,
-    image: "/images/products/gpu-6-rtx-4080-super.png",
-  },
-  {
-    id: "gpu-2",
-    brand: "MSI",
-    name: "MSI Ventus RTX 3060 2X 12GB Graphics Card",
-    specs: "12GB GDDR6 • Dual Fan • 192-bit VRAM",
-    rating: 4.9,
-    price: 26999,
-    mrp: 32000,
-    discount: 16,
-    image: "/images/products/graphic card.png",
-  },
-  {
-    id: "gpu-1",
-    brand: "Zotac",
-    name: "Zotac Gaming GTX 1650 4GB Graphics Card",
-    specs: "4GB GDDR6 • Low Power 75W • Budget King",
-    rating: 4.6,
-    price: 14500,
-    mrp: 17500,
-    discount: 17,
-    image: "/images/products/graphic card.png",
-  },
-];
+// The home page used to carry two hand-written product arrays here
+// (festivePicks and beastGPUs) with their own names, prices and images. They
+// were copies of the catalog that nothing kept in sync, so a product added in
+// the admin panel never reached the home page and a deleted (or repriced) one
+// went on being advertised and added to the cart at the stale price. Both are
+// now derived from the live Supabase catalog below.
+//
+// The flagship hero card is deliberately NOT derived from the catalog — it is
+// curated content managed from /admin/banners (see homeMedia.flagship).
 
 interface QuickViewProduct {
   id: string;
@@ -181,7 +47,25 @@ interface QuickViewProduct {
   image: string;
 }
 
+/** Live catalog product → the shape these product cards render. */
+function toQuickView(p: Product): QuickViewProduct {
+  const mrp = p.mrp && p.mrp > p.price ? p.mrp : undefined;
+  return {
+    id: p.id,
+    brand: p.brand,
+    name: p.name,
+    specs: p.specs ? Object.values(p.specs).slice(0, 3).join(" • ") : undefined,
+    rating: p.rating ?? 0,
+    reviews: p.reviewsCount,
+    price: p.price,
+    mrp,
+    discount: mrp ? Math.round(((mrp - p.price) / mrp) * 100) : undefined,
+    image: p.imageUrl || `/images/${p.categorySlug}.png`,
+  };
+}
+
 export default function Home() {
+  const { getFeaturedProducts, getProductsByCategory, catalogLoading } = useCatalog();
   const { addToCart, toast } = useCart();
   // Seeded from the server-resolved theme, so SSR and first client render agree.
   const activeTheme = useStoreTheme();
@@ -253,6 +137,15 @@ export default function Home() {
     e.stopPropagation();
     setWishlist((prev) => ({ ...prev, [id]: !prev[id] }));
   };
+
+  const festivePicks = useMemo(
+    () => getFeaturedProducts(6).map(toQuickView),
+    [getFeaturedProducts]
+  );
+  const beastGPUs = useMemo(
+    () => getProductsByCategory("graphics-cards").slice(0, 6).map(toQuickView),
+    [getProductsByCategory]
+  );
 
   const filteredGPUs = beastGPUs.filter((g) => {
     if (gpuFilter === "50series") return g.name.includes("5060");
@@ -387,7 +280,12 @@ export default function Home() {
             </div>
           </div>
 
-          {/* 6 Premium Product Cards Grid */}
+          {/* 6 Premium Product Cards Grid — from the live catalog */}
+          {!catalogLoading && festivePicks.length === 0 ? (
+            <div className="bg-white py-12 text-center text-sm text-[#6B6B6B]">
+              No products are listed right now. Please check back soon.
+            </div>
+          ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 divide-x divide-y sm:divide-y-0 divide-[#E5E0D7] bg-white">
             {festivePicks.map((p) => {
               const isAdded = addedItems[p.id];
@@ -465,9 +363,11 @@ export default function Home() {
                     <span className="text-base sm:text-lg font-extrabold text-[#7A1118]">
                       ₹{p.price.toLocaleString()}
                     </span>
-                    <span className="text-xs text-[#929292] line-through font-medium">
-                      ₹{p.mrp.toLocaleString()}
-                    </span>
+                    {p.mrp && (
+                      <span className="text-xs text-[#929292] line-through font-medium">
+                        ₹{p.mrp.toLocaleString()}
+                      </span>
+                    )}
                   </div>
 
                   {/* Add To Cart CTA */}
@@ -491,6 +391,7 @@ export default function Home() {
               );
             })}
           </div>
+          )}
         </section>
 
         {/* 05. CATEGORY COLLECTION (10 Categories, 5x2 Desktop, Section 16, 17, 18) */}
@@ -700,7 +601,12 @@ export default function Home() {
 
 
             {/* RIGHT: Supporting Graphics Card Cards (7 cols, 3x2 Grid) */}
-            <div className="lg:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-3.5">
+            <div className="lg:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-3.5 content-start">
+              {!catalogLoading && filteredGPUs.length === 0 && (
+                <p className="col-span-full text-sm text-[#6B6B6B] py-10 text-center">
+                  No graphics cards are listed right now.
+                </p>
+              )}
               {filteredGPUs.map((g) => {
                 const isAdded = addedItems[g.id];
                 return (
@@ -756,9 +662,11 @@ export default function Home() {
                         <span className="text-xs sm:text-sm font-extrabold text-[#7A1118]">
                           ₹{g.price.toLocaleString()}
                         </span>
-                        <span className="text-[10px] text-[#929292] line-through">
-                          ₹{g.mrp.toLocaleString()}
-                        </span>
+                        {g.mrp && (
+                          <span className="text-[10px] text-[#929292] line-through">
+                            ₹{g.mrp.toLocaleString()}
+                          </span>
+                        )}
                       </div>
                       <button
                         onClick={() => handleAdd(g.id)}

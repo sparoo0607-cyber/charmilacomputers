@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { categories } from "@/data/categories";
-import { products } from "@/data/products";
+import { useCatalog } from "@/context/CatalogContext";
 import { useCart } from "@/context/CartContext";
 import { STORE, formatINR, whatsappOrderLink } from "@/lib/format";
 import {
@@ -36,6 +36,7 @@ const popularCategories = [
 ];
 
 export default function Header() {
+  const { catalog, getProduct, searchProducts } = useCatalog();
   const { lines, itemCount, subtotal, removeFromCart, wishlist, compareList, user, logout } = useCart();
   // Seeded from the server-resolved theme (Supabase → root layout → context),
   // so SSR and the first client render already agree. No post-mount gate — that
@@ -79,21 +80,14 @@ export default function Header() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const searchResults = query.trim().length > 1
-    ? products.filter(
-        (p) =>
-          p.name.toLowerCase().includes(query.toLowerCase()) ||
-          p.brand.toLowerCase().includes(query.toLowerCase()) ||
-          p.categorySlug.toLowerCase().includes(query.toLowerCase())
-      ).slice(0, 5)
-    : [];
+  const searchResults = query.trim().length > 1 ? searchProducts(query).slice(0, 5) : [];
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
     const q = query.trim().toLowerCase();
     if (!q) return;
     setIsSearchFocused(false);
-    const hit = products.find((p) => p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q));
+    const hit = catalog.find((p) => p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q));
     if (hit) {
       router.push(`/product/${hit.id}`);
     } else {
@@ -434,7 +428,7 @@ export default function Header() {
                 ) : (
                   <div className="max-h-60 overflow-y-auto divide-y divide-zinc-100 mb-3 pr-1">
                     {lines.map((item) => {
-                      const prod = products.find((p) => p.id === item.productId);
+                      const prod = getProduct(item.productId);
                       if (!prod) return null;
                       return (
                         <div key={item.productId} className="py-2.5 flex items-center justify-between gap-3">
@@ -470,7 +464,7 @@ export default function Header() {
                       [
                         `Hi ${STORE.name}, please quote this order:`,
                         ...lines.map((item) => {
-                          const prod = products.find((p) => p.id === item.productId);
+                          const prod = getProduct(item.productId);
                           return prod ? `• ${prod.name} x${item.qty} — ${formatINR(prod.price * item.qty)}` : "";
                         }).filter(Boolean),
                         `Total: ${formatINR(subtotal)}`,

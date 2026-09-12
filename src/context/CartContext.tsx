@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { getProduct } from "@/data/products";
+import { useCatalog } from "./CatalogContext";
 import { Address, Order, OrderItem, UserProfile } from "@/data/types";
 import { supabase } from "@/lib/supabase/client";
 
@@ -171,6 +171,10 @@ function mapOrderRow(row: OrderRow): Order {
 }
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
+  // Live catalog — prices and names must reflect Supabase, not the bundled
+  // seed list, otherwise a deleted product still prices into the cart total.
+  const { getProduct } = useCatalog();
+
   const [lines, setLines] = useState<CartLine[]>([]);
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [compareList, setCompareList] = useState<string[]>([]);
@@ -390,7 +394,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       const product = getProduct(productId);
       showToast(product ? `✓ ${product.name} added to cart!` : "✓ Added to cart!");
     },
-    [showToast]
+    [showToast, getProduct]
   );
 
   const removeFromCart = useCallback((productId: string) => {
@@ -416,7 +420,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       const product = getProduct(productId);
       showToast(product ? `Saved ${product.name} to Wishlist` : "Saved to Wishlist");
     },
-    [showToast]
+    [showToast, getProduct]
   );
 
   const removeFromWishlist = useCallback((productId: string) => {
@@ -472,7 +476,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         const p = getProduct(l.productId);
         return sum + (p ? p.price * l.qty : 0);
       }, 0),
-    [lines]
+    [lines, getProduct]
   );
 
   const shippingFee = useMemo(() => {

@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
-import { getProduct } from "@/data/products";
+import { useCatalog } from "@/context/CatalogContext";
 import ProductImage from "./ProductImage";
 import { CloseIcon, CompareIcon } from "./icons";
 
 export default function CompareDrawer() {
   const { compareList, removeFromCompare, clearCompare } = useCart();
+  const { getProduct } = useCatalog();
 
   if (compareList.length === 0) return null;
 

@@ -1677,6 +1677,7 @@ type ProductRow = {
   specs: Record<string, string> | null;
   features: string[] | null;
   image_url: string | null;
+  images?: string[] | null;
 };
 
 const PRODUCT_DEFAULT_IMAGES: Record<string, string> = {
@@ -1778,6 +1779,12 @@ export function mapProductRow(row: ProductRow): Product {
     specs: row.specs ?? undefined,
     features: row.features ?? undefined,
     imageUrl: row.image_url || PRODUCT_DEFAULT_IMAGES[row.id] || `/images/${row.category_slug}.png`,
+    images:
+      Array.isArray(row.images) && row.images.length > 0
+        ? row.images
+        : row.image_url
+          ? [row.image_url]
+          : undefined,
   };
 }
 

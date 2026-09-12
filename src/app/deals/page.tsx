@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { getDealsProducts, sampleComboDeals, getProduct } from "@/data/products";
+import { sampleComboDeals } from "@/data/products";
+import { useCatalog } from "@/context/CatalogContext";
 import { formatINR } from "@/lib/format";
 import { useCart } from "@/context/CartContext";
 import { useStoreTheme } from "@/hooks/useStoreTheme";
@@ -10,7 +11,13 @@ import ProductCard from "@/components/ProductCard";
 import { BoltIcon, ClockIcon, CartIcon } from "@/components/icons";
 
 export default function DealsPage() {
+  const { getDealsProducts, getProduct, catalogLoading } = useCatalog();
   const dealsProducts = getDealsProducts().slice(0, 8);
+  // A bundle whose parts are no longer in the catalog can't be sold or priced,
+  // so drop it rather than rendering a card with blank component names.
+  const comboDeals = sampleComboDeals.filter(
+    (c) => getProduct(c.processor) && getProduct(c.motherboard) && getProduct(c.ram)
+  );
   const { addToCart, showToast } = useCart();
   const activeTheme = useStoreTheme();
   const isDussara = activeTheme.startsWith("dussara-d");
@@ -184,7 +191,7 @@ export default function DealsPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {sampleComboDeals.map((combo) => {
+          {comboDeals.map((combo) => {
             const cpu = getProduct(combo.processor);
             const mb = getProduct(combo.motherboard);
             const ram = getProduct(combo.ram);
@@ -249,11 +256,19 @@ export default function DealsPage() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-          {dealsProducts.map((p) => (
-            <ProductCard key={p.id} product={p} />
-          ))}
-        </div>
+        {catalogLoading ? (
+          <p className="text-sm text-zinc-500 py-10 text-center">Loading deals…</p>
+        ) : dealsProducts.length === 0 ? (
+          <p className="text-sm text-zinc-500 py-10 text-center">
+            No deals are available right now. Please check back soon.
+          </p>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+            {dealsProducts.map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );

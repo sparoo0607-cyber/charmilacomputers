@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
-import { getProduct } from "@/data/products";
+import { useCatalog } from "@/context/CatalogContext";
 import { formatINR } from "@/lib/format";
 import ProductImage from "@/components/ProductImage";
 import { CompareIcon, CartIcon, CloseIcon, StarIcon } from "@/components/icons";
@@ -15,6 +15,7 @@ export default function ComparePage() {
   // If empty, let's load sample comparison or show presets
   const sampleComparison = ["gpu-2", "gpu-3", "gpu-5"];
   const activeIds = compareList.length > 0 ? compareList : sampleComparison;
+  const { getProduct } = useCatalog();
   const comparedProducts = activeIds.map((id) => getProduct(id)).filter(Boolean);
 
   // Collect all unique spec keys across all compared products

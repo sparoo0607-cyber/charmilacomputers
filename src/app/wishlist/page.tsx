@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
-import { getProduct, getFeaturedProducts } from "@/data/products";
+import { useCatalog } from "@/context/CatalogContext";
 import { formatINR } from "@/lib/format";
 import ProductImage from "@/components/ProductImage";
 import ProductCard from "@/components/ProductCard";
@@ -11,6 +11,7 @@ import { HeartIcon, TrashIcon, CartIcon } from "@/components/icons";
 export default function WishlistPage() {
   const { wishlist, removeFromWishlist, addToCart } = useCart();
 
+  const { getProduct, getFeaturedProducts } = useCatalog();
   const items = wishlist.map((id) => getProduct(id)).filter(Boolean);
   const recommendations = getFeaturedProducts(4);
 

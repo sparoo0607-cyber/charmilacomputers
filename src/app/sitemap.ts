@@ -1,8 +1,8 @@
 import type { MetadataRoute } from "next";
-import { products } from "@/data/products";
+import { getAllProductsLive } from "@/data/products";
 import { categories } from "@/data/categories";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = "https://www.charmilacomputers.in";
   const now = new Date();
 
@@ -58,7 +58,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.9,
   }));
 
-  const productRoutes: MetadataRoute.Sitemap = products.map((p) => ({
+  // Live catalog, so the sitemap never advertises a product that was
+  // deleted in the admin panel (or omits one that was added).
+  const productRoutes: MetadataRoute.Sitemap = (await getAllProductsLive()).map((p) => ({
     url: `${base}/product/${p.id}`,
     lastModified: now,
     changeFrequency: "weekly",

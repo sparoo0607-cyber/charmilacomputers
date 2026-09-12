@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCart, AVAILABLE_COUPONS } from "@/context/CartContext";
 import { useStoreTheme } from "@/hooks/useStoreTheme";
-import { getProduct } from "@/data/products";
+import { useCatalog } from "@/context/CatalogContext";
 import { formatINR, STORE, whatsappOrderLink } from "@/lib/format";
 import ProductImage from "@/components/ProductImage";
 import {
@@ -20,6 +20,7 @@ export default function CartPage() {
     lines, updateQty, removeFromCart, subtotal, shippingFee, discount, total,
     appliedCoupon, applyCoupon, removeCoupon, clearCart, user
   } = useCart();
+  const { getProduct } = useCatalog();
   const [couponInput, setCouponInput] = useState("");
   const [couponError, setCouponError] = useState<string | null>(null);
 
