@@ -225,6 +225,13 @@ import FestivalEffects from "./festive/FestivalEffects";
 export default function SiteChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith("/admin");
+  // /login must stay reachable during maintenance too — an admin who is
+  // logged out (session expired, cache cleared, different browser) gets
+  // redirected from /admin to /login, and if /login itself were blocked by
+  // the maintenance screen there would be no way back into the admin panel
+  // to turn maintenance mode off again. Unlike /admin, /login should still
+  // get the normal storefront header/footer chrome.
+  const bypassMaintenance = isAdmin || pathname === "/login";
   const [isMaintenance, setIsMaintenance] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -270,7 +277,7 @@ export default function SiteChrome({ children }: { children: React.ReactNode }) 
     return <>{children}</>;
   }
 
-  if (mounted && isMaintenance) {
+  if (mounted && isMaintenance && !bypassMaintenance) {
     return <MaintenanceScreen />;
   }
 
