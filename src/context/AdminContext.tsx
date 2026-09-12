@@ -296,7 +296,10 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
           setSettings({
             ...defaultSettings,
             ...localParsed,
-            maintenanceMode: localParsed.maintenanceMode ?? isMaintenance ?? defaultSettings.maintenanceMode,
+            maintenanceMode:
+              typeof data.maintenance_mode === "boolean"
+                ? data.maintenance_mode
+                : localParsed.maintenanceMode ?? isMaintenance ?? defaultSettings.maintenanceMode,
             activeTheme: normalizeTheme(data.active_theme),
             storeName: data.store_name || defaultSettings.storeName,
             supportEmail: data.support_email || defaultSettings.supportEmail,
@@ -413,13 +416,18 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
 
     const productMap = new Map<string, Product>();
 
-    // 1. Baseline seed products
-    seedProducts.forEach((sp) => productMap.set(sp.id, sp));
+    if (dbProducts.length > 0) {
+      // Supabase has data — it is the source of truth. Using seed products as a
+      // base here would silently resurrect any product an admin deleted, since
+      // deleting only removes the row from Supabase, not from the seed list.
+      dbProducts.forEach((dp) => productMap.set(dp.id, dp));
+    } else {
+      // DB fetch failed or the table is genuinely empty — fall back to the
+      // bundled seed catalog so the storefront never renders blank.
+      seedProducts.forEach((sp) => productMap.set(sp.id, sp));
+    }
 
-    // 2. Supabase DB products override seeds or add new products
-    dbProducts.forEach((dp) => productMap.set(dp.id, dp));
-
-    // 3. Local customs override or add recent edits
+    // Local customs override or add recent optimistic edits
     localCustoms.forEach((lp) => productMap.set(lp.id, lp));
 
     setAdminProducts(Array.from(productMap.values()));
@@ -690,6 +698,7 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
             support_email: next.supportEmail,
             support_phone: next.supportPhone,
             free_shipping_threshold: next.freeShippingThreshold,
+            maintenance_mode: next.maintenanceMode,
             updated_at: new Date().toISOString(),
           })
           .then(() => {}, () => {});

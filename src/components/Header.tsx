@@ -109,7 +109,7 @@ export default function Header() {
     >
       {/* LEVEL 1 — MICRO UTILITY BAR */}
       <div className="bg-[#FAF7F2] border-b border-[#E5E0D7] text-[#6B6B6B] text-[11px]">
-        <div className="mx-auto max-w-[1440px] px-4 sm:px-6 flex items-center justify-between h-7">
+        <div className="mx-auto max-w-[1440px] px-4 sm:px-6 flex items-center justify-between min-h-7 py-1 flex-wrap gap-x-2 gap-y-1">
           {/* Left: Social Icons & Helpline */}
           <div className="flex items-center gap-3.5">
             <span className="hidden sm:inline text-[10px] text-[#929292] font-semibold uppercase tracking-wider">Follow Us:</span>
@@ -137,10 +137,10 @@ export default function Header() {
             <Link href="/warranty-rma" className="hover:text-[#7A1118] transition-colors hidden sm:flex items-center gap-1">
               <ShieldCheckIcon className="w-3 h-3" /> Warranty &amp; RMA
             </Link>
-            <span className="text-[#E5E0D7]">|</span>
-            <Link href="/about" className="hover:text-[#7A1118] transition-colors">About Us</Link>
-            <span className="text-[#E5E0D7]">|</span>
-            <Link href="/contact" className="hover:text-[#7A1118] transition-colors">Contact</Link>
+            <span className="text-[#E5E0D7] hidden sm:inline">|</span>
+            <Link href="/about" className="hover:text-[#7A1118] transition-colors hidden sm:inline">About Us</Link>
+            <span className="text-[#E5E0D7] hidden sm:inline">|</span>
+            <Link href="/contact" className="hover:text-[#7A1118] transition-colors hidden sm:inline">Contact</Link>
           </div>
         </div>
       </div>

@@ -162,8 +162,10 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         </main>
       </div>
 
-      {/* Mobile bottom nav */}
-      <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 bg-[#17130F] border-t border-black/20 flex items-stretch">
+      {/* Mobile bottom nav — 7 items don't fit a phone width as equal flex
+          columns (labels overlapped/ran together), so this scrolls horizontally
+          instead with each item a fixed, comfortably tappable width. */}
+      <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 bg-[#17130F] border-t border-black/20 flex items-stretch overflow-x-auto">
         {NAV.map((item) => {
           const active = item.exact ? pathname === item.href : pathname?.startsWith(item.href);
           const Icon = item.icon;
@@ -171,12 +173,12 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
             <Link
               key={item.href}
               href={item.href}
-              className={`flex-1 flex flex-col items-center gap-1 py-2.5 text-[10px] font-bold uppercase tracking-wide ${
+              className={`shrink-0 w-[76px] flex flex-col items-center gap-1 py-2.5 text-[9px] font-bold uppercase tracking-wide text-center leading-tight ${
                 active ? "text-[#D1121B]" : "text-[#C9C1B4]"
               }`}
             >
               <Icon className="w-5 h-5" />
-              {item.label}
+              <span className="px-0.5">{item.label}</span>
             </Link>
           );
         })}

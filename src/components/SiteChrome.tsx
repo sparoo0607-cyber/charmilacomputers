@@ -7,6 +7,7 @@ import Footer from "./Footer";
 import CompareDrawer from "./CompareDrawer";
 import { useCart } from "@/context/CartContext";
 import { PhoneIcon, CloseIcon, CheckIcon } from "./icons";
+import { supabase } from "@/lib/supabase/client";
 
 /**
  * Phone-collect modal — shown once after login when the user's profile
@@ -229,19 +230,39 @@ export default function SiteChrome({ children }: { children: React.ReactNode }) 
 
   useEffect(() => {
     setMounted(true);
-    const checkMaintenance = () => {
+    // localStorage is only a same-browser fast-path (e.g. right after the
+    // admin flips the toggle). The real, site-wide switch lives in Supabase
+    // `store_settings.maintenance_mode` so every visitor — not just the
+    // admin's own browser — sees the maintenance screen.
+    const checkMaintenanceLocal = () => {
       try {
         const mode = localStorage.getItem("charmila_maintenance_mode") === "true";
         setIsMaintenance(mode);
       } catch {}
     };
 
-    checkMaintenance();
-    window.addEventListener("storage", checkMaintenance);
-    window.addEventListener("charmila_maintenance_change", checkMaintenance);
+    async function checkMaintenanceRemote() {
+      try {
+        const { data, error } = await supabase
+          .from("store_settings")
+          .select("maintenance_mode")
+          .eq("id", "default")
+          .maybeSingle();
+        if (!error && data && typeof data.maintenance_mode === "boolean") {
+          setIsMaintenance(data.maintenance_mode);
+        }
+      } catch {}
+    }
+
+    checkMaintenanceLocal();
+    checkMaintenanceRemote();
+    const poll = setInterval(checkMaintenanceRemote, 30000);
+    window.addEventListener("storage", checkMaintenanceLocal);
+    window.addEventListener("charmila_maintenance_change", checkMaintenanceLocal);
     return () => {
-      window.removeEventListener("storage", checkMaintenance);
-      window.removeEventListener("charmila_maintenance_change", checkMaintenance);
+      clearInterval(poll);
+      window.removeEventListener("storage", checkMaintenanceLocal);
+      window.removeEventListener("charmila_maintenance_change", checkMaintenanceLocal);
     };
   }, []);
 
