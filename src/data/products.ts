@@ -1792,6 +1792,20 @@ export async function getProductLive(id: string): Promise<Product | undefined> {
   }
 }
 
+export async function getAllProductsLive(): Promise<Product[]> {
+  try {
+    const { supabase } = await import("@/lib/supabase/client");
+    const { data, error } = await supabase.from("products").select("*").order("name");
+    if (error || !data || data.length === 0) return products;
+    // Same rule as getProductsByCategoryLive: once the table has rows it is the
+    // source of truth, so a product deleted in the admin panel really is gone
+    // and one added there really does show up.
+    return (data as ProductRow[]).map(mapProductRow);
+  } catch {
+    return products;
+  }
+}
+
 export async function getProductsByCategoryLive(categorySlug: string): Promise<Product[]> {
   const seedList = getProductsByCategory(categorySlug);
   try {

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { products, getFeaturedProducts } from "@/data/products";
+import { getAllProductsLive, getFeaturedProducts } from "@/data/products";
 import ProductCard from "@/components/ProductCard";
 import { SearchIcon, BoltIcon } from "@/components/icons";
 
@@ -18,8 +18,10 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
 export default async function SearchPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
   const { q = "" } = await searchParams;
   const query = q.trim().toLowerCase();
+  // Live catalog, so products added/removed in the admin panel are searchable.
+  const catalog = await getAllProductsLive();
   const results = query
-    ? products.filter(
+    ? catalog.filter(
         (p) =>
           p.name.toLowerCase().includes(query) ||
           p.brand.toLowerCase().includes(query) ||

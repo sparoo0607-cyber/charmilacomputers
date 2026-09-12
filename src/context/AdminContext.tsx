@@ -398,40 +398,30 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
   }, [checkAdminSession]);
 
   const fetchProducts = useCallback(async () => {
-    let localCustoms: Product[] = [];
-    if (typeof window !== "undefined") {
-      try {
-        const raw = localStorage.getItem("charmila_custom_products_v1");
-        if (raw) localCustoms = JSON.parse(raw);
-      } catch {}
-    }
-
     const { data, error } = await supabase.from("products").select("*").order("name");
 
-    let dbProducts: Product[] = [];
-    if (!error && data && data.length > 0) {
-      dbProducts = (data as ProductRow[]).map(mapProductRow);
-    } else if (error) {
-      console.warn("Supabase products fetch warning, using seed products:", error.message);
+    if (error) {
+      // Keep whatever is on screen rather than blanking the catalog on a
+      // transient network error; seed only if we have nothing at all yet.
+      console.warn("Supabase products fetch failed:", error.message);
+      setAdminProducts((prev) => (prev.length > 0 ? prev : seedProducts));
+      return;
     }
 
-    const productMap = new Map<string, Product>();
-
-    if (dbProducts.length > 0) {
-      // Supabase has data — it is the source of truth. Using seed products as a
-      // base here would silently resurrect any product an admin deleted, since
-      // deleting only removes the row from Supabase, not from the seed list.
-      dbProducts.forEach((dp) => productMap.set(dp.id, dp));
-    } else {
-      // DB fetch failed or the table is genuinely empty — fall back to the
-      // bundled seed catalog so the storefront never renders blank.
-      seedProducts.forEach((sp) => productMap.set(sp.id, sp));
+    if (!data || data.length === 0) {
+      // The table is genuinely empty — show the bundled seed catalog so the
+      // admin screen isn't blank (and "Restore defaults" can push it to the DB).
+      setAdminProducts(seedProducts);
+      return;
     }
 
-    // Local customs override or add recent optimistic edits
-    localCustoms.forEach((lp) => productMap.set(lp.id, lp));
-
-    setAdminProducts(Array.from(productMap.values()));
+    // Supabase is the single source of truth. There used to be a
+    // "charmila_custom_products_v1" localStorage snapshot layered on top of
+    // this, holding the *entire* product list from the last admin session.
+    // That made the admin panel and the storefront disagree permanently: a
+    // product whose DB insert had failed still showed in /admin/products
+    // forever (but never on the site), and it masked failed deletes too.
+    setAdminProducts((data as ProductRow[]).map(mapProductRow));
   }, []);
 
   const fetchOrders = useCallback(async () => {
@@ -520,11 +510,21 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
   // ---------------------------------------------------------------
   // Products — optimistic local update + background Supabase write + localStorage sync
   // ---------------------------------------------------------------
-  const saveLocalProducts = (list: Product[]) => {
-    if (typeof window !== "undefined") {
-      try {
-        localStorage.setItem("charmila_custom_products_v1", JSON.stringify(list));
-      } catch {}
+  // Every admin write goes through /api/admin/products, which verifies
+  // profiles.is_admin from this token before touching the table.
+  const authHeaders = async (): Promise<Record<string, string>> => {
+    const { data } = await supabase.auth.getSession();
+    const token = data.session?.access_token;
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  };
+
+  // Reads back the error message an /api/admin/products response carries.
+  const responseError = async (res: Response): Promise<string> => {
+    try {
+      const json = await res.json();
+      return json?.error || `Request failed (${res.status})`;
+    } catch {
+      return `Request failed (${res.status})`;
     }
   };
 
@@ -533,53 +533,65 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
       const id = `custom-${Date.now().toString(36)}`;
       const newProduct: Product = { ...product, id };
 
-      // Optimistic update — product appears immediately in the UI.
-      setAdminProducts((prev) => {
-        const next = [newProduct, ...prev];
-        saveLocalProducts(next);
-        return next;
-      });
-      showToast(`✓ ${newProduct.name} added to catalog`);
+      // Optimistic update — product appears immediately in the UI, and is
+      // rolled back below if Supabase refuses the insert.
+      setAdminProducts((prev) => [newProduct, ...prev]);
 
-      // Persist to Supabase via service-role API (bypasses RLS — safe, server-only).
-      fetch("/api/admin/products", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          id,
-          category_slug: product.categorySlug,
-          name: product.name,
-          brand: product.brand,
-          model: product.model,
-          price: product.price,
-          mrp: product.mrp ?? null,
-          wattage: product.wattage ?? null,
-          in_stock: product.inStock,
-          stock_qty: product.stockQty,
-          rating: product.rating ?? null,
-          reviews_count: product.reviewsCount ?? null,
-          specs: product.specs ?? null,
-          features: product.features ?? null,
-          image_url: product.imageUrl ?? (product.images && product.images[0]) ?? null,
-          images: product.images ?? (product.imageUrl ? [product.imageUrl] : null),
-        }),
-      }).then((res) => {
-        if (!res.ok) {
-          res.json().then((j) => console.warn("[admin/products] insert failed:", j?.error ?? res.status));
+      (async () => {
+        try {
+          const res = await fetch("/api/admin/products", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", ...(await authHeaders()) },
+            body: JSON.stringify({
+              id,
+              category_slug: product.categorySlug,
+              name: product.name,
+              brand: product.brand,
+              model: product.model,
+              price: product.price,
+              mrp: product.mrp ?? null,
+              wattage: product.wattage ?? null,
+              in_stock: product.inStock,
+              stock_qty: product.stockQty,
+              rating: product.rating ?? null,
+              reviews_count: product.reviewsCount ?? null,
+              specs: product.specs ?? null,
+              features: product.features ?? null,
+              image_url: product.imageUrl ?? (product.images && product.images[0]) ?? null,
+              images: product.images ?? (product.imageUrl ? [product.imageUrl] : null),
+            }),
+          });
+
+          if (!res.ok) {
+            const message = await responseError(res);
+            console.warn("[admin/products] insert failed:", message);
+            // Undo the optimistic row — it is NOT in the catalog, and showing
+            // it here while the storefront never sees it is exactly the
+            // "I added a product but it doesn't appear on the site" bug.
+            setAdminProducts((prev) => prev.filter((p) => p.id !== id));
+            showToast(`Couldn't add product: ${message}`);
+            return;
+          }
+
+          showToast(`✓ ${newProduct.name} added to catalog`);
+          fetchProducts();
+        } catch (e) {
+          console.warn("[admin/products] insert fetch error:", e);
+          setAdminProducts((prev) => prev.filter((p) => p.id !== id));
+          showToast("Couldn't add product — check your connection and try again.");
         }
-      }).catch((e) => console.warn("[admin/products] insert fetch error:", e));
+      })();
     },
-    [showToast]
+    [showToast, fetchProducts]
   );
 
   const updateProduct = useCallback(
     (id: string, patch: Partial<Product>) => {
+      let previous: Product | undefined;
       setAdminProducts((prev) => {
-        const next = prev.map((p) => (p.id === id ? { ...p, ...patch } : p));
-        saveLocalProducts(next);
-        return next;
+        previous = prev.find((p) => p.id === id);
+        return prev.map((p) => (p.id === id ? { ...p, ...patch } : p));
       });
-      showToast("✓ Product updated");
 
       const dbPatch = {
         ...(patch.categorySlug !== undefined && { category_slug: patch.categorySlug }),
@@ -597,35 +609,79 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         ...(patch.features !== undefined && { features: patch.features ?? null }),
       };
 
-      fetch("/api/admin/products", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, ...dbPatch }),
-      }).then((res) => {
-        if (!res.ok) {
-          res.json().then((j) => console.warn("[admin/products] update failed:", j?.error ?? res.status));
+      (async () => {
+        try {
+          const res = await fetch("/api/admin/products", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json", ...(await authHeaders()) },
+            body: JSON.stringify({ id, ...dbPatch }),
+          });
+
+          if (!res.ok) {
+            const message = await responseError(res);
+            console.warn("[admin/products] update failed:", message);
+            if (previous) {
+              const restore = previous;
+              setAdminProducts((prev) => prev.map((p) => (p.id === id ? restore : p)));
+            }
+            showToast(`Couldn't save changes: ${message}`);
+            return;
+          }
+
+          showToast("✓ Product updated");
+        } catch (e) {
+          console.warn("[admin/products] update fetch error:", e);
+          if (previous) {
+            const restore = previous;
+            setAdminProducts((prev) => prev.map((p) => (p.id === id ? restore : p)));
+          }
+          showToast("Couldn't save changes — check your connection and try again.");
         }
-      }).catch((e) => console.warn("[admin/products] update fetch error:", e));
+      })();
     },
     [showToast]
   );
 
   const deleteProduct = useCallback(
     (id: string) => {
+      let removed: Product | undefined;
       setAdminProducts((prev) => {
-        const next = prev.filter((p) => p.id !== id);
-        saveLocalProducts(next);
-        return next;
+        removed = prev.find((p) => p.id === id);
+        return prev.filter((p) => p.id !== id);
       });
-      showToast("Product removed from catalog");
 
-      fetch(`/api/admin/products?id=${encodeURIComponent(id)}`, { method: "DELETE" })
-        .then((res) => {
+      (async () => {
+        try {
+          const res = await fetch(`/api/admin/products?id=${encodeURIComponent(id)}`, {
+            method: "DELETE",
+            headers: await authHeaders(),
+          });
+
           if (!res.ok) {
-            res.json().then((j) => console.warn("[admin/products] delete failed:", j?.error ?? res.status));
+            const message = await responseError(res);
+            console.warn("[admin/products] delete failed:", message);
+            // Put the row straight back. Previously the delete failure was only
+            // logged, so the product vanished from the admin screen, stayed in
+            // Supabase, and reappeared on the next load — the "deleted products
+            // keep restoring themselves" bug.
+            if (removed) {
+              const restore = removed;
+              setAdminProducts((prev) => (prev.some((p) => p.id === id) ? prev : [restore, ...prev]));
+            }
+            showToast(`Couldn't delete: ${message}`);
+            return;
           }
-        })
-        .catch((e) => console.warn("[admin/products] delete fetch error:", e));
+
+          showToast("Product removed from catalog");
+        } catch (e) {
+          console.warn("[admin/products] delete fetch error:", e);
+          if (removed) {
+            const restore = removed;
+            setAdminProducts((prev) => (prev.some((p) => p.id === id) ? prev : [restore, ...prev]));
+          }
+          showToast("Couldn't delete — check your connection and try again.");
+        }
+      })();
     },
     [showToast]
   );
@@ -633,6 +689,8 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
   const restoreDefaults = useCallback(() => {
     showToast("Resetting catalog…");
     if (typeof window !== "undefined") {
+      // Clear the retired local snapshot so an old one can't reappear after
+      // a downgrade; the catalog itself now lives only in Supabase.
       localStorage.removeItem("charmila_custom_products_v1");
     }
     (async () => {
