@@ -104,7 +104,7 @@ export default function Header() {
       {/* LEVEL 1 — MICRO UTILITY BAR */}
       <div className="bg-[#FAF7F2] border-b border-[#E5E0D7] text-[#6B6B6B] text-[11px]">
         <div className="mx-auto max-w-[1440px] px-4 sm:px-6 flex items-center justify-between min-h-7 py-1 flex-wrap gap-x-2 gap-y-1">
-          {/* Left: Social Icons & Helpline */}
+          {/* Left: Social Icons */}
           <div className="flex items-center gap-3.5">
             <span className="hidden sm:inline text-[10px] text-[#929292] font-semibold uppercase tracking-wider">Follow Us:</span>
             <div className="flex items-center gap-2.5">
@@ -115,11 +115,6 @@ export default function Header() {
                 <WhatsAppIcon className="w-3 h-3" />
               </a>
             </div>
-            <span className="text-[#E5E0D7]">|</span>
-            <a href={`tel:${STORE.helplinePhone}`} className="hidden md:flex items-center gap-1 text-[11px] text-[#4E0B10] font-bold hover:text-[#7A1118]">
-              <PhoneIcon className="w-3 h-3" />
-              <span>Helpline: {STORE.helplineFormatted}</span>
-            </a>
           </div>
 
           {/* Right: Quick Links */}
