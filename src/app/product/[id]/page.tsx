@@ -53,14 +53,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
     .filter((p) => p.id !== product.id)
     .slice(0, 4);
 
-  // Recommended pair item
-  // Pair suggestion from the live catalog — this used to come from the bundled
-  // seed array, so it could suggest (and add to cart) a product the store had
-  // deleted. Undefined when nothing else is stocked; the block below is skipped.
-  const catalog = await getAllProductsLive();
-  const pairItem =
-    catalog.find((p) => p.categorySlug !== product.categorySlug && p.price > 1000) ||
-    catalog.find((p) => p.id !== product.id);
+
 
   const sampleReviews = [
     {
@@ -231,54 +224,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
         </div>
       </div>
 
-      {/* Frequently Bought Together / Combo Deal */}
-      {pairItem && (
-        <div className="mt-8 bg-gradient-to-r from-amber-50/70 via-white to-amber-50/40 p-6 rounded-2xl border border-amber-200 shadow-sm">
-          <div className="flex items-center gap-2 mb-4">
-            <BoltIcon className="w-5 h-5 text-amber-600" />
-            <h2 className="font-extrabold text-base text-[#1B1B1B] uppercase tracking-wider">
-              Frequently Bought Together (Combo Savings)
-            </h2>
-          </div>
-          <div className="flex flex-col md:flex-row items-center gap-6 justify-between">
-            <div className="flex items-center gap-4 flex-wrap">
-              <div className="flex items-center gap-3 bg-white p-3 rounded-xl border border-zinc-200 shadow-2xs">
-                <ProductImage categorySlug={product.categorySlug} imageUrl={product.imageUrl} className="w-14 h-14 object-contain" />
-                <div className="text-xs">
-                  <p className="font-bold text-zinc-800 line-clamp-1">{product.name}</p>
-                  <p className="font-extrabold text-[#D1121B]">{formatINR(product.price)}</p>
-                </div>
-              </div>
 
-              <span className="text-xl font-black text-zinc-400">+</span>
-
-              <div className="flex items-center gap-3 bg-white p-3 rounded-xl border border-zinc-200 shadow-2xs">
-                <ProductImage categorySlug={pairItem.categorySlug} imageUrl={pairItem.imageUrl} className="w-14 h-14 object-contain" />
-                <div className="text-xs">
-                  <p className="font-bold text-zinc-800 line-clamp-1">{pairItem.name}</p>
-                  <p className="font-extrabold text-[#D1121B]">{formatINR(pairItem.price)}</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex flex-col sm:flex-row items-center gap-4 shrink-0 text-center sm:text-right">
-              <div>
-                <p className="text-xs text-zinc-500 font-medium">Combo Price:</p>
-                <p className="text-xl font-black text-[#1B1B1B]">
-                  {formatINR(product.price + pairItem.price - 500)}
-                </p>
-                <span className="text-[11px] font-bold text-emerald-700">Save ₹500 instantly</span>
-              </div>
-              <Link
-                href="/cart"
-                className="bg-[#D1121B] hover:bg-[#7A1118] text-white text-xs font-bold px-6 py-3 rounded-xl uppercase tracking-wider transition-all shadow-md active:scale-95"
-              >
-                Add Combo to Cart
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Specifications & Features Tabs */}
       <div className="mt-10 grid grid-cols-1 lg:grid-cols-12 gap-8">

@@ -260,14 +260,14 @@ export default function Home() {
                       ? "bg-gradient-to-r from-[#FFF4CC] via-[#FFD700] to-[#FFA726] bg-clip-text text-transparent"
                       : "text-white"
                   }`}>
-                    {activeTheme.startsWith("dussara-d") ? "DUSSARA FESTIVE PICKS" : (activeTheme === "festive" ? "VINAYAKA FESTIVE PICKS" : "FEATURED HARDWARE DEALS")}
+                    BEST SELLERS
                   </h2>
                   <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded tracking-wider ${
                     isFestive
                       ? "bg-[#D1121B] text-[#FFE58F] border border-[#C89B3C]/50"
                       : "bg-[#D1121B] text-white border border-red-500/50"
                   }`}>
-                    {activeTheme.startsWith("dussara-d") ? "DUSSARA SPECIAL" : (activeTheme === "festive" ? "FESTIVE SPECIAL" : "BEST SELLER")}
+                    TOP PICKS
                   </span>
                 </div>
                 <p className="text-xs sm:text-sm text-amber-100/90 font-medium">
