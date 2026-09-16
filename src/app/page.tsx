@@ -76,11 +76,7 @@ export default function Home() {
   const [wishlist, setWishlist] = useState<{ [key: string]: boolean }>({});
   const [gpuFilter, setGpuFilter] = useState<"all" | "50series" | "30series" | "budget">("all");
   const [quickViewProduct, setQuickViewProduct] = useState<QuickViewProduct | null>(null);
-  const [timeLeft, setTimeLeft] = useState({
-    hours: 18,
-    minutes: 42,
-    seconds: 30,
-  });
+
 
   useEffect(() => {
     async function fetchMedia() {
@@ -113,17 +109,7 @@ export default function Home() {
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [quickViewProduct]);
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev.seconds > 0) return { ...prev, seconds: prev.seconds - 1 };
-        if (prev.minutes > 0) return { ...prev, minutes: 59, seconds: 59 };
-        if (prev.hours > 0) return { ...prev, hours: prev.hours - 1, minutes: 59, seconds: 59 };
-        return { hours: 23, minutes: 59, seconds: 59 };
-      });
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
+
 
   const handleAdd = (id: string) => {
     addToCart(id, 1);
@@ -276,17 +262,8 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Countdown & View All CTA */}
+            {/* View All CTA */}
             <div className="flex items-center gap-3 sm:gap-4 shrink-0">
-              <div className="bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-md border border-[#C89B3C]/40 flex items-center gap-2 font-mono text-xs">
-                <span className="text-[10px] text-amber-300 font-bold uppercase">Ends:</span>
-                <span className="bg-[#D1121B] px-1.5 py-0.5 rounded font-bold text-white">{String(timeLeft.hours).padStart(2, "0")}h</span>
-                <span className="text-amber-400">:</span>
-                <span className="bg-[#D1121B] px-1.5 py-0.5 rounded font-bold text-white">{String(timeLeft.minutes).padStart(2, "0")}m</span>
-                <span className="text-amber-400">:</span>
-                <span className="bg-[#D1121B] px-1.5 py-0.5 rounded font-bold text-white animate-pulse">{String(timeLeft.seconds).padStart(2, "0")}s</span>
-              </div>
-
               <Link
                 href="/offers"
                 className="bg-gradient-to-r from-[#C89B3C] to-[#E87516] hover:from-[#d8a846] hover:to-[#f08426] text-black font-extrabold text-xs sm:text-sm px-4 sm:px-5 py-2 rounded-md shadow-md transition-transform duration-200 hover:scale-105 uppercase tracking-wider flex items-center gap-1 whitespace-nowrap"
