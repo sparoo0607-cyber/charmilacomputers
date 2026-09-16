@@ -771,7 +771,7 @@ export default function Home() {
                     ✓ 3-Yr Warranty
                   </span>
                   <span className={`bg-black/50 backdrop-blur-xs px-2.5 py-1 rounded border ${isFestive ? "border-amber-500/30" : "border-red-500/30"}`}>
-                    ✓ Free Pan-India Delivery
+                    ✓ Express Pan-India Delivery
                   </span>
                 </div>
 
@@ -911,7 +911,7 @@ export default function Home() {
               </div>
               <div>
                 <h4 className="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-white">
-                  FREE SHIPPING
+                  PAN-INDIA SHIPPING
                 </h4>
                 <p className="text-[11px] text-zinc-300">Across all Indian pin codes</p>
               </div>

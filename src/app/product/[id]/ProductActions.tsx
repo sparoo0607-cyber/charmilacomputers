@@ -226,7 +226,7 @@ export default function ProductActions({ product }: { product: Product }) {
               ✓ Express Delivery in 2-3 Business Days to {pincode}
             </p>
             <p>✓ Cash on Delivery &amp; UPI on Delivery available</p>
-            <p>✓ Free shipping on orders above ₹3,000</p>
+            <p>✓ Insured express delivery across India</p>
           </div>
         )}
       </div>

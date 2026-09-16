@@ -460,7 +460,7 @@ export default function BuildYourPc() {
               </div>
               <div className="flex justify-between">
                 <span>Shipping</span>
-                <span className="text-emerald-600 font-bold">FREE</span>
+                <span className="text-zinc-700 font-medium">Insured Transit</span>
               </div>
             </div>
 

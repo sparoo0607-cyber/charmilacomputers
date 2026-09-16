@@ -119,9 +119,9 @@ export default function CartPage() {
           <span className="flex items-center gap-1.5 text-zinc-800">
             <TruckIcon className="w-4 h-4 text-[#7A1118]" />
             {amountNeededForFreeShip === 0 ? (
-              <span className="text-emerald-700 font-extrabold">Free Pan-India Express Shipping unlocked!</span>
+              <span className="text-emerald-700 font-extrabold">Pan-India Express Shipping Discount unlocked!</span>
             ) : (
-              <span>Add <strong>{formatINR(amountNeededForFreeShip)}</strong> more for FREE Express Shipping!</span>
+              <span>Add <strong>{formatINR(amountNeededForFreeShip)}</strong> more to unlock Express Shipping Discount!</span>
             )}
           </span>
           <span className="text-zinc-500 font-bold">{freeShipProgress}%</span>

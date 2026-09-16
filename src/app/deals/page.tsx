@@ -71,7 +71,7 @@ export default function DealsPage() {
               Unbeatable Deals on GPUs, CPUs &amp; Rigs
             </h1>
             <p className="text-xs sm:text-sm text-zinc-200">
-              India&apos;s lowest prices guaranteed. Enjoy instant bank cashbacks, combo savings up to ₹7,900, and free insured pan-India express shipping.
+              India&apos;s lowest prices guaranteed. Enjoy instant bank cashbacks, combo savings up to ₹7,900, and insured pan-India express shipping.
             </p>
           </div>
 
@@ -161,11 +161,11 @@ export default function DealsPage() {
                   FREESHIP
                 </span>
                 <span className="text-[10px] font-extrabold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
-                  Free Shipping
+                  Shipping Waiver
                 </span>
               </div>
               <h3 className="font-bold text-xs text-zinc-900 mt-2">Zero Shipping Charge</h3>
-              <p className="text-[11px] text-zinc-500 mt-0.5">Free BlueDart Express Air delivery on orders above ₹2,000.</p>
+              <p className="text-[11px] text-zinc-500 mt-0.5">BlueDart Express Air delivery on orders above ₹2,000.</p>
             </div>
             <button
               onClick={() => handleCopyCoupon("FREESHIP")}
