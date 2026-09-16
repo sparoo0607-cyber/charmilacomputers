@@ -884,13 +884,13 @@ export default function Home() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 divide-y sm:divide-y-0 sm:divide-x divide-white/10">
             <div className="flex items-center gap-4 pt-4 sm:pt-0 sm:px-4">
               <div className="w-12 h-12 rounded-full bg-white/10 border border-[#C89B3C] flex items-center justify-center shrink-0">
-                <TruckIcon className="w-6 h-6 text-[#C89B3C]" />
+                <CheckIcon className="w-6 h-6 text-[#C89B3C]" />
               </div>
               <div>
                 <h4 className="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-white">
-                  PAN-INDIA SHIPPING
+                  100% GENUINE PARTS
                 </h4>
-                <p className="text-[11px] text-zinc-300">Across all Indian pin codes</p>
+                <p className="text-[11px] text-zinc-300">Brand warranty &amp; sealed pack</p>
               </div>
             </div>
 
