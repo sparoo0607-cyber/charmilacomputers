@@ -109,7 +109,7 @@ export default function ProductCard({ product }: { product: Product }) {
           <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">{product.brand}</span>
           <span className={`text-[10px] font-bold flex items-center gap-1 ${product.inStock ? "text-emerald-700" : "text-red-500"}`}>
             <span className={`w-1.5 h-1.5 rounded-full ${product.inStock ? "bg-emerald-500" : "bg-red-500"}`} />
-            {product.inStock ? `In Stock (${product.stockQty})` : "Out of Stock"}
+            {product.inStock ? "In Stock" : "Out of Stock"}
           </span>
         </div>
 

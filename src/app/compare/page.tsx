@@ -170,8 +170,8 @@ export default function ComparePage() {
               <tr className="hover:bg-zinc-50">
                 <td className="p-3.5 font-bold text-zinc-600 sticky left-0 bg-white z-10">Availability</td>
                 {comparedProducts.map((p) => (
-                  <td key={p!.id} className="p-3.5 font-bold text-emerald-700">
-                    {p!.inStock ? `In Stock (${p!.stockQty} units)` : "Out of Stock"}
+                  <td key={p!.id} className={`p-3.5 font-bold ${p!.inStock ? "text-emerald-700" : "text-red-500"}`}>
+                    {p!.inStock ? "In Stock" : "Out of Stock"}
                   </td>
                 ))}
               </tr>
