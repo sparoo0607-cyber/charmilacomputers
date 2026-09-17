@@ -44,12 +44,7 @@ export default function DealsPage() {
     showToast(`✓ Added ${combo.title} bundle to cart!`);
   }
 
-  function handleCopyCoupon(code: string) {
-    navigator.clipboard.writeText(code);
-    showToast(`Coupon ${code} copied to clipboard!`);
-  }
 
-  const mainCouponCode = isDussara ? "DUSSARA500" : "VINAYAKA500";
 
   return (
     <div className="mx-auto max-w-[1440px] px-4 sm:px-6 py-8 font-sans">
@@ -106,76 +101,7 @@ export default function DealsPage() {
         </div>
       </div>
 
-      {/* Active Promo Codes Bar */}
-      <section className="mb-14">
-        <h2 className="text-lg font-black text-[#1B1B1B] uppercase tracking-wider mb-4 flex items-center gap-2">
-          Active Coupon Codes &amp; Bank Discounts
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white p-5 rounded-2xl border border-dashed border-[#D1121B] shadow-2xs space-y-3 flex flex-col justify-between">
-            <div>
-              <div className="flex justify-between items-start">
-                <span className="font-mono font-black text-base text-[#D1121B] bg-red-50 px-3 py-1 rounded-lg border border-red-200">
-                  {mainCouponCode}
-                </span>
-                <span className="text-[10px] font-extrabold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
-                  Active
-                </span>
-              </div>
-              <h3 className="font-bold text-xs text-zinc-900 mt-2">Flat ₹500 Off Storewide</h3>
-              <p className="text-[11px] text-zinc-500 mt-0.5">Valid on all hardware orders above ₹5,000.</p>
-            </div>
-            <button
-              onClick={() => handleCopyCoupon(mainCouponCode)}
-              className="w-full py-2 bg-[#FAF7F2] hover:bg-red-50 text-[#7A1118] font-bold text-xs rounded-xl border border-[#E5E0D7] transition-colors uppercase tracking-wider"
-            >
-              Copy Code
-            </button>
-          </div>
 
-          <div className="bg-white p-5 rounded-2xl border border-dashed border-[#C89B3C] shadow-2xs space-y-3 flex flex-col justify-between">
-            <div>
-              <div className="flex justify-between items-start">
-                <span className="font-mono font-black text-base text-[#7A1118] bg-amber-50 px-3 py-1 rounded-lg border border-amber-200">
-                  GAMER5
-                </span>
-                <span className="text-[10px] font-extrabold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
-                  5% OFF
-                </span>
-              </div>
-              <h3 className="font-bold text-xs text-zinc-900 mt-2">5% Off Custom Gaming Builds</h3>
-              <p className="text-[11px] text-zinc-500 mt-0.5">Save up to ₹2,500 on RTX 40/50 GPUs and PC Rigs.</p>
-            </div>
-            <button
-              onClick={() => handleCopyCoupon("GAMER5")}
-              className="w-full py-2 bg-[#FAF7F2] hover:bg-amber-50 text-[#7A1118] font-bold text-xs rounded-xl border border-[#E5E0D7] transition-colors uppercase tracking-wider"
-            >
-              Copy Code
-            </button>
-          </div>
-
-          <div className="bg-white p-5 rounded-2xl border border-dashed border-emerald-500 shadow-2xs space-y-3 flex flex-col justify-between">
-            <div>
-              <div className="flex justify-between items-start">
-                <span className="font-mono font-black text-base text-emerald-800 bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-200">
-                  FREESHIP
-                </span>
-                <span className="text-[10px] font-extrabold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
-                  Shipping Waiver
-                </span>
-              </div>
-              <h3 className="font-bold text-xs text-zinc-900 mt-2">Zero Shipping Charge</h3>
-              <p className="text-[11px] text-zinc-500 mt-0.5">BlueDart Express Air delivery on orders above ₹2,000.</p>
-            </div>
-            <button
-              onClick={() => handleCopyCoupon("FREESHIP")}
-              className="w-full py-2 bg-[#FAF7F2] hover:bg-emerald-50 text-emerald-800 font-bold text-xs rounded-xl border border-[#E5E0D7] transition-colors uppercase tracking-wider"
-            >
-              Copy Code
-            </button>
-          </div>
-        </div>
-      </section>
 
       {/* Pre-Configured Hardware Bundles & Combos */}
       <section className="mb-14">
