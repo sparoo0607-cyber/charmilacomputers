@@ -45,7 +45,9 @@ export default function ProductActions({ product }: { product: Product }) {
               <StarIcon key={i} className="w-3.5 h-3.5" filled={i < Math.round(product.rating!)} />
             ))}
             <span className="text-xs font-black text-zinc-800 ml-1">{product.rating}</span>
-            <span className="text-[11px] text-zinc-500">({product.reviewsCount || 42} reviews)</span>
+            {product.reviewsCount ? (
+              <span className="text-[11px] text-zinc-500">({product.reviewsCount} reviews)</span>
+            ) : null}
           </div>
         )}
         <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200">

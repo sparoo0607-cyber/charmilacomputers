@@ -55,35 +55,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
 
 
 
-  const sampleReviews = [
-    {
-      id: "rev-1",
-      userName: "Karthik R.",
-      rating: 5,
-      date: "3 days ago",
-      title: "Superb genuine product & lightning fast delivery!",
-      comment: "Ordered this for my custom workstation. Arrived in sealed original box with invoice and warranty card. Packaging was rock solid with bubble wraps. Highly recommended!",
-      verified: true,
-    },
-    {
-      id: "rev-2",
-      userName: "Naveen Kumar",
-      rating: 5,
-      date: "1 week ago",
-      title: "Great pricing compared to other platforms",
-      comment: "Charmila Computers offered the best price across all Indian retailers for this model. Temperatures are well in control and performance is stellar.",
-      verified: true,
-    },
-    {
-      id: "rev-3",
-      userName: "Suresh P.",
-      rating: 4,
-      date: "2 weeks ago",
-      title: "Good value and genuine brand warranty",
-      comment: "Registered the serial number on the manufacturer website right after delivery. Official warranty is confirmed. Seamless experience.",
-      verified: true,
-    },
-  ];
+
 
   const productImageUrl = product.imageUrl?.startsWith("http")
     ? product.imageUrl
@@ -284,56 +256,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
             </div>
           </div>
 
-          {/* Customer Reviews Section */}
-          <div className="bg-white p-6 rounded-2xl border border-[#E5E0D7] shadow-sm space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-200 pb-4">
-              <div>
-                <h2 className="text-lg font-bold text-[#1B1B1B]">Customer Reviews &amp; Ratings</h2>
-                <div className="flex items-center gap-2 mt-1">
-                  <div className="flex text-amber-500">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <StarIcon key={i} className="w-4 h-4" filled={i < Math.round(product.rating || 4.5)} />
-                    ))}
-                  </div>
-                  <span className="text-sm font-bold text-zinc-800">{product.rating || 4.5} out of 5</span>
-                  <span className="text-xs text-zinc-500">({product.reviewsCount || 42} verified ratings)</span>
-                </div>
-              </div>
-              <button className="bg-[#1B1B1B] hover:bg-black text-white text-xs font-bold px-4 py-2.5 rounded-xl uppercase tracking-wider transition-all shadow-xs">
-                Write a Review
-              </button>
-            </div>
 
-            {/* Reviews List */}
-            <div className="divide-y divide-zinc-100 space-y-4">
-              {sampleReviews.map((rev) => (
-                <div key={rev.id} className="pt-4 first:pt-0 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-full bg-[#7A1118] text-white font-bold text-xs grid place-items-center">
-                        {rev.userName[0]}
-                      </div>
-                      <span className="text-xs font-bold text-zinc-900">{rev.userName}</span>
-                      {rev.verified && (
-                        <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 flex items-center gap-1">
-                          <CheckIcon className="w-3 h-3" /> Verified Buyer
-                        </span>
-                      )}
-                    </div>
-                    <span className="text-[11px] text-zinc-400">{rev.date}</span>
-                  </div>
-
-                  <div className="flex text-amber-500">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <StarIcon key={i} className="w-3.5 h-3.5" filled={i < rev.rating} />
-                    ))}
-                  </div>
-                  <h4 className="text-xs font-bold text-zinc-900">{rev.title}</h4>
-                  <p className="text-xs text-zinc-600 leading-relaxed">{rev.comment}</p>
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
 
         {/* Right 4 cols: Support, Warranty & Policies */}
