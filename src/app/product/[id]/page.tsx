@@ -61,7 +61,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
     ? product.imageUrl
     : `https://www.charmilacomputers.in${product.imageUrl || "/icon.png"}`;
 
-  const shippingCost = product.price >= 3000 ? 0 : 150;
+  const shippingCost = 0;
 
   const jsonLd = {
     "@context": "https://schema.org",

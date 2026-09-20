@@ -8,15 +8,14 @@ import { useCatalog } from "@/context/CatalogContext";
 import { formatINR, STORE, whatsappOrderLink } from "@/lib/format";
 import ProductImage from "@/components/ProductImage";
 import {
-  CartIcon, MinusIcon, PlusIcon, TrashIcon, WhatsAppIcon,
-  TruckIcon
+  CartIcon, MinusIcon, PlusIcon, TrashIcon, WhatsAppIcon
 } from "@/components/icons";
 
 export default function CartPage() {
   const router = useRouter();
   const activeTheme = useStoreTheme();
   const {
-    lines, updateQty, removeFromCart, subtotal, shippingFee, discount, total,
+    lines, updateQty, removeFromCart, subtotal, total,
     clearCart, user
   } = useCart();
   const { getProduct } = useCatalog();
@@ -24,10 +23,6 @@ export default function CartPage() {
   const items = lines
     .map((line) => ({ line, product: getProduct(line.productId) }))
     .filter((x) => x.product);
-
-  const freeShippingThreshold = 3000;
-  const amountNeededForFreeShip = Math.max(0, freeShippingThreshold - subtotal);
-  const freeShipProgress = Math.min(100, Math.round((subtotal / freeShippingThreshold) * 100));
 
   if (items.length === 0) {
     return (
@@ -60,7 +55,6 @@ export default function CartPage() {
     ...items.map(({ line, product }) => `- ${product!.name} x${line.qty} = ${formatINR(product!.price * line.qty)}`),
     "",
     `Subtotal: ${formatINR(subtotal)}`,
-    `Shipping: ${shippingFee === 0 ? "FREE" : formatINR(shippingFee)}`,
     `*Total: ${formatINR(total)}*`,
     "",
     "Please confirm my order. Thank you!",
@@ -89,29 +83,6 @@ export default function CartPage() {
       <h1 className="text-2xl sm:text-3xl font-black text-[#1B1B1B] mb-6">
         Shopping Cart ({items.length} {items.length === 1 ? "Item" : "Items"})
       </h1>
-
-      {/* Free Shipping Tier Banner */}
-      <div className="mb-8 p-4 bg-white rounded-2xl border border-[#E5E0D7] shadow-2xs">
-        <div className="flex items-center justify-between text-xs font-bold mb-2">
-          <span className="flex items-center gap-1.5 text-zinc-800">
-            <TruckIcon className="w-4 h-4 text-[#7A1118]" />
-            {amountNeededForFreeShip === 0 ? (
-              <span className="text-emerald-700 font-extrabold">Pan-India Express Shipping Discount unlocked!</span>
-            ) : (
-              <span>Add <strong>{formatINR(amountNeededForFreeShip)}</strong> more to unlock Express Shipping Discount!</span>
-            )}
-          </span>
-          <span className="text-zinc-500 font-bold">{freeShipProgress}%</span>
-        </div>
-        <div className="w-full bg-zinc-100 h-2.5 rounded-full overflow-hidden">
-          <div
-            className={`h-full transition-all duration-500 rounded-full ${
-              amountNeededForFreeShip === 0 ? "bg-emerald-500" : "bg-gradient-to-r from-amber-500 to-[#D1121B]"
-            }`}
-            style={{ width: `${freeShipProgress}%` }}
-          />
-        </div>
-      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Left Column: Cart Items List (8 cols) */}
@@ -218,12 +189,6 @@ export default function CartPage() {
               <div className="flex justify-between">
                 <span>Items Subtotal</span>
                 <span className="font-bold text-zinc-900">{formatINR(subtotal)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Estimated Shipping</span>
-                <span className="font-bold text-zinc-900">
-                  {shippingFee === 0 ? <span className="text-emerald-700">FREE</span> : formatINR(shippingFee)}
-                </span>
               </div>
               <div className="flex justify-between text-[11px] text-zinc-500 pt-1">
                 <span>Included GST (18%)</span>

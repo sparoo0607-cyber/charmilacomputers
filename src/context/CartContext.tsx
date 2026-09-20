@@ -484,49 +484,21 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     [lines, getProduct]
   );
 
-  const shippingFee = useMemo(() => {
-    if (subtotal === 0 || subtotal >= 3000 || appliedCoupon?.code === "FREESHIP") return 0;
-    return 150;
-  }, [subtotal, appliedCoupon]);
+  const shippingFee = 0;
+  const discount = 0;
+  const total = subtotal;
 
-  const discount = useMemo(() => {
-    if (!appliedCoupon || subtotal < appliedCoupon.minOrder) return 0;
-    if (appliedCoupon.discountType === "fixed") {
-      return appliedCoupon.discountValue;
-    }
-    if (appliedCoupon.discountType === "percentage") {
-      const val = Math.round((subtotal * appliedCoupon.discountValue) / 100);
-      return Math.min(val, 2500);
-    }
-    return 0;
-  }, [appliedCoupon, subtotal]);
-
-  const total = useMemo(() => Math.max(0, subtotal + shippingFee - discount), [subtotal, shippingFee, discount]);
-
-  // Coupon handling (unchanged)
+  // Coupon handling (disabled)
   const applyCoupon = useCallback(
-    (code: string) => {
-      const found = AVAILABLE_COUPONS.find((c) => c.code.toUpperCase() === code.trim().toUpperCase());
-      if (!found) {
-        return { success: false, message: "Invalid promo code" };
-      }
-      if (subtotal < found.minOrder) {
-        return {
-          success: false,
-          message: `Coupon requires a minimum order value of ₹${found.minOrder.toLocaleString("en-IN")}`,
-        };
-      }
-      setAppliedCoupon(found);
-      showToast(`Promo code ${found.code} applied!`);
-      return { success: true, message: `Coupon applied: ${found.description}` };
+    (_code: string) => {
+      return { success: false, message: "Coupons are currently disabled" };
     },
-    [subtotal, showToast]
+    []
   );
 
   const removeCoupon = useCallback(() => {
     setAppliedCoupon(null);
-    showToast("Coupon removed");
-  }, [showToast]);
+  }, []);
 
   return (
     <CartContext.Provider
