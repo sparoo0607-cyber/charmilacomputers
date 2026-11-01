@@ -1691,7 +1691,15 @@ export async function getProductLive(id: string): Promise<Product | undefined> {
   try {
     const { supabase } = await import("@/lib/supabase/client");
     const { data, error } = await supabase.from("products").select("*").eq("id", id).maybeSingle();
-    if (error || !data) return getProduct(id);
+    // A query error (network/DB down) falls back to the bundled catalog so a
+    // Supabase hiccup never 404s a real product. A clean "no row" is NOT a
+    // failure — it means this id was deleted from Supabase, and must 404 for
+    // real. Falling back to the bundled seed here (as this used to) kept
+    // Google-indexed, admin-deleted product pages rendering as if still for
+    // sale, so customers kept finding and WhatsApp-ing about products that no
+    // longer exist.
+    if (error) return getProduct(id);
+    if (!data) return undefined;
     return mapProductRow(data as ProductRow);
   } catch {
     return getProduct(id);
