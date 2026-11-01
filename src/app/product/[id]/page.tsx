@@ -72,13 +72,18 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
         name: product.name,
         image: productImageUrl,
         brand: { "@type": "Brand", name: product.brand },
-        sku: product.model || product.id,
+        // sku must be a clean identifier — product.model is free-text (often
+        // has spaces, e.g. "RTX 4090 SUPRIM X 24G"), which is what Search
+        // Console's Merchant listing check was flagging as an invalid sku.
+        sku: product.id,
+        mpn: product.model || product.id,
         description: product.features?.join(". ") || product.name,
         category: category?.name || product.categorySlug,
         offers: {
           "@type": "Offer",
           priceCurrency: "INR",
           price: product.price,
+          validFrom: new Date().toISOString(),
           priceValidUntil: "2026-12-31",
           itemCondition: "https://schema.org/NewCondition",
           availability: product.inStock
